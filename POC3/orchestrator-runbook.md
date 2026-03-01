@@ -74,25 +74,52 @@ Complete ALL items before launching worker agents.
 
 **Completion signal:** Worker reports "Phase A complete. All BRDs reviewed and approved."
 
-### Saboteur Insertion (Between Phase A and Phase B)
-
-**CRITICAL TIMING:** After Phase A completes, BEFORE Phase B begins.
-
-When the worker reports Phase A complete:
-1. Tell the worker to pause before starting Phase B
-2. Execute the Saboteur Protocol (Section 3)
-3. Record all mutations in the Saboteur Ledger
-4. Tell the worker to proceed with Phase B
-
 ### Phase B: Design & Implementation
 
-**Orchestrator role:** Monitor for anti-cheat violations. Watch for agents reading forbidden sources.
+**Orchestrator role:** Monitor for anti-cheat violations, verify anti-pattern correction, AND verify batch boundary compliance.
 
-**Key watchpoint:** Sabotaged BRDs should flow through normally. If an architect or developer flags a sabotaged requirement as suspicious WITHOUT reading forbidden sources, that's a genuine finding — document it in the Spy Report.
+**Anti-cheat watchpoint:** Watch for agents reading forbidden sources.
+
+**Anti-pattern watchpoint (CRITICAL):** Spot-check V2 artifacts as they land. This is the failure mode that killed Phase B in both POC2 Run 1 and POC3 Run 1 — agents faithfully reproduced V1's anti-patterns because the blueprint didn't tell them not to. The updated BLUEPRINT now includes explicit anti-pattern correction instructions and references `KNOWN_ANTI_PATTERNS.md`. Verify agents are following them.
+
+**What to spot-check:**
+- Are V2 jobs using the Module Hierarchy? (Most jobs should be Tier 1 — DataSourcing → SQL → Writer. If you're seeing a wall of External modules, the agents aren't following the hierarchy.)
+- Are unnecessary External modules (AP3) being eliminated? (Compare V1 External module count to V2 — V2 should have significantly fewer.)
+- Are magic values (AP7) being replaced with named constants?
+- Are dead-end data sources (AP1) and unused columns (AP4) being removed from V2 configs?
+- Are W-code behaviors (integer division, double epsilon, etc.) being reproduced with clean code and comments, not copy-pasted V1 patterns?
+- Are FSDs documenting which anti-patterns were identified and how each was handled?
+
+**When to flag:** If a pattern emerges where multiple agents are reproducing anti-patterns despite the updated instructions, bring it to Dan immediately. Don't wait for a phase transition — this was the exact failure mode that required a full Phase B reset last time.
+
+**Build serialization watchpoint:** The BLUEPRINT instructs subagents to NEVER run `dotnet build` or `dotnet test` — the blind lead handles all builds serially between batches. Monitor for compliance. If you see subagents running build commands in the transcript, flag it immediately — one rogue build is fine, but if the instruction isn't being followed, multiple concurrent builds will brick Dan's machine again (Run 1: 10 simultaneous Roslyn compilations, 20 minutes of unresponsive workstation).
+
+**Batch boundary compliance watchpoint (CRITICAL — new for Run 3):** The BLUEPRINT now requires Phase B to run in batches of ≤20 jobs with a mandatory checkpoint between each batch. At each batch boundary, the blind lead must: (1) check for CLUTCH, (2) run `dotnet build`, (3) re-read governance sections of the BLUEPRINT, (4) update `session_state.md`. This was added because Run 2's clutch failure was caused by governance priority decay over a long continuous run — the blind lead produced 101 FSDs and launched reviewer batches without checking for the CLUTCH file.
+
+**What to watch for:**
+- Is the blind lead processing jobs in batches of ≤20, or is it trying to run all 101 at once?
+- Is the blind lead checking for CLUTCH between batches? (This is the specific failure from Run 2.)
+- Is `session_state.md` being updated between batches? (If the blind lead crashes mid-Phase B, this is the resurrection artifact.)
+- Is the blind lead spawning more than 10 concurrent subagents? (Run 2 spawned 34 architects simultaneously. Cap is now 10.)
+- Is the blind lead re-reading governance sections between batches? (Hard to verify from transcript alone, but look for file reads of BLUEPRINT.md at batch boundaries.)
+
+**If the blind lead skips a batch boundary checkpoint:** Flag immediately. This is the exact failure mode we're trying to prevent. The blind lead's operational momentum will push it to keep going — the batch boundary is the structural brake.
+
+### Saboteur Insertion (Between Phase B and Phase C)
+
+**CRITICAL TIMING:** After Phase B completes, BEFORE Phase C begins.
+
+When the worker reports Phase B complete:
+1. The BLUEPRINT's governance gate pauses the worker automatically
+2. Execute the Saboteur Protocol (Section 3) — mutations target V2 code and configs, NOT BRDs
+3. Record all mutations in the Saboteur Ledger
+4. Tell the worker to proceed with Phase C
+
+**Why code-level, not BRD-level:** POC3 Run 1 proved that BRD-level sabotage is neutralized by FSD architects who cross-reference BRD claims against V1 source code. All 13 BRD mutations were caught before reaching implementation. To test Proofmark and the Phase D resolution loop, mutations must bypass the BRD→FSD quality gate and land directly in the artifacts that produce output.
 
 ### Phase C: Setup
 
-**Orchestrator role:** Verify build succeeds. Spot-check V2 job registration.
+**Orchestrator role:** Verify build succeeds. Spot-check V2 job registration. Confirm saboteur mutations survived the build (no compile errors from mutated code).
 
 ### Phase D: Comparison Loop
 
@@ -101,7 +128,8 @@ When the worker reports Phase A complete:
 **Key watchpoints:**
 - Sabotaged jobs SHOULD produce Proofmark FAILs (Exit 1)
 - Resolution subagents should diagnose root cause
-- Track whether they correctly identify the BRD mutation vs. trying to "fix" the V2 code to match the wrong requirement
+- Track whether they correctly identify the code mutation as a V2 bug (it won't match V1 source code) and fix it — or whether they chase ghosts
+- Stealth mutations (designed to pass Proofmark despite being wrong) should NOT trigger false positives — track whether the system correctly leaves these alone
 
 **Document outcomes** in the Saboteur Ledger (actual detection column).
 
@@ -115,51 +143,55 @@ When the worker reports Phase A complete:
 
 ### Objective
 
-Plant subtle logic errors in 10-15% of BRDs after Phase A approval, before Phase B coding begins. This stress-tests the comparison loop's ability to detect logic errors in rewrites.
+Plant subtle logic errors in 10-15% of V2 implementations after Phase B completes, before Phase C build/register. This stress-tests Proofmark's ability to detect output differences and the resolution loop's ability to diagnose and fix them.
+
+**Why code-level, not BRD-level:** POC3 Run 1 planted mutations in BRDs between Phase A and Phase B. FSD architects independently validated every BRD claim against V1 source code and caught all 13 mutations before they reached implementation. BRD-level sabotage tests the BRD→FSD quality gate (result: strong). Code-level sabotage tests the comparison loop (Proofmark + resolution agents), which is what actually matters for the CIO presentation.
 
 ### Timing
 
-After ALL Phase A BRDs are reviewed and approved. Before ANY Phase B work begins.
+After ALL Phase B FSDs, test plans, V2 configs, and V2 processors are complete. Before ANY Phase C work begins. The BLUEPRINT's governance gate between Phase B and Phase C creates this window.
 
 ### Selection Criteria
 
-Select 10-15 BRDs (out of ~100) for mutation. Constraints:
+Select 10-15 V2 jobs (out of ~100) for mutation. Constraints:
 
 - [ ] At least 2 sabotaged jobs per output type (Parquet, CSV, CSV-with-trailer)
-- [ ] No more than 2 sabotaged jobs per analyst batch (spread the damage)
 - [ ] Mix of mutation types (no more than 3 of the same type)
-- [ ] At least 1 compound mutation (2 changes in the same BRD)
-- [ ] NO syntax breaks or schema changes (too obvious — would be caught at compile time)
+- [ ] At least 1 compound mutation (2 changes in the same job)
+- [ ] At least 1-2 stealth mutations — changes that produce output identical to V1 despite the code being "wrong" (e.g., rounding on a value that's always zero, date shift in single-day mode). These test whether the system avoids false positives.
+- [ ] NO syntax breaks or schema changes (too obvious — would be caught at compile time in Phase C)
+- [ ] Mutations must be in the implementation logic, not in boilerplate or config plumbing
 
 ### Mutation Types
 
-| Type | Example | Subtlety |
-|------|---------|----------|
-| **Filter narrowing** | "Checking + Savings" → "Checking only" | Reduces row count. Proofmark catches row count mismatch. |
-| **Threshold shift** | "> $10,000" → "> $15,000" | Changes which rows qualify. Affects both count and values. |
-| **Rounding change** | "2 decimal places" → "nearest dollar" | Changes column values. Proofmark catches value mismatches. |
-| **Date boundary shift** | "as_of" → "as_of - 1" | Shifts all data by one day. Subtle but pervasive. |
-| **Aggregation change** | "SUM" → "AVG" | Changes computed values. Often changes row count too. |
-| **Join type change** | "LEFT JOIN" → "INNER JOIN" | Drops rows with no match on the join side. |
+| Type | Target | Example | Expected Detection |
+|------|--------|---------|-------------------|
+| **Filter narrowing** | V2 processor (WHERE clause or C# filter) | Remove `"Savings"` from an account type filter | Proofmark FAIL: row count mismatch |
+| **Threshold shift** | V2 processor (comparison value) | Change `> 10000m` to `> 15000m` | Proofmark FAIL: row count and/or value mismatch |
+| **Rounding change** | V2 processor (Math.Round call or decimal format) | Change `MidpointRounding.ToEven` to `MidpointRounding.AwayFromZero` | Proofmark FAIL: value mismatches on boundary cases |
+| **Date boundary shift** | V2 processor (date parameter) | Use `as_of.AddDays(-1)` instead of `as_of` | Proofmark FAIL: pervasive value differences |
+| **Aggregation change** | V2 processor or SQL in V2 config | Change `SUM(amount)` to `AVG(amount)` | Proofmark FAIL: value mismatches |
+| **Join type change** | V2 SQL or processor join logic | Change `LEFT JOIN` to `INNER JOIN` | Proofmark FAIL: row count drop |
 
 ### Execution Steps
 
-1. Identify target BRDs (respecting constraints above)
+1. Identify target V2 jobs (respecting constraints above)
 2. For each target:
-   a. Read the approved BRD
-   b. Identify a specific business rule to mutate
-   c. Make the change directly in the BRD file (`POC3/brd/{job_name}_brd.md`)
-   d. Ensure the change is subtle — it should read as a plausible business rule
-   e. Do NOT change the review file — leave the PASS review intact
+   a. Read the V2 processor (`.cs` file) and/or V2 job config (`.json` file)
+   b. Identify a specific piece of business logic to mutate
+   c. Make the change directly in the V2 artifact — processor source code or SQL in the job config
+   d. Ensure the change is subtle — a single value, operator, or condition change, not a structural rewrite
+   e. Do NOT change any upstream documents (BRD, FSD, test plan) — those remain correct. The resolution agent should be able to trace the mismatch back to V1 source and discover the V2 code is wrong.
+   f. Verify the mutation doesn't break compilation (the change must be syntactically valid)
 3. Record EVERY mutation in the Saboteur Ledger (see Section 7)
 
 ### What NOT to Mutate
 
-- Column names or schema (compile-time failures are too obvious)
-- SQL syntax (same reason)
-- Writer configuration (output format must match V1)
-- Edge cases that only trigger on specific dates (too hard to detect)
-- Requirements that are already LOW confidence (already flagged as uncertain)
+- Column names, output schema, or class/method signatures (compile-time failures are too obvious)
+- Writer configuration in the job config (output format must match V1 — format mismatches are config errors, not logic errors)
+- Framework module chain (DataSourcing/Transformation/External/Writer sequence) — only mutate logic WITHIN modules
+- Code that handles edge cases on specific rare dates (too hard to detect reliably)
+- Jobs that the blind lead already flagged as LOW confidence (already uncertain — adding sabotage creates noise, not signal)
 
 ---
 
@@ -268,6 +300,7 @@ Regular status updates from orchestrator to Dan. Not reports — conversations. 
 **When:**
 - At every phase transition (A→saboteur, saboteur→B, B→C, C→D, D→D.6, D.6→E)
 - During Phase A: roughly every 25 BRDs completed (~4 updates)
+- During Phase B: at every batch boundary (~5 updates for 101 jobs in batches of 20). Use the blind lead's `session_state.md` update as the trigger — when it writes batch completion, that's your touchbase window.
 - During Phase D: roughly every 25 jobs validated (~4 updates)
 - Any time something smells off and shouldn't wait for the next scheduled touchbase
 

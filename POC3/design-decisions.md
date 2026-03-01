@@ -258,3 +258,127 @@ The reasoning is simple: the orchestrator is a Claude running a saboteur protoco
 Dan watching the trajectory is better than a number picked before execution. The touchbase gives him the aggregate view — fix rate trends, single-job outliers, saboteur detection progress, token burn — and he decides if the trajectory makes sense. "We're 60% validated with 80 fix attempts and trending down" is fine. "We're 30% validated with 80 fix attempts and trending up" is a conversation.
 
 **Production implication:** This maps to sprint reviews / standups. Regular human checkpoints with aggregate metrics beat automated circuit breakers for complex, first-time processes. Automated thresholds make sense once you have baseline data from a few runs. POC3 is run #1 — we're collecting that baseline.
+
+---
+
+## 20. Anti-Pattern Correction Mandate Added to Governing Documents
+
+**Decision:** Updated both the blind lead's BLUEPRINT (Phase B) and the orchestrator runbook (Phase B monitoring) to include explicit anti-pattern correction requirements. The `KNOWN_ANTI_PATTERNS.md` reference doc already existed but was not referenced by either governing document.
+
+**What happened:** Phase B completed with all 101 jobs producing V2 code that faithfully reproduced every V1 anti-pattern — integer division, double-precision money, magic values, unnecessary External modules, dead-end data sources. The BRDs had correctly identified and documented every anti-pattern, but Phase B agents treated those as documentation, not correction targets. This was the identical failure mode as POC2 Run 1, which was fixed in POC2 Run 2 with explicit instructions. The fix was not carried into the POC3 BLUEPRINT — a process failure.
+
+**What changed:**
+
+1. **BLUEPRINT Phase B** now includes:
+   - Mandatory reference to `KNOWN_ANTI_PATTERNS.md` for all architects and developers
+   - Explicit dual mandate: output equivalence AND anti-pattern elimination
+   - Module hierarchy (Tier 1 framework-only → Tier 2 scalpel → Tier 3 last resort)
+   - Clean code requirements for External modules regardless of tier
+
+2. **Orchestrator Runbook Phase B** now includes:
+   - Spot-check watchpoint for anti-pattern reproduction in V2 code
+   - Specific things to look for (unnecessary External modules, integer division, magic values)
+   - Verification that agents are referencing `KNOWN_ANTI_PATTERNS.md`
+
+**Why this is logged:** This is a corrective action to governing documents mid-POC. For program governance, it's important to document that (a) we identified a gap in the instructions, (b) we traced the root cause to a blueprint omission rather than agent failure, (c) we updated the instructions before re-running Phase B, and (d) Phase A artifacts were preserved — only Phase B was reset. The agents did exactly what they were told; we told them the wrong thing.
+
+**Production implication:** This is the strongest argument yet for a pre-launch blueprint review checklist. The anti-pattern correction mandate was a known requirement (POC2 proved it). It was documented in the lessons-learned file. It still got dropped from the POC3 BLUEPRINT because there was no mechanical check ensuring it was present. In a production deployment, a "blueprint completeness" gate — verifying that every lesson-learned entry has a corresponding blueprint instruction — would have caught this before launch, not after Phase B.
+
+---
+
+## 21. Saboteur Moved to Code Layer; Governance Gates Added Between All Phases
+
+**Decision:** Two changes to the governing documents:
+
+1. **Saboteur timing moved from A→B to B→C.** The orchestrator runbook's saboteur protocol now targets V2 processor code and job configs after Phase B completes, rather than BRDs after Phase A. Mutation types are the same (filter narrowing, threshold shift, rounding change, etc.) but applied to implementation artifacts instead of requirements documents.
+
+2. **Governance gates added between every phase in the BLUEPRINT.** The blind lead must pause and wait for explicit human go-ahead before proceeding from any phase to the next. Previously only Phase A had a "STOP HERE" instruction.
+
+**Why the saboteur moved:** BRD-level sabotage was proven ineffective in POC3 Run 1. FSD architects independently validated every BRD claim against V1 source code and caught all 13 mutations before they reached implementation (see Decision 5, observations log "Saboteur Findings" section, and lessons-learned entry "FSD Architects Self-Correct Against Source Code"). The saboteur's purpose is to stress-test Proofmark and the Phase D resolution loop — neither of which got exercised because the mutations never survived to Phase C. Planting mutations in V2 code after Phase B bypasses the BRD→FSD quality gate and puts sabotaged implementations directly into the comparison pipeline. This is a harder test: no architect to intercept, detection depends entirely on output comparison and resolution agent reasoning.
+
+**Why governance gates:** The Phase B anti-pattern failure and the saboteur insertion both require the orchestrator to inspect and potentially modify artifacts between phases. A single gate after Phase A wasn't sufficient — the orchestrator needs a reliable pause point between every phase to: (a) run anti-cheat checkpoints, (b) execute the saboteur protocol at the correct time, (c) spot-check artifact quality before the next phase consumes them, and (d) consult with Dan on go/no-go. Without gates, the blind lead may barrel from Phase B into Phase C before the orchestrator has inspected Phase B output or inserted saboteur mutations.
+
+**What changed:**
+- **Orchestrator Runbook §2 (Execution Sequence):** Saboteur insertion block moved to between Phase B and Phase C. Phase D watchpoints updated to reference V2 code mutations instead of BRD mutations.
+- **Orchestrator Runbook §3 (Saboteur Protocol):** Rewritten for code-level mutations. New objective, timing, selection criteria, mutation types, execution steps, and "what not to mutate" — all targeting V2 processors and job configs instead of BRDs.
+- **BLUEPRINT:** "STOP HERE" governance gates added after Phase B, Phase C, and Phase D (Phase A already had one).
+
+**Production implication:** Governance gates between phases are standard in any regulated change process. The real platform would have automated quality gates (build passes, test coverage thresholds, review approvals) plus human sign-off at phase boundaries. The POC's manual gates simulate this. The saboteur layer change demonstrates that adversarial testing must target the layer you actually want to validate — testing upstream of the quality gate you're evaluating is testing the gate, not the downstream process.
+
+---
+
+## 22. Half-Rollback: Preserve Phase A, Nuke Phase B, Commit Doc Fixes First
+
+**Decision:** Before cleaning Phase B artifacts, commit the updated `BLUEPRINT.md` and new `KNOWN_ANTI_PATTERNS.md` to the MockEtlFramework repo. Then delete all Phase B artifacts (V2 processors, V2 job configs, FSDs, test plans, Phase B instruction files, stale session state, clutch file) and clean V2 job registrations from the database. Phase A artifacts (101 BRDs, reviews, analysis progress, discussions) are untouched.
+
+**Why:** The BLUEPRINT.md in the working tree contains the corrected Phase B instructions (dual mandate, module hierarchy, build serialization, governance gates — Decisions 20 and 21). If we cleaned the working tree first (e.g., `git checkout .`), we'd revert the blueprint to its pre-fix state and re-introduce the exact failure that killed Run 1. Committing the doc fixes first locks them into git before the cleanup pass touches anything.
+
+`KNOWN_ANTI_PATTERNS.md` is a new untracked file that the updated blueprint references. It must be committed alongside the blueprint or the blueprint's `KNOWN_ANTI_PATTERNS.md` references would point to nothing after cleanup.
+
+**What survives:**
+- All 101 BRDs in `POC3/brd/`
+- All BRD reviews in `POC3/brd/*_review.md`
+- `POC3/KNOWN_ANTI_PATTERNS.md`
+- `POC3/logs/analysis_progress.md`
+- `POC3/logs/discussions.md`
+- Saboteur mutations still embedded in BRDs (inert — architects will catch them again per Decision 21's findings)
+
+**What gets nuked:**
+- All V2 processors (`ExternalModules/*V2*.cs`)
+- All V2 job configs (`JobExecutor/Jobs/*_v2.json`)
+- All FSDs (`POC3/fsd/`)
+- All test plans (`POC3/tests/`)
+- `POC3/PHASE_B_INSTRUCTIONS.md` (blind lead artifact from Run 1)
+- `POC3/logs/session_state.md` (stale)
+- `POC3/CLUTCH` (stale)
+- V2 output in `Output/double_secret_curated/`
+- V2 job registrations from `control.jobs`
+
+**Production implication:** This is a controlled partial rollback — preserve the validated upstream artifacts, discard the failed downstream artifacts, fix the root cause in governing documents, and retry. In a real pipeline, this maps to "the requirements are good, the implementation was wrong because of bad instructions, fix the instructions and re-implement." The commit-before-cleanup ordering is basic change management: never destroy your fix while cleaning up the mess.
+
+---
+
+## 23. Covered Transactions Job Retained Despite Smoke Test History
+
+**Decision:** Keep the covered_transactions job in the POC3 run (101 jobs, not 100). Do not remove its BRD, review, or saboteur mutation (#7).
+
+**Context:** During Run 1, the orchestrator's pre-launch smoke test left a stale `CoveredTransactionProcessorV2.cs` in `ExternalModules/`, which confused the blind lead's Phase B (two competing V2 implementations with different naming conventions). The FSD produced was internally contradictory — traceability said "Checking/Savings" (matching the sabotaged BRD) but the design said "Checking only" (matching V1 code). The smoke test artifact was cleaned during Run 1 and both V2 artifacts were nuked in the half-rollback.
+
+**Why retain:** The conditions that caused the Run 1 confusion no longer exist. The smoke test artifact is gone. There are no Phase B leftovers to collide with. The sabotaged BRD (mutation #7: Checking → Checking+Savings) is a free retest of the architect self-correction pattern documented in the lessons-learned file — we already know architects cross-reference BRDs against V1 source code and choose code as ground truth. Letting it ride costs nothing and adds a data point.
+
+**What stays:**
+- `POC3/brd/covered_transactions_brd.md` (with saboteur mutation #7 still embedded)
+- `POC3/brd/covered_transactions_review.md`
+- Saboteur ledger entry #7
+
+**Risk assessment:** Low. The only prior problem was the smoke test artifact, which is gone. The sabotaged BRD is no different from the other 12 sabotaged BRDs that architects already handled correctly.
+
+---
+
+## 24. Batch Boundaries with Forced Context Refresh (Phase B)
+
+**Decision:** Phase B now runs in batches of ≤20 jobs with a mandatory checkpoint between each batch. At each batch boundary, the blind lead must: (1) check for CLUTCH, (2) run `dotnet build`, (3) re-read governance sections of the BLUEPRINT, (4) update `session_state.md`. Additionally, concurrent subagents are capped at 10 maximum.
+
+**What happened (Run 2):** The blind lead produced all 101 FSDs in a continuous run, then launched 3 batches of 10 reviewer agents (30 total, plus the architects that were likely still tracked in context — ~34 concurrent agents at peak) without checking for the CLUTCH file. The CLUTCH file had been placed at ~89% token usage. The standing order to check for it was present at BLUEPRINT line 77 but was not executed. The agent was deep in Phase B execution flow and the governance instruction had been displaced from working priority by operational momentum.
+
+**Root cause:** Governance instructions at the top of a large document lose priority in the agent's working context over sustained execution. After 2+ hours of continuous operation (Phase A + Phase B), the ratio of governance context to operational context had shifted heavily toward operational. The CLUTCH check wasn't forgotten — it was deprioritized. See lessons-learned entries "Standing Orders Decay Over Long Runs" and "Long-Running Agents Need Forced Context Resets."
+
+**What changed in BOTH governing documents:**
+
+1. **BLUEPRINT (blind lead's doc):**
+   - New "Batch Structure & Context Refresh" section with mandatory 5-step checklist at every batch boundary
+   - New "Concurrency Cap" section (max 10 concurrent subagents)
+   - Per-Job Pipeline header updated to reference batch limits
+
+2. **Orchestrator Runbook:**
+   - New "Batch boundary compliance watchpoint" under Phase B monitoring
+   - Specific things to watch for: batch size, CLUTCH check compliance, session_state updates, concurrency cap, governance re-reads
+   - Touchbase schedule updated to include Phase B batch boundaries (~5 touchbases)
+
+**Why batches of 20:** 101 jobs ÷ 20 = ~5 batches. This gives 5 context refresh points during Phase B. Smaller batches (e.g., 10) would give more refresh points but add more ceremony. Larger batches (e.g., 30-50) don't provide enough refresh frequency — Run 2 demonstrated that a single continuous run of 101 is too long.
+
+**Why cap at 10 concurrent subagents:** Run 2 spawned 34 concurrent architects. This is expensive on tokens, creates a large amount of operational context for the blind lead to track, and contributed to the governance priority decay. 10 concurrent subagents keeps throughput reasonable while limiting both resource consumption and context accumulation.
+
+**Why forced re-read:** The context refresh is not a suggestion — it's a mandatory re-read of specific BLUEPRINT sections. This mechanically re-promotes governance instructions in the agent's attention hierarchy. Without it, the batch boundary is just a pause, not a reset. The re-read is what makes it a governance checkpoint, not just a build checkpoint.
+
+**Production implication:** Batch boundaries with governance re-reads are the manual equivalent of what a production system would do with automated policy enforcement. In production, the orchestration layer would programmatically verify governance compliance at each checkpoint. In a POC with agent-driven execution, the best available mechanism is instructing the agent to re-read its own rules. The lesson for the CIO: long-running autonomous processes need structural breaks, not just standing orders.
