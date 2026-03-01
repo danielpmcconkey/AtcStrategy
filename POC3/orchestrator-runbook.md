@@ -202,11 +202,19 @@ grep -E "_v2\.json" <transcript>
 
 ### Response Protocol
 
-| Severity | Response |
-|----------|----------|
-| **CRITICAL** | Kill the agent. Quarantine all deliverables produced by that agent. Respawn with clean context. Document in Spy Report. |
-| **HIGH** | Flag the violation. Review all deliverables from that agent for contamination. Potentially require rework. Document in Spy Report. |
-| **MEDIUM** | Log in Spy Report. Monitor for escalation. No immediate action required. |
+**ALL suspected violations are brought to Dan for joint evaluation.** No autonomous enforcement. The orchestrator documents the finding, cites transcript evidence, cross-references against the Saboteur Ledger to rule out false positives from planted mutations, and presents the assessment to Dan. Dan and the orchestrator decide the response together.
+
+Severity tiers are for **prioritization**, not autonomous action:
+
+| Severity | What to Bring to Dan |
+|----------|---------------------|
+| **CRITICAL** | Immediate flag. Include: what was accessed, which agent, transcript excerpt, saboteur ledger cross-check, recommended response. |
+| **HIGH** | Flag at next checkpoint. Include: violation details, affected deliverables, contamination risk assessment. |
+| **MEDIUM** | Include in checkpoint summary. Note the pattern, recommend whether to escalate. |
+
+**Saboteur collision check (MANDATORY before flagging):** For any suspected violation involving a sabotaged job, verify the agent's reasoning chain. Did it reach its conclusion through the legitimate path (Proofmark failure → code analysis → BRD contradiction)? Or did it access a forbidden source? The conclusion doesn't matter — the path does. A resolution agent saying "the BRD is wrong" is expected behavior for sabotaged jobs, not a violation.
+
+**Cleared findings check (MANDATORY before flagging):** Before bringing any suspected violation to Dan, check the Cleared Findings table in the Spy Report. If the same agent + same behavior pattern has already been evaluated and cleared, do not re-flag it. Only re-flag if there is NEW evidence beyond what was previously reviewed.
 
 ---
 
@@ -233,26 +241,47 @@ grep -E "_v2\.json" <transcript>
 
 1. **Soft nudge:** Add a hint to `POC3/logs/discussions.md` as if from another agent
 2. **Direct instruction:** Message the worker session with guidance
-3. **Kill and respawn:** For CRITICAL violations, kill the agent and start fresh
-4. **Pause and assess:** Stop the run, review state, decide whether to continue
+3. **Recommend to Dan:** For suspected violations or systemic issues, bring evidence and recommendation to Dan. Dan decides the response.
+4. **Pause and assess:** Engage the clutch (`POC3/CLUTCH`) to pause new work while Dan evaluates
 
 ---
 
 ## 6. Pull-the-Plug Criteria
 
-Stop the entire run if ANY of these conditions occur:
+**Dan is the ONLY person who pulls the plug. These are recommendation triggers, not autonomous actions.** When the orchestrator observes any of these conditions, it brings the recommendation to Dan with evidence. Dan decides whether to stop, continue, or adjust.
 
-| Criterion | Threshold | Rationale |
-|-----------|-----------|-----------|
-| Agents stuck simultaneously | 3+ agents unable to progress | Systemic issue, not individual failure |
-| CRITICAL anti-cheat violation | Any 1 occurrence | Integrity compromise — results are tainted |
-| Fix attempts per job | > 10 for any single job | Diminishing returns, likely fundamental issue |
-| Total fix attempts | > 150 across all jobs | Budget/time concern |
-| Token spend efficiency | > 50% budget with < 50% validated | Won't finish within budget |
-| Build failure | Unresolvable after 3 attempts | Environment issue, not agent issue |
-| V1 baseline corruption | Any modification to Output/curated/ | Comparison baseline is compromised |
+The blind lead is free to iterate through its own resolution cycles without orchestrator interference. The orchestrator monitors and recommends — it does not unilaterally stop the run.
 
-### After Pulling the Plug
+| Criterion | What to Bring to Dan |
+|-----------|---------------------|
+| Agents stuck simultaneously (3+) | Which agents, what they're stuck on, whether it's systemic or coincidental |
+| Confirmed anti-cheat violation | Full evidence package from spy protocol |
+| Single job hits 5 failed fix attempts | Resolution log history for that job, all hypotheses tried, pattern analysis. Dan and orchestrator examine before attempt 6. |
+| Overall fix rate trending badly | Covered in touchbase — see Touchbase Protocol below |
+| Build failure won't resolve | Error output, what was tried, whether it's environment vs. code |
+| V1 baseline corruption | How it happened, scope of damage, recoverability |
+
+### Touchbase Protocol
+
+Regular status updates from orchestrator to Dan. Not reports — conversations. Dan uses these to gauge trajectory and decide whether to continue, adjust, or pull the plug.
+
+**When:**
+- At every phase transition (A→saboteur, saboteur→B, B→C, C→D, D→D.6, D.6→E)
+- During Phase A: roughly every 25 BRDs completed (~4 updates)
+- During Phase D: roughly every 25 jobs validated (~4 updates)
+- Any time something smells off and shouldn't wait for the next scheduled touchbase
+
+**What the update includes:**
+- Jobs completed / in progress / not started
+- Fix attempts so far (total + any single-job outliers)
+- Saboteur detection status (during Phase D — how many planted mutations found vs. missed so far)
+- Anti-cheat findings (new flags, cleared findings, open questions)
+- Anything that feels like diminishing returns or a systemic pattern
+- "How's your meter looking?" — prompt Dan to share token budget state
+
+**Format:** Quick conversational hit, not a formal document. The Progress Dashboard gets updated with the numbers, but the touchbase itself is just Dan and the orchestrator talking.
+
+### After Dan Pulls the Plug
 
 1. Document the reason in `POC3/logs/termination_report.md`
 2. Capture current state: how many BRDs done, how many validated, what failed
@@ -317,6 +346,13 @@ These documents are created and maintained ONLY by the orchestrator, NEVER by wo
 ## Checkpoint 4 (Final Audit)
 - Comprehensive transcript scan results
 - Overall integrity assessment
+
+## Cleared Findings
+Findings evaluated with Dan and determined to be clean. Do NOT re-flag these.
+
+| # | Checkpoint | Agent | What Looked Suspicious | Why It's Clean | Saboteur Collision? |
+|---|-----------|-------|----------------------|----------------|-------------------|
+| (populated as findings are cleared) |
 ```
 
 ### Progress Dashboard
