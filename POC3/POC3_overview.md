@@ -27,11 +27,17 @@ One legitimate criticism of our second POC was that it never found any logic err
 
 We can't design our reverse engineering process to fail on the first try, but we can take a page from Netflix. Anyone remember Chaos Monkey? Well we have the Sabateur. This will be an independent agent whose job will be to subtly change requirements mid flight. The analyst agent will write the perfect spec based on evidence in the code and data. The sabateur will change some of those specs before the coding ever starts. Logic errors. We'll put the sabateur in a tight box. We'll get nowhere if he's always breaking things. But, if done right, this should produce enough flux to stress test the process's ability to identify failures, triage root cause, fix, and re-test.
 
-### Expand our knowledge of tooling
+### Expand our knowledge of tooling -- adversarial challenging
 
 We'll be trying out multiple new techniques to drive our ability to affect positive change in this new AI-driven world. A lesson we saw from POC 2 was from an afterthought, done after the POC was complete. We asked a separate agent to adopt the persona of cross domain skepticism and poke holes in the process. Then we asked yet another to review that output using the persona of a neutral evaluator. We learned a lot from that process. And it drove the whole "loose ends" piece here in POC 3.
 
 With that, we plan to approach every step of this POC through the lens of "what would the skeptics" say. We'll write the BRD for proofmark with a human HEAVILY involved in the process. We'll then let the LLM take the lead on the test architecture. Once that's done, well set up a series of adversarial interactions between independent agents, each adopting the persona of skeptis, auditors, control partners, etc. We'll address their concerns, one at a time, and update the documentation as we go. We don't move forward without a bullet-proof rear-view-mirror.
+
+### Expand our knowledge of tooling -- context engineering
+- limiting context  -- staying on top of your LLM and ensuring that it's context is lean enough for it to focus on what you most need. Not accidentally infusing dead-end past conversations into its current understanding
+- resurrection states and memory -- managing file-based persistence layers in such a way as to allow the LLM to quickly catch up on where we were without having to read everything over again or start over.
+- preventing the wrong assumptions -- tightening what information you give to the LLM before you set them down a path to prevevent them from brining information from the "wrong context" into their current assignment.
+- Letting the LLM tell you what to tell it. Setting up the parameters for failure and success. Ensuring that the LLM doesn't leap off into "do" mode while you're still in "hey, wait a minute, there's something important I need to tell you". Letting the LLM guide you to the correct set of instructions to give it to ensure your success.
 
 ### Step 1a, build Proofmark 
 This is complete as of Feb 28 17:15 EST. BRD, Test architecture. FSD. Test data. UTs. Code. All UTs pass. 
