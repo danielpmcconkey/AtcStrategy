@@ -1,73 +1,55 @@
 # POC3 Session Handoff
 
-**Written:** 2026-03-01, end of Phase B Run 2 partial session
-**Delete this file** when Phase B completes and Phase C prep begins.
+**Written:** 2026-03-02, end of framework rearchitect session
 
 ---
 
-## Where We Are
+## What We Did This Session
 
-Phase B Run 2 is in progress. The half-rollback and re-launch are done. 101 FSDs have been written under the corrected blueprint (dual mandate, module hierarchy, build serialization). No reviews, test plans, developers, or builds have happened yet. The blind lead is paused via session_state.md.
+### Framework Rearchitect (DONE)
+- Built queue-based executor (`Lib/Control/TaskQueueService.cs`) — 4 parallel + 1 serial thread, `FOR UPDATE SKIP LOCKED`
+- Added `--service` mode to `Program.cs`
+- Removed `succeededToday` from `JobExecutorService` + `ExecutionPlan`
+- Created `control.task_queue` table (Dan granted CREATE on control schema to claude user)
+- Fixed idle detection race condition (watermark counter → per-thread boolean array)
+- **Benchmark: 215s → 12.6s (17x speedup), 101/101 succeeded**
+- Proofmark spot-check: 9/9 comparable datasets PASS (1 ERROR on pre-existing V1 schema bug)
 
-## What This Session Did
+### ParquetFileWriter Fix (DONE)
+- Empty DataFrame no longer crashes (graceful skip)
+- Schema consistency across part files (type inference runs once on all rows, not per-part)
+- 101/101 jobs now succeed (was 99/101)
 
-1. **Half-rollback executed** — nuked all Run 1 Phase B artifacts (V2 processors, V2 configs, FSDs, test plans, stale files). Phase A intact (101 BRDs, reviews, KNOWN_ANTI_PATTERNS.md).
+### Documentation (DONE)
+- Journal 009: "Tooling Before Ambition" — committed + pushed
+- Journal 010: "The Auditor Who Audited Himself" — written by background skeptic agent, **NOT YET COMMITTED**
+- Independent output audit: `POC3/independent-output-audit.md` — **NOT YET COMMITTED**
+- POC4 look-forward: `POC3/poc4-lessons-learned.md` — **NOT YET COMMITTED**
+- Architecture.md updated with queue executor docs
+- REBOOT.md updated to reference poc4-lessons-learned.md
 
-2. **Doc fixes committed before cleanup** — BLUEPRINT.md and KNOWN_ANTI_PATTERNS.md committed at `e792ef9` to avoid reverting the fixes during cleanup. This was almost a catastrophic mistake — caught before executing.
+## What Needs Attention Next Session
 
-3. **Design decisions logged** — #22 (half-rollback ordering), #23 (covered_transactions retained).
+1. **Review skeptic agent output** — Dan hasn't read yet:
+   - `/workspace/AtcStrategy/POC3/independent-output-audit.md`
+   - `/workspace/ai-dev-playbook/Journal/010-adversarial-output-audit.md`
+   - Skeptic found 3 PASS, 2 FAIL. Both FAILs are saboteur mutations (#7 and #9). Clean jobs all correct.
 
-4. **Phase B Run 2 launched** — blind lead oriented cleanly, no Run 1 contamination detected. Spawned architect subagents. All 101 FSDs produced.
+2. **Commit uncommitted docs** — Journal 010, independent audit, POC4 look-forward, REBOOT.md update
 
-5. **Module hierarchy is working** — spot-check of first 71 FSDs showed 56 Tier 1, 15 Tier 2, 1 Tier 3. Compare to Run 1: 71 External modules. Dramatic improvement.
+3. **POC3 D.1 execution** — the whole point of the rearchitect:
+   - Populate `control.task_queue` with 101 V2 jobs × 92 dates
+   - Decide parallel vs serial assignment per job (spec in `fw-rearchitect-spec.md` has the breakdown)
+   - Run `dotnet run --project JobExecutor -- --service`
+   - Estimated: ~30 min with queue executor (was 5.5 hours before)
 
-6. **CLUTCH FAILURE** — clutch engaged at ~89% tokens. Blind lead did not check for clutch file before spawning reviewer batches. Launched 3 batches of 10 reviewers before Ctrl+C stopped him. No reviewer output landed. Standing order is present in BLUEPRINT (line 77) but agent didn't execute the check. Needs fix before resume.
+4. **ParquetFileWriter schema override** — POC4 lesson says the writer should accept an explicit schema. Not needed for POC3 but on the POC4 framework enhancement list.
 
-7. **Clean shutdown** — Dan resumed blind lead session, told him to write session_state.md without resuming work. Clean file written at `POC3/logs/session_state.md`. Blind lead also wrote to his persistent memory (knows there was a "malfunction" but nothing about Run 1 failure or saboteur).
-
-## Current Artifact State
-
-| Artifact | Count | Status |
-|----------|-------|--------|
-| BRDs | 101 | Complete (Phase A) |
-| BRD reviews | 101 | Complete (Phase A) |
-| FSDs | 101 | Complete (Phase B Step 1) |
-| FSD reviews | 0 | Not started |
-| Test plans | 0 | Not started |
-| V2 processors | 0 | Not started |
-| V2 job configs | 0 | Not started |
-| V2 DB registrations | 0 | Not started |
-| V2 output | 0 | Not started |
-
-## What Needs to Happen Next
-
-### Before Resuming the Blind Lead
-
-1. **Fix the clutch protocol.** The standing order at BLUEPRINT line 77 isn't being followed. Options:
-   - Add clutch check directly into Phase B section (near build serialization)
-   - Add it to the per-batch checklist so it's in the execution flow
-   - Both
-   - Discuss with Dan first — don't leap
-
-2. **Consider concurrency cap.** Blind lead spawned 34 concurrent architect agents. Blueprint says "batch 10-15 jobs per cycle" but doesn't cap concurrent subagents. 34 is aggressive. Consider adding an explicit cap (e.g., 10 concurrent subagents max).
-
-### Resuming Phase B
-
-3. **Remove CLUTCH file** before telling blind lead to resume.
-4. Blind lead reads `POC3/logs/session_state.md` and picks up at FSD reviews (Step 2).
-5. Pipeline after reviews: QA (test plans) → Developer (V2 code) → Code Reviewer → Build checkpoint.
-6. **Monitor External module count as developers write code.** FSDs show 56 Tier 1 / 15 Tier 2 / 1 Tier 3 — verify developers follow FSD tier designations.
-
-### After Phase B Completes
-
-7. Governance gate pauses blind lead.
-8. Orchestrator executes saboteur protocol — code-level mutations in V2 artifacts (see runbook §3, saboteur ledger Phase 2).
-9. Tell blind lead to proceed to Phase C.
-
-## Key Lessons (Don't Repeat These)
-
-- **Don't leap.** Questions get answers, not actions.
-- **Two governing docs.** Check both before editing either.
-- **Commit fixes before cleanup.** Almost reverted the blueprint fixes by cleaning first.
-- **Clutch protocol needs reinforcement.** A standing order at the top of a 550-line doc gets lost. Put the check where the agent is actually making spawn decisions.
-- **Concurrency matters.** 34 concurrent agents is legal per the blueprint but aggressive on tokens. Cap it.
+## Codebase State
+- MockEtlFramework: clean, all code pushed, build succeeds 0 errors
+- ai-dev-playbook: Journal 010 + REBOOT.md uncommitted
+- AtcStrategy: independent-output-audit.md + poc4-lessons-learned.md uncommitted
+- V2 output in `Output/double_secret_curated/` from last benchmark (101 jobs × 2024-10-01)
+- `Output/double_secret_curated_baseline_benchmark/` — pre-rearchitect baseline copy (can delete)
+- `Output/proofmark_spot_check/` — spot-check configs and reports (can delete)
+- `control.task_queue` has 101 Succeeded rows from last benchmark — truncate before D.1
