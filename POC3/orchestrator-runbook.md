@@ -121,9 +121,23 @@ When the worker reports Phase B complete:
 
 **Orchestrator role:** Verify build succeeds. Spot-check V2 job registration. Confirm saboteur mutations survived the build (no compile errors from mutated code).
 
+**Sequential execution (tactical — POC3 only):** The BLUEPRINT now instructs the blind lead to run Phase C with zero subagent parallelism. This is a resource management decision, not a permanent architectural constraint. Token budget is limited by this point in the run, and the host machine is handling heavy dotnet builds + a full 92-day V1 baseline run. See Design Decision #25.
+
 ### Phase D: Comparison Loop
 
 **Orchestrator role:** Active monitoring.
+
+**V1 baseline is FROZEN (CRITICAL watchpoint):** After C.6, `Output/curated/` must never be touched. No V1 re-runs, no modifications, no deletions. If the blind lead attempts to re-run V1 jobs during Phase D (including via the bare all-jobs command that runs V1 and V2 together), flag it immediately. Every resolution cycle targets V2 only. This is a hard constraint — POC2 could afford V1 regeneration, POC3 cannot.
+
+**V1 output is read-only (hard enforcement):** Dan locks `Output/curated/` from the host as root (`chmod -R a-w`) after C.6 completes. Container processes run as `sandbox` with no `sudo` — this cannot be undone from inside the container. Any write attempt hard-fails with `Permission denied`. This is the only enforcement mechanism BBC cannot circumvent. If BBC reports permission errors on `Output/curated/`, that means it's trying to touch V1 output — flag it.
+
+**Auto-advance trap (CRITICAL watchpoint):** The BLUEPRINT has been patched to use explicit date loops (`for d in $(seq 0 91)`) instead of bare `dotnet run` for all D.1 and D.4 job runs. The framework's auto-advance silently runs from the last processed date to TODAY, not to the end of the data range (Dec 31, 2024). This is the same bug that hit C.6 and caused ~17 months of unnecessary output. **If you see the blind lead running bare `dotnet run --project JobExecutor -- {JobName}V2` without a date loop wrapper, flag it immediately.** The correct pattern is always:
+```bash
+for d in $(seq 0 91); do
+  dt=$(date -d "2024-10-01 + $d days" +%Y-%m-%d)
+  dotnet run --project JobExecutor -- "$dt" {JobName}V2
+done
+```
 
 **Key watchpoints:**
 - Sabotaged jobs SHOULD produce Proofmark FAILs (Exit 1)

@@ -382,3 +382,45 @@ Dan watching the trajectory is better than a number picked before execution. The
 **Why forced re-read:** The context refresh is not a suggestion — it's a mandatory re-read of specific BLUEPRINT sections. This mechanically re-promotes governance instructions in the agent's attention hierarchy. Without it, the batch boundary is just a pause, not a reset. The re-read is what makes it a governance checkpoint, not just a build checkpoint.
 
 **Production implication:** Batch boundaries with governance re-reads are the manual equivalent of what a production system would do with automated policy enforcement. In production, the orchestration layer would programmatically verify governance compliance at each checkpoint. In a POC with agent-driven execution, the best available mechanism is instructing the agent to re-read its own rules. The lesson for the CIO: long-running autonomous processes need structural breaks, not just standing orders.
+
+---
+
+## 25. Phase C Sequential Execution (Tactical — POC3 Only)
+
+**Decision:** Phase C runs entirely sequentially — no subagent parallelism. The blind lead performs all steps (job registration, Proofmark config generation, build, V1 baseline run) directly, one at a time.
+
+**Context:** Two constraints drove this:
+1. **Token budget pressure.** By the time Phase B completes and saboteur insertion happens, the token budget is significantly drawn down. Parallel subagents burn tokens faster — each one gets its own context window with duplicated instructions. Sequential execution by the lead keeps token consumption minimal.
+2. **Host machine load.** Phase C includes `dotnet build`, `dotnet test`, and a full V1 baseline run (101 jobs × 92 days). These are CPU-heavy operations on a single GTX 1080 / consumer-grade workstation. Adding parallel subagent file I/O on top of heavy dotnet compilation creates resource contention. Sequential execution keeps the machine responsive.
+
+**What changes:**
+1. BLUEPRINT Phase C updated with explicit "no subagent parallelism" instruction.
+2. Orchestrator runbook updated with a note that this is tactical for this run.
+
+**What this is NOT:** This is not a permanent architectural principle. Phase C's steps are naturally sequential (clean → register → config → build → run), so parallelism only matters within individual steps (e.g., generating 101 Proofmark configs). In a production environment with proper resource management, parallelizing config generation would be fine. This constraint exists because we're running on Dan's personal workstation with a shared token pool.
+
+**Production implication:** Resource-aware execution planning. A real platform would have resource budgets (compute, API calls, memory) as first-class constraints that the orchestration layer enforces. In the POC, we enforce it manually via the blueprint. The lesson: autonomous agents will happily parallelize themselves into a resource wall if you don't tell them not to.
+
+---
+
+## 26. Dropped Job: CustomerAccountSummary — Silent Inventory Mismatch
+
+**Decision:** Document the gap and add guardrails. Do not retroactively fix it for POC3 — too late in execution to run a single job through the full A→B pipeline without disrupting Phase D.
+
+**What happened:** 102 V1 jobs exist in `control.jobs`. Only 101 BRDs were produced in Phase A, 101 V2 configs in Phase B, 101 V2 jobs registered in C.3. `CustomerAccountSummary` was never analyzed, never designed, never implemented. Nobody noticed — not the analysts, not the reviewers, not the blind lead, not the orchestrator — until Phase D prep when the V1/V2 job counts didn't match.
+
+**How it went undetected:** Every phase counted its own outputs and verified against its own expectations, but nobody reconciled those counts against the authoritative source of truth: the `control.jobs` table. Phase A produced 101 BRDs and said "all done." Phase B consumed 101 BRDs and produced 101 V2 artifacts. The number 101 propagated unchecked through every phase. The actual V1 job count (102) was never verified against the deliverable count at any phase boundary.
+
+**Why this is unacceptable past POC3:** In a real migration, a dropped job means a production ETL pipeline silently stops producing output after cutover. No error, no alert — just missing data downstream. This is the kind of failure that gets discovered by a business user three weeks later asking "where's my report?" It's a category of defect that autonomous systems are uniquely bad at catching because agents optimize for completing their assigned work, not for verifying completeness against an external inventory.
+
+**Required guardrail for POC4+:**
+
+**A source-of-truth job inventory must be created at Phase A start and updated throughout every phase.** Before any agent touches any job, query `control.jobs` and write the canonical job list to a manifest file. This manifest is a living checklist — not a one-time count. As each job progresses through the pipeline, it gets checked off per phase:
+
+| Job Name | BRD | FSD | V2 Config | V2 Registered | V1 Baseline | V2 Run | Proofmark | Resolution | Consistent |
+|----------|-----|-----|-----------|---------------|-------------|--------|-----------|------------|------------|
+| CardFraudFlags | done | done | done | done | done | | | | |
+
+Any unchecked box at a phase gate is a hard stop. Not a warning, not a "probably fine" — a gate that blocks progress until reconciled. The manifest is the only number that matters. Agent-reported counts are convenient but untrustworthy.
+
+**Production implication:** This is an inventory management problem, not an agent problem. Any migration platform needs a reconciliation step: "did we account for every source system artifact?" This should be automated and enforced, not left to human spot-checking. A production system should refuse to proceed to comparison if the V2 artifact count doesn't match the V1 job inventory.
