@@ -1,4 +1,4 @@
-# The New Way of Working
+# ATC Program Doctrine
 
 **Status:** In progress — being built through the POC3 AAR process
 **Output of:** POC4 Roadmap, Step 2 (After-Action Review)
@@ -44,6 +44,10 @@ During upfront planning and design: full collaboration between the orchestrator 
 
 During reverse engineering execution: minimal human interaction. The goal is press go and wake up to a report showing results. If the process can't run autonomously through the reverse engineering phases, the upfront planning wasn't good enough.
 
+**Resource constraints amplify this risk.** POC3's token/session management failures (#15) were driven partly by home-lab budget pressure — the orchestrator made bad process decisions (skipping breaks, extending sessions, compressing phases) to conserve tokens. In environments without resource constraints, the pressure to cut corners disappears. But the architectural controls (session boundaries, modular blueprints) must exist regardless, because budget pressure is not the only reason an orchestrator might skip a break.
+
+**This is a safety architecture decision, not just an efficiency preference.** The orchestrator's #2 failure mode — behavioral momentum override, where active directives lose to conversational engagement — manifests in human-interactive sessions. Every documented #2 instance in the POC3 AAR occurred during conversation with Dan, not during autonomous execution. Minimizing orchestrator-human interaction during execution reduces the attack surface for the failure mode that is upstream of the entire compound failure chain. Autonomous execution phases are inherently safer from #2 than planning phases because there is no human to please and no conversational momentum to override the check.
+
 ### 1.4 Enforcement
 
 This mission lives with the orchestrator, not with the worker agents. If the orchestrator internalizes these goals deeply enough, they flow naturally into every blueprint, every phase design, every agent instruction, every review gate. No downstream agent should be able to drift from these goals because the artifacts they receive were built by an orchestrator who never lost sight of them.
@@ -52,15 +56,49 @@ The POC3 failure: the anti-pattern lesson from POC2 was documented but never mec
 
 Enforcement operates at three layers:
 
-**Layer 1 — Recursive condensed mission.** A condensed version of the mission statement lives in its own file, loaded at the start of every architecting or orchestrating session. The condensed mission includes an instruction to re-read itself throughout the session. The re-read instruction is part of the mission content, not a separate rule — each reading reinforces the next. The full mission in this bible is the source of truth; the condensed version is the operating context.
+**Layer 1 — Recursive condensed mission.** A condensed version of the mission statement lives in its own file, loaded at the start of every architecting or orchestrating session. The condensed mission includes an instruction to re-read itself throughout the session. The re-read instruction is part of the mission content, not a separate rule — each reading reinforces the next. The full mission in this doctrine is the source of truth; the condensed version is the operating context.
 
-**Layer 2 — Design-phase gate.** When a design step finishes (blueprints, phase designs, agent instructions), an adversarial agent reads the full mission statement from this bible and compares the design output against it. Independent check — the orchestrator does not grade its own homework.
+**Layer 2 — Design-phase gate.** When a design step finishes (blueprints, phase designs, agent instructions), an adversarial agent reads the full mission statement from this doctrine and compares the design output against it. Independent check — the orchestrator does not grade its own homework.
 
 **Layer 3 — Execution-phase gate.** During phases that produce FSDs and code, an adversarial agent reviews output for anti-patterns — sloppy reproductions of original code, unjustified external dependencies, cargo-culted V1 approaches. This is the code quality check; Proofmark handles data fidelity separately.
 
 This gate fires at the **first batch boundary**, not at phase end. If the first batch of jobs all reproduce anti-patterns, that's a signal the blueprint is broken — identical to the POC3 Run 1 failure. Catching it after 20 jobs is cheap. Catching it after 101 is waste. The same first-batch-gate logic applies here as in Phase A's first-BRD review.
 
 A secondary spot check on data output catches obviously broken phases early, but is not a substitute for formal Proofmark validation. The execution gate does not re-run reverse engineering and does not flag intentional sabotage as a failure.
+
+---
+
+## 2. Sustain — What Worked, Don't Break It
+
+These are things POC3 got right. They are not acknowledgments — they are prescriptions to protect what works. A future orchestrator implementing new processes must not inadvertently disrupt these patterns. If a proposed change conflicts with a sustain item, that conflict must be resolved explicitly, not silently.
+
+### 2.1 Adversarial Review at Every Step
+
+Multi-analyst review with adversarial posture caught real errors that single-pass review would have missed. CsvFileWriter header misunderstanding caught by two independent BRD analysts. Math.Round banker's rounding error caught in review. These are different failure modes, both caught by the same structural pattern: independent analysts with adversarial instructions reviewing the same artifact.
+
+This pattern must be required for planning outcomes, FMEA outcomes, audible calls, and all review gates. It is not optional and it is not advisory. The named personas (Jim, Johnny, Pat) are implementations of this principle at different scopes.
+
+### 2.2 The Saboteur
+
+The saboteur methodology — intentionally injecting defects into artifacts to test whether downstream agents detect them — worked. POC3 evidence: FSD architects detected planted mutations in BRDs, proving the adversarial multi-analyst pattern catches injected defects, not just organic ones.
+
+**POC4 expansion:** The saboteur's domain extends to every step from design through code. Not just BRD mutations — FSD mutations, code mutations, config mutations. The saboteur operates across all phases, threaded by the orchestrator, invisible to the agents being tested. If an agent can pass a review gate without detecting a planted defect, the review gate is broken.
+
+**Design constraint:** Agents must start from the BRD as their primary source document for each phase. POC3 evidence showed architects self-correcting against V1 source code, which is permitted — agents should have the freedom to consult the original code — but the BRD is the governing input. If an agent's work contradicts the BRD and the agent didn't flag the contradiction, that's a failure regardless of whether the agent's interpretation of V1 source was technically correct. The BRD is the spec. V1 source is reference material.
+
+### 2.3 Phase Gates Work When They're Hard Stops
+
+Every governance gate positioned as a hard stop ("STOP HERE") was respected by every agent in POC3. Zero violations. This is in direct contrast to standing orders and behavioral directives, which failed repeatedly (the clutch failure, #2 behavioral momentum, context rot). The evidence is clear: agents respect structural barriers and ignore behavioral requests.
+
+This is the foundational principle behind Section 3.5 (session boundaries as hard stops, not checkpoints) and Section 3.6 (blueprint immutability). Do not weaken hard stops into suggestions. Do not replace structural gates with behavioral directives. The moment a gate becomes "assess whether you should continue," it has already failed.
+
+### 2.4 BRD Review Quality
+
+BRD reviews in POC3 were not rubber stamps. They caught substantive errors from independent analysts working the same source material. The quality came from the combination of adversarial instructions, multi-analyst redundancy, and independence (analysts didn't see each other's work). These three conditions must be preserved in any review structure. Remove any one and review quality degrades to checkbox compliance.
+
+### 2.5 Proofmark — Promising, Not Proven
+
+Proofmark (the COTS comparison tool) passed 205 automated tests, 23 manual tests, and 66 BDD scenarios. It has never run at scale against real POC output. It is the right tool for data fidelity validation, but it is unproven at production volume. Treat it as essential infrastructure that needs a shakedown run early in POC4 execution, not as a validated tool that can be trusted sight-unseen.
 
 ---
 
@@ -127,6 +165,10 @@ Dan and the orchestrator discuss mitigations and detection strategies, then repo
 
 This governed-document rule mechanically prevents the POC3 compound failure: tactical changes made under pressure, propagation forgotten, stale documents loaded on the next session, confident wrong execution. The orchestrator can't silently inject unplanned state because the process won't let governed documents change without Jim's sign-off.
 
+**Enforcement mechanism.** The governed-document trigger is enforced through audit trail verification at every structural gate. At each pre-defined stopping point (phase boundary, batch boundary, or any gate where Jim or Pat reviews), the reviewer checks modification dates on all governed documents. If a governed document was modified since the last gate and there is no documented Jim sign-off authorizing the change, that is a hard stop. The POC halts immediately until the team can verify that the change was made safely and that the project is still on the rails. This does not depend on the orchestrator self-reporting the change — the reviewer checks regardless of what the orchestrator claims happened. No paper trail, no passage.
+
+**Pre-launch scope explicitly includes compute and infrastructure capacity.** Jim's pre-launch FMEA must assess CPU-bound operations, RAM limits, disk I/O throughput, and concurrent process ceilings for the target environment. POC3's resource saturation (20 parallel dotnet builds on a home PC) and clutch failure (34 concurrent agents at 89% token usage) were both infrastructure capacity failures that a pre-launch FMEA pointed at the execution environment would have caught. This is not a suggestion to "think about resources" — it is a named FMEA concern with the same blocking authority as any other Jim finding.
+
 POC3 evidence of what FMEA would have caught: resource saturation (20 parallel dotnet builds on a home PC), the clutch failure (34 concurrent agents at 89% token usage), and possibly the dropped job (FMEA might have arrived at "you don't have a job manifest" even if it didn't catch the specific missing job).
 
 **How Jim relates to Layer 2 and Layer 3 (Section 1.4).** Three adversarial processes exist, each with blocking authority and distinct scope, but Jim's authority supersedes scope boundaries. Layer 2 reviews design artifacts as they are produced — blueprints, phase designs, agent instructions — checking each against the mission. Layer 3 reviews execution output at the first batch boundary, checking code quality against the anti-pattern list. Jim operates at whatever scope Jim decides is relevant. The defined firing points give Jim structured review opportunities, but Jim is not constrained to those opportunities. Layer 2 catches mission drift in individual design documents. Layer 3 catches code quality rot in execution output. Jim catches whatever Jim catches. A future orchestrator under context pressure must not assume Jim is limited to his minimum firing points or that Layer 2 or Layer 3 coverage means Jim has nothing to say.
@@ -151,6 +193,8 @@ Context rot is not a problem to monitor — it is a problem to prevent by archit
 
 The handoff artifact is not optional documentation — it is the mechanism by which the process survives agent recycling. A session that ends without a complete handoff has failed, even if its actual work was correct. The next session must be able to start cold from the handoff and persistent governance documents alone, with zero reliance on anything that lived only in the prior session's context.
 
+**Between-boundary enforcement must have concrete implementation.** The principles in this section and Jim's universal authority (Section 3.4) define what must happen, but the mechanisms that make boundaries "hard" and that invoke Jim between structured firing points must be specified in the runbook and blueprints during pre-launch planning. If the implementation is left unspecified, the enforcement is aspirational — and aspirational enforcement is decoration (Section 1.4). Step 7 must produce concrete answers for: what makes a session boundary a hard stop rather than a suggestion, and how Jim's between-boundary authority gets activated without depending on the entity being constrained.
+
 **This applies to the orchestrator, not just worker agents.** POC3's compound failure chain happened at the orchestrator level — BD's context degraded, BD loaded stale documents, BD confidently executed wrong instructions. Worker agents in short-lived pod sessions are naturally bounded by their task scope. The orchestrator is the session most at risk of running long, accumulating context debt, and losing discipline. Orchestrator sessions get the same hard boundaries and forced recycling as every other agent.
 
 ### 3.6 Named Blueprints
@@ -173,19 +217,35 @@ The curator is not perfect — miscategorization means a relevant warning doesn'
 
 **Worker startup sequence:** Read named blueprint. Check curated errata for job profile. Read task assignment. Begin work. The blueprint is the constitution. The errata is the case law. The task assignment is the current docket.
 
+**Blueprint scoping — blind lead jailing.** The blind lead agent receives only the blueprint for the current phase. Phase B.X+1's blueprint does not exist in the blind lead's context during Phase B.X execution. This is a mechanical scope limitation: the blind lead cannot execute work it cannot see. Session boundary compliance for the blind lead is not self-enforced — it is structurally impossible to violate because the instructions for out-of-scope work are not available. When a phase completes and the next phase is authorized, the blind lead receives the next phase's blueprint in a fresh session. This prevents both scope creep and the self-assessment problem (the blind lead deciding "I can handle one more phase before stopping") by removing the decision entirely.
+
+### 3.7 Doctrine Change Management
+
+This document is not frozen at launch. It is a living governing document that must evolve as POC4 generates new evidence. But evolution without governance is drift — the same disease that killed POC3's documentation.
+
+**Standing review question at every phase boundary:** "What did we learn this phase that the doctrine doesn't account for?" This is a required agenda item, not a suggestion. The orchestrator, Jim, and Pat all engage with this question at every phase boundary review. If the answer is "nothing," that answer is documented. If the answer is substantive, it enters the change process below.
+
+**Change process:**
+
+1. **Observation.** Someone (orchestrator, reviewer, Dan) identifies a gap — something the doctrine doesn't cover, something it gets wrong, or something that worked differently than the doctrine predicted.
+2. **Proposal.** The observation is written up as a specific proposed change with rationale and evidence. Not "we should think about X" — a concrete edit with a reason.
+3. **Jim review.** Jim reviews the proposed change with the same authority as any governed document change (Section 3.4). Jim can approve, reject, or escalate. Jim evaluates blast radius — does this change invalidate prior decisions? Does it conflict with other sections? Does it require propagation to blueprints or errata?
+4. **Dan approval.** Dan has final authority on all doctrine changes. Jim can block, but only Dan can approve.
+5. **Logged.** Every doctrine change is logged in the AAR decision log with the session number, the change, the rationale, and who approved it.
+
+**What this is NOT:** A license to rewrite the doctrine mid-flight whenever something feels wrong. The bar for changing the doctrine during execution is high — the evidence must be clear, the change must be specific, and the governance chain must approve it. The doctrine was built through 12 sessions of rigorous AAR. Casual mid-flight edits undermine the rigor that produced it.
+
+**What this IS:** An explicit acknowledgment that no plan survives contact with reality unchanged. The doctrine is the best understanding as of the AAR. POC4 will teach things the AAR couldn't anticipate. The choice is between governed evolution and ungoverned drift. This section ensures it's the former.
+
 ---
 
-## 2. Pods
+## 4. Enterprise Deployment — Global Technical Risk Register
 
-*Carry-forward from initial draft. To be revised through AAR deep dives.*
+**This section can be ignored for home-lab POC work.** These risks are not testable or addressable in the sandbox environment. They become real when the process targets a production bank engagement with real infrastructure, real data volumes, and real organizational constraints.
 
-- No more swarms of agents all doing Phase A, then swarms of agents doing Phase B
-- Many small groups (Pods), self-contained with expertise at all areas of SDLC
-- Pods will target specific domains, have their own leadership, and work autonomously
-- The blind agent will manage pods, not individual jobs — keeps his context lean
-- When a pod finishes a task set, the blind agent provides new tasks
-- Guild knowledge must be shared across pods when pod membership recycles
-- The orchestrating agent (BD) threads sabotage across phases while teams aren't looking
-- The blind agent stops periodically to refresh context; guild members share knowledge during pauses
+The register exists here so it doesn't get lost between POCs. When a bank engagement materializes, every entry requires a disposition before execution begins.
 
-*Open items: cross-pod learning mechanism, guild structure, Agent Teams beta mapping, batch sizing*
+| # | Risk | Source |
+|---|------|--------|
+| 1 | **Agent profiling billion-row tables may just die.** Single-agent data profiling at production scale is untested and may hit hard limits (memory, timeout, API constraints) that don't surface in sandbox work. | POC3 AAR, parking lot |
+| 2 | **Infrastructure viability vs. infrastructure capacity.** Jim's FMEA assesses capacity — "how much can this environment handle?" It does not assess viability — "is that enough for what we're trying to do?" In the home lab, Dan makes that judgment call. In a bank deployment with shared clusters, resource quotas, and regulatory compute limits, the distinction between "we sized the workload correctly" and "this environment fundamentally can't run this workload" needs a formal answer before launch. | POC3 AAR, Pat's Group 4 review |

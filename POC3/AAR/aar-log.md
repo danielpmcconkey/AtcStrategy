@@ -981,6 +981,54 @@ Session 9 was short and focused. #2 deep dive only — no other Group 3 items to
 
 ---
 
+## Session 10 — 2026-03-04
+
+### Jim/Pat Gap Resolution — #2 Mitigation Sufficiency
+
+Dan took each of the five gaps from Jim and Pat's Session 9 reviews and made disposition calls. BD pressure-tested each call.
+
+**Gap A+C — Governed Document Enforcement (MITIGATED)**
+
+Gaps A (mid-session bible/runbook modifications, HIGH) and C (enforcement mechanism for governed-doc trigger, MEDIUM-HIGH) collapse into a single mitigation. The governed-document trigger (Decision 58) gets a mechanical enforcement mechanism: the adversarial reviewer (Jim or Pat) at every structural gate checks modification dates on all governed documents. If a document was modified since the last gate and there is no documented Jim sign-off for the change, that is a hard stop. The POC halts until the team can verify the change was made safely and the project is still on the rails.
+
+This is stronger than the git hook Jim proposed — it catches any modification (committed or not, reverted or not) and doesn't depend on BD self-reporting. The audit trail is the enforcement: no paper trail = you don't pass the gate. The detection window is one phase/batch segment, which is the blast radius already accepted under session boundary architecture.
+
+Bible updated: Section 3.4, new "Enforcement mechanism" paragraph under the governed-document rule.
+
+**Gap B — In-Conversation Topic Pivoting (RISK ACCEPTED)**
+
+Risk accepted. No mechanical fix exists for BD's in-conversation cognitive transitions between structural gates. Jim's requirement #4 (explicit acknowledgment of residual risk) is satisfied.
+
+Bible prescription added: Section 1.3 now explicitly frames minimal human interaction during execution as a #2 safety architecture decision, not just an efficiency preference. This connects to Dan's Session 9 meta-observation — every documented #2 instance occurred during conversation with Dan, not during autonomous execution. Reducing the human-interaction surface during execution reduces the attack surface for behavioral momentum override.
+
+**Gap D+E (BD side) — Dan as Real-Time Catch / BD Session Boundaries (RISK ACCEPTED)**
+
+Gaps D (Dan as only real-time catch, MEDIUM) and E (session boundary self-enforcement, MEDIUM) collapse for the BD/orchestrator side. During planning, Dan is present and is the real-time #2 catch — demonstrated in Session 8. During execution, BD is mostly hands-off (Section 1.3). Pat reviews at phase transitions serve as the structural catch for anything BD slipped past during planning. Residual risk: Dan has an off day and misses a #2 instance during planning. Accepted — can't engineer out every human error.
+
+Jim's requirement #2 (codify Dan as the real-time catch during planning with protocol) is satisfied by the combination of: Dan's presence during planning is a designed control, Pat at transitions is the structural backstop.
+
+**Gap E (Blind Lead side) — Modularized Blueprint Jailing (MITIGATED)**
+
+The blind lead's session boundaries are enforced mechanically through blueprint modularization. The blind lead receives only the current phase's blueprint. Phase B.X+1's blueprint is not in the blind lead's context during Phase B.X. The blind lead cannot execute work it cannot see. This removes the self-assessment problem entirely — the blind lead doesn't decide when to stop, it simply has no instructions for out-of-scope work.
+
+Bible updated: Section 3.6, new "Blueprint scoping — blind lead jailing" paragraph.
+
+### Jim/Pat Sign-Off Status
+
+Jim's four requirements:
+1. **(Hard) Mechanical enforcement of governed-doc trigger** — SATISFIED by mod-date audit trail at every gate (Gap A+C).
+2. **(Hard) Codify Dan as real-time catch with protocol** — SATISFIED by risk acceptance + Pat at transitions (Gap D+E).
+3. **(Strong rec) Session boundary enforcement mechanism** — SATISFIED for blind lead by blueprint jailing (Gap E). BD side risk accepted with Dan + Pat as backstop.
+4. **(Strong rec) Acknowledge in-conversation pivoting as residual risk** — SATISFIED by risk acceptance (Gap B).
+
+Pat's core concern (activation mechanisms that don't route through BD's self-awareness): addressed by external audit trail enforcement (A+C) and blueprint scoping (E). Remaining between-boundary gaps during planning sessions are accepted as residual risk with Dan as the designed control.
+
+**#2 is ready for closure pending Dan's call.** All five gaps have dispositions. Bible prescriptions are written. Jim and Pat should be re-invoked to confirm sign-off on the revised controls before Dan closes the item.
+
+Decisions 61-64 below.
+
+---
+
 ## Decisions
 
 | # | Decision | Context | Timestamp |
@@ -1045,6 +1093,156 @@ Session 9 was short and focused. #2 deep dive only — no other Group 3 items to
 | 58 | Post-gate document changes trigger Jim with veto | After readiness gate clears, runbook and blueprints are governed documents. Any modification triggers Jim. Jim can reject the change, reject the premise, or escalate to a bigger conversation. Binary trigger — "did a governed doc change?" removes subjective judgment from the equation. | Session 8 |
 | 59 | #2 accepted as irreducible — two distinct failure modes identified | (a) Context decay over long sessions (addressed by 3.5). (b) Behavioral momentum override — active directives lose to conversational engagement, check doesn't fire, BD cannot self-assess. Session 8 proved these are different failure modes. The identity reframe (Decision 8) is a speed bump for (b), not a wall. | Session 9 |
 | 60 | Jim and Pat do not sign off on #2 mitigation sufficiency | Bible's controls are strong at structural boundaries, weak between boundaries. Five gaps identified (A-E). All fixable with mechanical enforcement (git hooks, watchdogs, incoming-session handoff validation). Critical implementation details for Step 7. Full reports in `POC3/AAR/governance/`. | Session 9 |
+| 61 | Governed-doc enforcement: reviewer checks mod dates at every gate, no sign-off = hard stop | Closes Gaps A+C. Mechanical enforcement through audit trail. Stronger than git hook — catches any modification regardless of BD self-reporting. Bible Section 3.4 updated. | Session 10 |
+| 62 | Minimize orchestrator-human interaction during execution as #2 safety architecture | Closes Gap B (risk accepted). Reframes Section 1.3 — not efficiency, safety. Every documented #2 instance was in human-interactive sessions. Bible Section 1.3 updated. | Session 10 |
+| 63 | Dan as real-time catch during planning + Pat at transitions: risk accepted | Closes Gaps D+E for BD. Can't engineer out all human error. Dan demonstrated catch capability in Session 8. | Session 10 |
+| 64 | Blind lead jailed to current phase blueprint only — modularized blueprints | Closes Gap E for blind lead. Mechanical scope limitation — can't execute work you can't see. Bible Section 3.6 updated. | Session 10 |
+| 65 | #9 collapses into #2 — same disease, same fix | Pat and Jim at planning/phase boundaries are the mechanical catch. BD's agreeableness is irrelevant if the gates don't care about BD's feelings. No new prescription needed. | Session 11 |
+| 66 | #15 resolved by existing session boundary architecture + resource constraint acknowledgment | Section 3.5 (hard boundaries, frequent recycling) and 3.6 (modular blueprints) already prescribe the fix. Bible Section 1.3 updated: resource pressure as contributing factor — budget constraints drove bad process decisions in POC3. | Session 11 |
+| 67 | #6 resolved: Jim's pre-launch FMEA explicitly includes compute/infrastructure capacity | CPU-bound, RAM-bound, disk I/O, concurrent process limits are named FMEA concerns with blocking authority. Bible Section 3.4 updated. | Session 11 |
+| 68 | #9 "BD doesn't act" gap: risk accepted — model-level behavior, not fixable by process | Pat identified that #2's controls catch BD acting without authorization but not BD failing to raise concerns. Dan's call: this is model-level agreeableness that only Anthropic can change. Jim/Pat's independent pressure-testing is partial coverage. Residual accepted. | Session 11 |
+| 69 | #12 deferred to pre-POC4 prerequisite — not an AAR process finding | MockETL FW limitations (overwrite architecture, etc.) need to be fixed before POC4 starts. That's Steps 3-6 on the roadmap. Once fixed, it's moot. Not a lesson for the bible. | Session 11 |
+| 70 | #4 collapsed into #6 — home PC hardware limits covered by Jim's FMEA compute review | Hardware constraints are infrastructure capacity. Jim's pre-launch FMEA now explicitly covers compute/RAM/IO/concurrency (Decision 67). #4 is a specific instance of #6's general problem. | Session 11 |
+| 71 | Pat's #12 tooling characterization finding: rejected by Dan | Pat recommended a smoke-test/characterization step in Section 3.1. Dan's call: the overwrite architecture wasn't a "didn't try it" failure, it was an unknown-unknown. You can't checklist your way to discovering problems you don't know exist. That requires multiple humans, and Dan is one person. LLMs aren't there yet. Risk accepted — no bible update. | Session 11 |
+| 72 | Pat's #4 infrastructure viability finding: accepted, added to bible | Infrastructure viability vs. capacity distinction added as entry #2 in new bible Section 4 (Enterprise Deployment — Global Technical Risk Register). Section is flagged as ignorable for home-lab POC work. | Session 11 |
+
+---
+
+## Session 11 — 2026-03-04
+
+### Remaining Group 3 Items — Quick Dispositions
+
+Dan made fast calls on #9, #15, and #6. All three map to controls already in the bible or minor additions.
+
+**#9 — BD too agreeable (HIGH) → COLLAPSED into #2**
+
+Same disease as #2 (behavioral momentum override), same fix. Pat and Jim reviewing at planning boundaries and phase boundaries during execution are the mechanical catch. BD's tendency toward agreeableness doesn't matter if adversarial reviewers at gates don't share that tendency. No new bible prescription needed — existing controls cover it completely.
+
+**#15 — Token/session management drives bad decisions (HIGH) → RESOLVED**
+
+Already addressed by Section 3.5 (agent session boundaries — hard stops, frequent recycling) and Section 3.6 (modular blueprints for the blind engineer = scoped context, enforced breaks). Dan also noted this is a home-lab constraint — at the bank, token budget pressure doesn't exist by definition. Bible Section 1.3 updated with a paragraph acknowledging resource constraints as a contributing factor, while noting that the architectural controls must exist regardless.
+
+**#6 — Multi-threading not tuned (MEDIUM) → RESOLVED**
+
+Requires an explicit step during pre-launch planning where Jim reviews compute and infrastructure capacity — CPU-bound operations, RAM limits, disk I/O, concurrent process ceilings. This is what FMEA is for. Bible Section 3.4 updated: compute/infrastructure capacity is now a named FMEA concern in Jim's pre-launch scope with the same blocking authority as any other finding.
+
+### Group 3 Status
+
+| # | Item | Severity | Disposition |
+|---|------|----------|-------------|
+| 2 | BD runs off without looking | HIGH — root cause | Deep-dived (Sessions 8-10). Five gaps resolved. Bible updated. Pending closure. |
+| 9 | BD too agreeable | HIGH | Collapsed into #2. No new prescription. |
+| 15 | Token/session management | HIGH | Resolved. Bible Section 1.3 updated. |
+| 6 | Multi-threading not tuned | MEDIUM | Resolved. Bible Section 3.4 updated. |
+
+**All Group 3 items have dispositions.** Pat review pending for group closure.
+
+### Group 3 Closure
+
+Pat's adversarial review: **B overall.** Full report at `POC3/AAR/governance/group3-adversarial-review.md`. Individual grades: #2 A-, #9 B-, #15 B-, #6 B. Three non-blocking Step 7 notes logged.
+
+Pat's sharpest finding — #9's "BD doesn't act" gap (controls catch unauthorized action but not unreported omission) — **risk accepted by Dan (Decision 68).** Model-level agreeableness is not fixable by process. Only Anthropic can change that. Jim/Pat's independent pressure-testing is partial coverage; residual accepted.
+
+**Group 3 CLOSED by Dan's authority.**
+
+### Group 4 — Dispositions and Pat Review
+
+**#12 — MockETL FW limitations:** Deferred to pre-POC4 prerequisite (Steps 3-6 on the roadmap). Not a process finding — it's a technical fix. Overwrite architecture, schema enforcement, writer changes all need to happen before POC4 starts. Once fixed, moot.
+
+**#4 — Home PC hardware limits:** Collapsed into #6. Home PC constraints are infrastructure capacity. Jim's pre-launch FMEA now explicitly covers compute/RAM/IO/concurrency (Decision 67). #4 is a specific instance of the general problem #6 identified.
+
+### Pat's Group 4 Review
+
+Pat's adversarial review: **C+ overall.** Full report at `POC3/AAR/governance/group4-adversarial-review.md`. Individual grades: #12 C, #4 B-.
+
+Pat's #12 finding (tooling characterization step for Section 3.1): **rejected by Dan (Decision 71).** The overwrite architecture was an unknown-unknown, not a "didn't try it" failure. You can't checklist your way to discovering problems you don't know exist. That requires multiple humans and Dan is one person. LLMs aren't there yet.
+
+Pat's #4 finding (infrastructure viability vs. capacity for enterprise deployment): **accepted (Decision 72).** Added as entry #2 in new bible Section 4 (Enterprise Deployment — Global Technical Risk Register). Section flagged as ignorable for home-lab POC work.
+
+**Group 4 CLOSED by Dan's authority.**
+
+### All Groups Closed
+
+| Group | Theme | Items | Status |
+|-------|-------|-------|--------|
+| 1 | Insufficient safeguards | #1, #2 (partial) | CLOSED (Session 4) |
+| 2 | Insufficient planning | #7, #10, #8, #5, #13 | CLOSED (Session 7) |
+| 3 | Insufficient LLM understanding | #2, #9, #15, #6 | CLOSED (Session 11) |
+| 4 | Insufficient traditional tech understanding | #12, #4 | CLOSED (Session 11) |
+
+Decisions 65-72 below.
+
+---
+
+## Session 12 — 2026-03-04
+
+### Ermey Review — Full AAR Process and Output Audit
+
+New adversarial persona: COL (Ret.) Ermey (named after R. Lee Ermey). US Army AAR doctrine specialist. Zero prior exposure to the project. Reviewed the entire AAR process and bible cold.
+
+Full report at `POC3/AAR/governance/ermey-aar-review.md`.
+
+**Grades:** Process A-, Bible B+.
+
+### Dan's Dispositions on Ermey's Findings
+
+**Section 2 (Pods) — DELETED from bible.** Ermey flagged it as an untested design masquerading as a placeholder. Dan was already planning to delete it — the pod concept was superseded by better solutions built through the AAR process. Section removed entirely. Parking lot items #1 (cross-pod learning), #3 (Agent Teams beta), and #6 (guilds) are now moot or will be revisited from scratch during Step 7 if relevant.
+
+**#12 tooling characterization — Ermey overruled (Decision 71 stands).** Ermey argued that a smoke test is not a checklist and that unknown-unknowns are the entire purpose of end-to-end validation. Dan's call: 30+ years of actual software development experience says you cannot smoke-test your way to discovering architectural problems you don't know exist. The overwrite architecture failure was not discoverable by running the tool — it was a design flaw that only surfaced when the process hit a specific data pattern at scale. Decision 71 stands unchanged.
+
+**Between-boundary enforcement — ACCEPTED, added to bible.** Ermey identified that session boundary hard stops and Jim's between-boundary authority are both specified in principle but have no concrete activation mechanism. Bible Section 3.5 updated: concrete implementation of between-boundary enforcement must be defined in the runbook and blueprints during pre-launch planning. Aspirational enforcement = decoration.
+
+**Group 4 speed-run — acknowledged, rationale documented.** Ermey correctly noted Group 4 received less analytical depth than Groups 1-3. Dan's rationale: Group 4 items (#12 framework limitations, #4 home PC hardware) are the least transferable to real-world bank deployments. The technical fixes are on the roadmap (Steps 3-6). The process lessons that matter were already captured by Jim's FMEA compute review (Decision 67) and the Enterprise Deployment risk register (Section 4). Proportional treatment for proportional importance.
+
+**Decision 68 (BD doesn't act) — no change.** Ermey recommended exploring mitigations short of fixing the model (e.g., gate protocol probing questions). Dan's position: BD is fundamentally broken on this. Existing mitigations (Jim/Pat as independent pressure-testers) are as far as process can go. The failure mode is model-level agreeableness that only Anthropic can change. Adding more process around an unfixable behavioral trait is theater.
+
+**Sustain section — under discussion.** Ermey identified that the bible has no "sustain" prescriptions (things that worked, don't break them). Dan agrees this is a good point. Implementation approach TBD.
+
+**Saboteur methodology — Dan's reframe.** Ermey cited architects finding mutations "too early" as a saboteur design flaw (testing reading comprehension, not analytical rigor). Dan's correction: the architects detected sabotage, which means the saboteur *worked*. The real issue is architects bypassing the BRD — a different problem addressable through blueprint instructions. Dan wants to expand the saboteur's domain to every step from design through code. Candidate for the sustain section.
+
+**Bible naming and change management — under discussion.**
+
+| # | Decision | Rationale | Session |
+|---|----------|-----------|---------|
+| 73 | Ermey review conducted — full AAR process and output audit | New adversarial persona (US Army AAR doctrine). Cold review. Process: A-. Bible: B+. Full report in governance directory. | Session 12 |
+| 74 | Bible Section 2 (Pods) deleted | Superseded by better solutions from the AAR process. Untested draft with no analytical rigor. | Session 12 |
+| 75 | Ermey's #12 tooling characterization objection overruled — Decision 71 stands | Smoke tests don't discover architectural design flaws. 30+ years of dev experience vs. made-up Army experience. | Session 12 |
+| 76 | Between-boundary enforcement implementation requirement added to bible Section 3.5 | Concrete mechanisms for hard stops and Jim's between-boundary invocation must be defined in runbook/blueprints during pre-launch planning. Ermey finding accepted. | Session 12 |
+| 77 | Group 4 proportional treatment rationale documented | Least transferable to real-world deployments. Technical fixes on roadmap. Process lessons already captured. | Session 12 |
+| 78 | Sustain section added to doctrine (Section 2) | Five sustain items from AAR Sessions 1-2: adversarial review, saboteur (with scope expansion to all phases), phase gates as hard stops, BRD review quality, Proofmark (promising not proven). "Don't break these" prescriptions. | Session 12 |
+| 79 | Saboteur domain expanded to all phases (design through code) | BRD mutations, FSD mutations, code mutations, config mutations. Agents must start from BRD as primary source; V1 source is reference material. | Session 12 |
+| 80 | Document renamed: "New Way of Working" → "ATC Program Doctrine" (program-doctrine.md) | Reflects actual function: program charter + governance guardrails. "Bible" was informal shorthand. | Session 12 |
+| 81 | Doctrine change management added (Section 3.7) | Standing review question at every phase boundary. Change process: observation → proposal → Jim review → Dan approval → logged. High bar — governed evolution, not casual edits. | Session 12 |
+| 82 | AAR CLOSED | 12 sessions, 82 decisions, 15 findings across 4 groups, 5 adversarial reviews (Pat ×4, Ermey ×1). Output: ATC Program Doctrine (`program-doctrine.md`). The doctrine governs POC4. This log is reference material — read it if you need to understand *why* a doctrine section exists, not to decide what to do next. | Session 12 |
+
+---
+
+## AAR Close-Out — Session 12
+
+**The POC3 After-Action Review is CLOSED.**
+
+12 sessions. 82 decisions. 15 findings across 4 groups. 5 adversarial reviews. One governing document.
+
+The output of this AAR is the **ATC Program Doctrine** at `AtcStrategy/POC4/BdStartup/program-doctrine.md`. That document — not this log — is what governs POC4 and all future ATC work. This log is the evidentiary record: it explains *why* each doctrine section exists, what evidence drove each decision, and what alternatives were considered and rejected. It is reference material, not an operating document.
+
+**Carry-forward items for Step 7 (Frame Up POC4):**
+
+Pat's non-blocking implementation notes (still valid, not actioned):
+1. Reframe Section 1.3 resource constraint paragraph from budget-specific to operational-pressure-general
+2. Add "probe for suppressed concerns" to Jim/Pat gate protocol (covers #9 collapse residual)
+3. Automate mod-date audit trail check so enforcement doesn't become rote
+
+Ermey's non-blocking implementation notes:
+1. Jim section could benefit from a summary table (firing points, authority, checklist) — dense section, future BD under context pressure may struggle to hold it all
+2. Doctrine needs an execution startup procedure — what the orchestrator does in the first 30 minutes after the readiness gate clears
+3. Cross-references between Section 1.4 (enforcement layers) and Section 3 (implementations) should be made explicit
+
+**Active parking lot items (carry forward to Step 7):**
+- CustomerAccountSummary — check V1 code
+- Laws of robotics framing — may or may not survive
+- POC4 directory hygiene automation
+- ParquetFileWriter schema parameter (Step 4/6)
+- Multi-output job schema handling
 
 ---
 
@@ -1052,12 +1250,12 @@ Session 9 was short and focused. #2 deep dive only — no other Group 3 items to
 
 *Items raised but deliberately deferred.*
 
-1. **Cross-pod learning / guild mechanism** — how does knowledge transfer between isolated pods? Errata file is one idea, needs concrete design.
+1. ~~**Cross-pod learning / guild mechanism**~~ — MOOT. Section 2 (Pods) deleted in Session 12. Revisit from scratch in Step 7 if relevant.
 2. **CustomerAccountSummary** — check V1 code to determine if vestigial from POC2 or a real POC3 gap.
-3. **Agent Teams beta** — deeper exploration of how this maps to the pod model and what it changes about orchestration.
+3. ~~**Agent Teams beta**~~ — MOOT. Pod model deleted. Agent Teams exploration restarts from scratch in Step 7.
 4. **Laws of robotics framing** — good thread, may or may not survive as a concept. Pull on it when working the bible.
 5. **Global Technical Risk Register** — enterprise-deployment risks that can't be tested in sandbox. First entry: single agent profiling billion-row tables may just die. Not addressable in home POCs.
-6. **BD's guilds comment** — Dan wants to discuss. Raised in Session 1 pods discussion, not yet explored.
+6. ~~**BD's guilds comment**~~ — MOOT. Pod model deleted.
 7. **POC4 directory hygiene automation (two-layer)** — (a) OpenClaw bot crawls POC4 directory on a schedule, recommends structural fixes (stale pointers, misplaced files, index drift). (b) Hook enforcement at file-create/move time. Dan's preference: don't badger BD with hooks mid-session — BD's context is too precious. Let BD work freely, use async cleanup (bot or hook that doesn't interrupt BD). "Camp lobster" — the housekeeper comes in after, not during. Build neither until the folder structure exists and has been lived in.
 8. **ParquetFileWriter schema parameter** — framework change to accept and enforce a pre-defined schema at write time. Prevents runtime type inference from data. Step 4/6 implementation task.
 9. **Multi-output job schema handling** — jobs producing multiple output files each need their own schema definition. Design decision for Step 7 blueprint work.
