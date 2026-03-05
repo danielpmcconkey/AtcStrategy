@@ -1,74 +1,84 @@
-# Session Handoff: POC4 Pre-Work
+# Session Handoff: Write Mode Variants — All Four Validated
 
-**Written:** 2026-03-04 (end of Step 2.5 session)
-**Purpose:** Step 2.5 is DONE. Next: write doctrine slices, then Step 3 (Write Modes).
+**Written:** 2026-03-05 (session 2 of the day)
+**Previous handoff:** CreditScoreDelta CSV Overwrite done, CSV Append next.
+**Dan says hi.**
 
 ---
 
-## Where We Are
+## What We Accomplished
 
-**Step 2 (AAR) is COMPLETE.** 12 sessions, 82 decisions, 15 findings, 5 adversarial reviews. Output: ATC Program Doctrine.
+All four write mode variants are now validated. This may complete POC4 Step 3 — Dan thinks so, but future-you needs to read the roadmap (`memory/poc4-roadmap.md`) and confirm with Dan.
 
-**Step 2.5 (Planning Progression) is COMPLETE.** Defined 14 sequential planning steps from pre-work to "press the button." Each step gets a doctrine slice — a focused extract of only the doctrine sections relevant to that step's work. Governance (Jim, Pat, Layer 2/3) always uses the full doctrine.
+### Jobs built and validated this session
 
-**Next task: Write the doctrine slices.** The planning progression file lists which doctrine sections map to each step. Future-you needs to read the full doctrine and the planning progression, then create 14 slice files. This is mechanical work — extract, don't rewrite. Each slice should be the minimum context needed for the working session on that step.
+1. **CreditScoreDeltaCsvAppend** — `JobExecutor/Jobs/credit_score_delta_csv_append.json`
+   - Same sources/SQL as CSV Overwrite, `writeMode: "Append"`
+   - Output columns updated to match Dan's reference query: added `ifw_effective_date`, `past_ifw_effective_date`, renamed `prior_score` → `past_score`
+   - Ran Oct 1-10: 8/10 succeeded (Oct 5-6 have no credit_scores data in datalake — weekends)
+   - Output at `Output/poc4/credit_score_delta_csv_append/`
 
-**After slices: Step 3 — Write Modes Conversation.**
+2. **BranchVisitsByCustomer** — `JobExecutor/Jobs/branch_visits_by_customer.json`
+   - CSV Append + trailing record (`TRAILER|{row_count}|{date}`)
+   - Branch visits (7-day data) LEFT JOIN customers (weekday only, `mostRecent`)
+   - Tests the "main table has today's data, enrichment doesn't" scenario — weekends use Friday's customer snapshot
+   - `additionalFilter: "customer_id < 1500"` to keep output manageable
+   - Ran Oct 1-10: 10/10 succeeded (branch_visits has weekend data)
+   - Output at `Output/poc4/branch_visits_by_customer/`
+
+3. **BranchVisitsByCustomerParquetAppend** — `JobExecutor/Jobs/branch_visits_by_customer_parquet_append.json`
+   - Same sources/SQL as above, Parquet Append writer
+   - Ran Oct 1-10: 10/10 succeeded
+   - Output at `Output/poc4/branch_visits_by_customer_parquet_append/`
+
+### Proofmark validation
+
+Converted all 10 Parquet partitions to CSV (with matching trailing records) and ran proofmark STRICT mode against the CSV Append output. **10/10 PASS, zero mismatches.** This proves CSV and Parquet writers produce identical data through the append pipeline.
+
+### Framework changes this session
+
+1. **Append mode trailer stripping** — CsvFileWriter now strips the trailing record from the prior partition's CSV before parsing. When `trailerFormat` is set and `writeMode` is Append, it reads the file as lines, drops the last line (`lines[..^1]`), then parses via `FromCsvLines`. Without this fix, the prior trailer would be carried forward as a garbage data row.
+
+2. **`DataFrame.FromCsvLines(string[] lines)`** — new static factory method. Shared parse logic used by both `FromCsv(filePath)` and the trailer-stripping path. Keeps trailer responsibility in CsvFileWriter, not DataFrame.
+
+### Test count: 111 (was 106 at session start)
+
+New tests: `FromCsvLines` parsing (3), CsvFileWriter append+trailer strips prior trailer (1), append-without-trailer doesn't strip last row (1).
+
+### Architecture docs updated
+
+Background agent updated `Documentation/Architecture.md` covering all framework changes from both sessions: date resolution modes, empty DataFrames, trailer stripping, `FromCsvLines`, corrected CsvFileWriter property names.
+
+## Open Issues
+
+### Default date resolution crash (T-0/T-N with no data)
+When there's no datalake data for the effective date, default DataSourcing returns nothing and the table never gets registered → Transformation throws `no such table`. This is how CreditScoreDelta failed on Oct 5-6.
+
+**Dan's rules (agreed this session, not yet implemented):**
+1. **Default (T-0/T-N):** no data = no output. This is the primary source. If it's not there, the job has nothing to do. Should be a graceful no-op, not a crash.
+2. **`mostRecent`:** no data = empty DataFrame with schema. *(Already works.)*
+3. **`mostRecentPrior`:** no data = empty DataFrame with schema. *(Already works.)*
+
+### Parking lot (carried forward)
+- CustomerAccountSummary — check V1 code (vestigial from POC2 or real gap?)
+- SQL seed scripts still reference `as_of` — low priority
+
+## What To Do Next
+
+1. **Read the POC4 roadmap** (`memory/poc4-roadmap.md`) and confirm with Dan that this completes Step 3.
+2. **Governance sign-off** — Dan wants to do this next session.
+3. **Fix the T-0/T-N no-data crash** — implement Dan's rules above. This is probably Step 4 or a prerequisite for Step 5.
+4. **CreditScoreDelta Parquet variants** (Overwrite + Append) — the two remaining CreditScoreDelta flavors. Low priority since the write modes are proven via BranchVisits, but they exist for completeness.
+
+## What NOT To Read
+
+- AAR log, governance reviews, POC3 orchestrator docs — not relevant
+- `rename-review-report.md` — historical
 
 ## What To Read
 
-1. **This file** (you're reading it)
-2. **Planning progression:** `/workspace/AtcStrategy/POC4/planning-progression.md` — the 14 steps with dependencies and doctrine section mappings. THIS IS YOUR INPUT for writing the slices.
-3. **The program doctrine:** `/workspace/AtcStrategy/POC4/BdStartup/program-doctrine.md` — THE governing document. The source material you're slicing.
-4. **Condensed mission:** `/workspace/AtcStrategy/POC4/BdStartup/condensed-mission.md`
-5. **Anti-pattern list:** `/workspace/AtcStrategy/POC4/anti-patterns.md`
-6. **POC4 roadmap:** `/home/sandbox/.claude/projects/-workspace/memory/poc4-roadmap.md`
-
-## What NOT To Read (Unless You Need It)
-
-- **AAR log** (`POC3/AAR/aar-log.md`) — Reference material. Explains *why* doctrine sections exist. Only read if you need to understand the reasoning behind a specific decision.
-- **Pat/Ermey governance reviews** (`POC3/AAR/governance/`) — Historical adversarial reviews from the AAR process. Don't load these unless revisiting a specific finding.
-- **POC3 orchestrator docs** (runbook, observations, design-decisions, poc4-lessons-learned) — Superseded by the program doctrine. The doctrine absorbed everything worth keeping.
-
-## Doctrine Slice Task
-
-**What to do:**
-- Read `planning-progression.md` for the 14 steps and their doctrine section mappings
-- Read the full doctrine
-- For each step, create a file at `AtcStrategy/POC4/doctrine-slices/step-NN-<name>.md`
-- Each slice contains ONLY the doctrine sections listed for that step, extracted verbatim or lightly condensed
-- The condensed mission statement (Section 1.4, Layer 1) should be included in every slice — it's designed for this
-- Slices are working context, not governance documents. They don't need Jim's sign-off to create.
-- **Ask Dan before starting** — confirm the approach and file naming convention
-
-## Carry-Forward: Step 7 Implementation Notes
-
-These are non-blocking notes from the AAR's adversarial reviews. Don't action them now — they're for Step 7 (Frame Up POC4).
-
-**From Pat:**
-1. Reframe Section 1.3 resource constraint paragraph from budget-specific to operational-pressure-general
-2. Add "probe for suppressed concerns" to Jim/Pat gate protocol
-3. Automate mod-date audit trail check
-
-**From Ermey:**
-1. Jim section summary table (firing points, authority, checklist)
-2. Execution startup procedure (first 30 minutes after readiness gate clears)
-3. Explicit cross-references between Section 1.4 layers and Section 3 implementations
-
-## Active Parking Lot Items
-
-- CustomerAccountSummary — check V1 code (vestigial from POC2 or real gap?)
-- Laws of robotics framing — may or may not survive
-- POC4 directory hygiene automation (two-layer)
-- ParquetFileWriter schema parameter (Step 4/6)
-- Multi-output job schema handling (Step 7)
-- Old roadmap Steps 3–7 vs. planning progression 14 steps — coverage not formally reconciled yet
-
-## Persona Roster
-
-| Name | Role | Key Trait |
-|------|------|-----------|
-| Jim | FMEA — risk assessment | Universal authority. "You fucked this up." Burden of proof on the team. |
-| Johnny | Spec review — FSD gate | Refuses ambiguous specs. If he passes it, it writes the code in English. |
-| Pat | Adversarial review — logic audit | "That makes no sense." Traces claims to evidence. Structural weakness, not style. |
-| Ermey | AAR process review | US Army AAR doctrine. Cold reviewer. Evaluates process rigor and output quality. |
+1. **This file**
+2. **POC4 roadmap:** `memory/poc4-roadmap.md`
+3. **Program doctrine:** `AtcStrategy/POC4/BdStartup/program-doctrine.md` (for governance gates)
+4. **Job configs:** `JobExecutor/Jobs/` — all four new jobs
+5. **CsvFileWriter.cs** — trailer stripping logic
