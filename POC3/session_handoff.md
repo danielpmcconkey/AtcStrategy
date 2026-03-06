@@ -79,6 +79,6 @@ When there's no datalake data for the effective date, default DataSourcing retur
 
 1. **This file**
 2. **POC4 roadmap:** `memory/poc4-roadmap.md`
-3. **Program doctrine:** `AtcStrategy/POC4/BdStartup/program-doctrine.md` (for governance gates)
+3. **Program doctrine:** `AtcStrategy/POC4/ProgramDoctrine/program-doctrine.md` (for governance gates)
 4. **Job configs:** `JobExecutor/Jobs/` — all four new jobs
 5. **CsvFileWriter.cs** — trailer stripping logic
