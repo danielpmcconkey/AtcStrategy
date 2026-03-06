@@ -93,9 +93,9 @@ Steps within this phase have a default ordering but some can run in parallel.
 
 | Step | Description | Status | Depends On |
 |------|-------------|--------|------------|
-| 8 | Scope & Success Criteria | ⬜ NOT STARTED | 6 |
+| 8 | Scope & Success Criteria | ✅ COMPLETE | 6 |
 | 9 | Doc Tree & Document Taxonomy | ✅ COMPLETE | — |
-| 10 | Job Scope Manifest | ⬜ NOT STARTED | 6, 8 |
+| 10 | Job Scope Manifest | ✅ COMPLETE | 6, 8 |
 | 11 | Execution Phase Structure & Phase Definitions | ⬜ NOT STARTED | 8 |
 | 12 | Agent Architecture | ⬜ NOT STARTED | 11 |
 | 13 | Errata System Design | ⬜ NOT STARTED | 12 |
@@ -106,6 +106,12 @@ Steps within this phase have a default ordering but some can run in parallel.
 ### Step 8 — Scope & Success Criteria
 What is POC4 proving? How many jobs? What does "done" look like? This depends on Step 6
 (config triage) because you can't define scope without knowing which jobs are viable.
+
+Completed 2026-03-06. Scope is defined as "all jobs in the job scope manifest" (Step 10).
+Success criteria defined in `Governance/definition-of-success.md` — covers high-level POC
+success (100% completion, evidence rollup, executive summary) and per-job reengineering
+criteria (BRD, FSD, test execution, external module justification, anti-pattern elimination,
+doc chain consistency, Proofmark pass on all effective dates, EXCLUDED/FUZZY governance).
 
 Doctrine: §1.1 (fidelity standard), §1.2 (code quality), §1.3 (human interaction)
 
@@ -119,6 +125,11 @@ Completed 2026-03-06. Output: this directory structure + doc-registry.md.
 ### Step 10 — Job Scope Manifest
 The governed list of every job in scope with current status. Blocking governance document —
 count mismatch at any phase boundary = hard stop. Lives at `Governance/ScopeManifest/`.
+
+Completed 2026-03-06. Generated from `control.jobs WHERE is_active = true`. 105 jobs sealed
+in `Governance/ScopeManifest/job-scope-manifest.json`. This is the amber — the input contract.
+The evidence ledger (runtime tracking of per-job/per-output status and proofmark results)
+lives in the database and is generated on demand.
 
 Doctrine: §3.3 (scope governance)
 

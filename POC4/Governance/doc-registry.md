@@ -35,3 +35,9 @@
 | Session: Proofmark Wakeup | Execution/Sessions/proofmark-queue-wakeup.md | 2026-03-06 | Queue runner wakeup/context doc | Reference |
 | Amendment 002 | Governance/Amendments/002-job-boundary-preservation.md | 2026-03-06 | Doctrine §1.1 amendment — job boundary preservation rule | Approved |
 | Session: Governance Audit | Execution/Sessions/2026-03-06-governance-audit-session.md | 2026-03-06 | Session handoff — Jim/Pat Phase I-II audit, 12 findings remediated | Reference |
+| Session: Phase II Closure | Execution/Sessions/2026-03-06-phase-ii-closure-session.md | 2026-03-06 | Session handoff — Phase II closure, baseline snapshots, conditions remediated | Reference |
+| Phase II Baseline Dump | Backups/control-schema-phase-ii-baseline.dump | 2026-03-06 | Control schema data backup at Phase II close | Reference |
+| Phase II Baseline DDL | Backups/control-schema-ddl-phase-ii-baseline.sql | 2026-03-06 | Control schema structure backup at Phase II close | Reference |
+| Restore Playbook | Backups/restore-to-phase-ii-baseline.md | 2026-03-06 | Instructions for rolling back to Phase II baseline | Reference |
+| Definition of Success | Governance/definition-of-success.md | 2026-03-06 | Step 8 output — POC-level and per-job success criteria | Active |
+| Job Scope Manifest | Governance/ScopeManifest/job-scope-manifest.json | 2026-03-06 | Step 10 output — sealed list of 105 in-scope jobs. Blocking governance doc per §3.3 | Active |
