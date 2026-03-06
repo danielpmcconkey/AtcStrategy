@@ -34,3 +34,4 @@
 | Session: Step 6 Triage | Execution/Sessions/2026-03-06-step6-triage-session.md | 2026-03-06 | Session handoff — job triage, framework changes, DansTransactionSpecial | Reference |
 | Session: Proofmark Wakeup | Execution/Sessions/proofmark-queue-wakeup.md | 2026-03-06 | Queue runner wakeup/context doc | Reference |
 | Amendment 002 | Governance/Amendments/002-job-boundary-preservation.md | 2026-03-06 | Doctrine §1.1 amendment — job boundary preservation rule | Approved |
+| Session: Governance Audit | Execution/Sessions/2026-03-06-governance-audit-session.md | 2026-03-06 | Session handoff — Jim/Pat Phase I-II audit, 12 findings remediated | Reference |
