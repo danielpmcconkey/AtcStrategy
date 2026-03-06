@@ -96,7 +96,7 @@ Steps within this phase have a default ordering but some can run in parallel.
 | 8 | Scope & Success Criteria | ✅ COMPLETE | 6 |
 | 9 | Doc Tree & Document Taxonomy | ✅ COMPLETE | — |
 | 10 | Job Scope Manifest | ✅ COMPLETE | 6, 8 |
-| 11 | Execution Phase Structure & Phase Definitions | ⬜ NOT STARTED | 8 |
+| 11 | Execution Phase Structure & Phase Definitions | ✅ COMPLETE | 8 |
 | 12 | Agent Architecture | ⬜ NOT STARTED | 11 |
 | 13 | Errata System Design | ⬜ NOT STARTED | 12 |
 | 14 | Session Boundary Implementation | ⬜ NOT STARTED | 11, 12 |
@@ -137,6 +137,11 @@ Doctrine: §3.3 (scope governance)
 What are the actual reverse engineering execution phases? Phase definitions (reference docs
 for "what IS Phase A") live at `Design/PhaseDefinitions/`. This is the structure; the
 runbook (Step 16) is the sequence and gates.
+
+Completed 2026-03-06. Seven execution phases defined in `Design/PhaseDefinitions/phase-v-execution.md`:
+E.1 (BRD + output manifest), E.2 (FSD + test strategy), E.3 (sabotage round 1), E.4 (build),
+E.5 (sabotage round 2), E.6 (validate — 92 effective dates, errata, non-strict column audit),
+E.7 (close-out). BD/orchestrator separation formalized. Dan approval + BD recycle at every boundary.
 
 Doctrine: §3.5 (session boundaries), §2.3 (phase gates as hard stops)
 

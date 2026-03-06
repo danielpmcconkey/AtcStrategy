@@ -42,3 +42,5 @@
 | Restore Playbook | Backups/restore-to-phase-ii-baseline.md | 2026-03-06 | Instructions for rolling back to Phase II baseline | Reference |
 | Definition of Success | Governance/definition-of-success.md | 2026-03-06 | Step 8 output — POC-level and per-job success criteria | Active |
 | Job Scope Manifest | Governance/ScopeManifest/job-scope-manifest.json | 2026-03-06 | Step 10 output — sealed list of 105 in-scope jobs. Blocking governance doc per §3.3 | Active |
+| Phase V Execution Definitions | Design/PhaseDefinitions/phase-v-execution.md | 2026-03-06 | Step 11 output — E.1-E.7 phase structure, operating model, sabotage rounds | Active |
+| Session: Steps 8/10/11 | Execution/Sessions/2026-03-06-step8-10-11-session.md | 2026-03-06 | Session handoff — definition of success, scope manifest, execution phases, dry run | Reference |
