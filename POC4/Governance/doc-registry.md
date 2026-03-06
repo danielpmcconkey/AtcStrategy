@@ -35,6 +35,7 @@
 | Session: Proofmark Wakeup | Execution/Sessions/proofmark-queue-wakeup.md | 2026-03-06 | Queue runner wakeup/context doc | Reference |
 | Amendment 002 | Governance/Amendments/002-job-boundary-preservation.md | 2026-03-06 | Doctrine §1.1 amendment — job boundary preservation rule | Approved |
 | Session: Governance Audit | Execution/Sessions/2026-03-06-governance-audit-session.md | 2026-03-06 | Session handoff — Jim/Pat Phase I-II audit, 12 findings remediated | Reference |
+| Dry Run Lessons Learned | TBD | TBD | Step X.3 output — only durable artifact from Phase III.5 dry run | Placeholder |
 | Session: Phase II Closure | Execution/Sessions/2026-03-06-phase-ii-closure-session.md | 2026-03-06 | Session handoff — Phase II closure, baseline snapshots, conditions remediated | Reference |
 | Phase II Baseline Dump | Backups/control-schema-phase-ii-baseline.dump | 2026-03-06 | Control schema data backup at Phase II close | Reference |
 | Phase II Baseline DDL | Backups/control-schema-ddl-phase-ii-baseline.sql | 2026-03-06 | Control schema structure backup at Phase II close | Reference |

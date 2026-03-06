@@ -172,6 +172,66 @@ Doctrine: §3.4 (Jim's firing points), §3.5 (boundary enforcement), §3.7 (doct
 
 ---
 
+## Phase III.5 — Dry Run
+
+A controlled, governance-suspended trial run of the full reverse engineering process on a
+small batch of jobs (~5). The purpose is to validate that the process design from Phase III
+actually works end-to-end before committing to 105 jobs — and before Jim's FMEA locks
+everything down.
+
+**Governance is intentionally suspended for this phase.** This is stated explicitly, not
+hidden. The scope manifest count check (§3.3), blueprint immutability (§3.6), and all
+phase boundary governance are not enforced during the dry run. Dan will approve actions
+as they arise. The dry run is a learning exercise, not a governed execution.
+
+**All artifacts are disposable.** The standing plan is to delete everything the dry run
+produces and revert to a clean state:
+- MockEtlFramework repo: revert to pre-dry-run commit
+- Control schema: revert to pre-dry-run state
+- Any BRDs, FSDs, test cases, V4 configs, proofmark results: deleted
+
+A save point (git tag + DB dump) must be taken before the dry run begins, using the same
+mechanism as the Phase II baseline (`Backups/`).
+
+**The only durable output is the lessons learned.** Everything else gets thrown away. The
+lessons learned document captures what worked, what broke, what the blueprints got wrong,
+and what Jim needs to know. It feeds directly into Step 17 (FMEA) as evidence.
+
+| Step | Description | Status | Depends On |
+|------|-------------|--------|------------|
+| X.1 | Dry Run: Save Point & Job Selection | ⬜ NOT STARTED | 16 |
+| X.2 | Dry Run: Execute ~5 Jobs End-to-End | ⬜ NOT STARTED | X.1 |
+| X.3 | Dry Run: Lessons Learned | ⬜ NOT STARTED | X.2 |
+| X.4 | Dry Run: Revert to Save Point | ⬜ NOT STARTED | X.3 |
+
+### Step X.1 — Save Point & Job Selection
+Tag repos and dump control schema. Select ~5 representative jobs — pick for variety, not
+ease. Should include at least one multi-output job, one with external modules likely needed,
+and one straightforward job as a sanity check.
+
+### Step X.2 — Execute ~5 Jobs End-to-End
+Run the full reverse engineering process as designed in Phase III: BRD, FSD, test strategy,
+test execution, V4 code, proofmark comparison. Use the blueprints as written. Dan approves
+as needed. The goal is not to produce perfect output — it's to find out where the process
+breaks.
+
+### Step X.3 — Lessons Learned
+The only artifact that survives. Document:
+- What worked as designed
+- What broke and why
+- Blueprint gaps or structural problems
+- Anything Jim should scrutinize in the FMEA
+- Recommended changes to blueprints, phase structure, or runbook
+
+This document goes into the Step 17 FMEA review package alongside the assembled design.
+
+### Step X.4 — Revert to Save Point
+Delete all dry run artifacts. Revert MockEtlFramework and control schema to the save point.
+Apply lessons learned to Phase III design artifacts (blueprints, phase definitions, runbook)
+while they are still mutable. Then proceed to Phase IV.
+
+---
+
 ## Phase IV — Gate
 
 Nothing moves until these clear.
