@@ -15,9 +15,29 @@
 - **Architects** — spawn as worker subagents, assign batches of jobs
 - **Reviewers** — spawn as independent subagents
 
+## Concurrency Target
+
+**Keep 8-12 subagents in flight at all times.** When one finishes, immediately
+launch the next. Do not wait for a full batch to complete before starting the
+next batch. The goal is maximum throughput — idle slots are waste.
+
+## Progress Reporting
+
+Maintain a structured progress file at `POC4/Artifacts/e2-progress.md` that BD
+can poll. Update it every time a job completes a stage. Format:
+
+```markdown
+# E.2 Progress
+
+| Job | Architect | FSD | Test Strategy | FSD Review | Test Review | Status |
+|-----|-----------|-----|---------------|------------|-------------|--------|
+| {name} | done/in-progress/pending | done/pending | done/pending | pass/fail/pending | pass/fail/pending | {overall} |
+```
+
 ## Execution
 
-1. Assign jobs to architect workers in batches
+1. Assign jobs to architect workers — launch as many as possible in parallel
+   (up to concurrency target)
 2. Each architect, for each assigned job:
    - Read the BRD and output manifest
    - Read V1 source code for reference
@@ -31,17 +51,18 @@
      - Test cases traced to BRD requirements
      - Any additional anti-patterns discovered during test design
      - Edge case coverage
-3. For each completed FSD, spawn an independent reviewer:
+3. As each FSD completes, immediately spawn an independent reviewer:
    - All BRD requirements accounted for
    - All functional requirements citing evidence in BRD, V1 code, or data
    - All output DataFrames match BRD output schema
    - Anti-pattern avoidance specs are sound
-4. For each completed test document, spawn an independent reviewer:
+4. As each test document completes, immediately spawn an independent reviewer:
    - All BRD requirements have corresponding test cases
    - All test cases citing evidence in BRD, V1 code, or data
 5. If reviewer rejects, send feedback to a fresh architect worker for revision. Max 3 cycles.
-6. Update `POC4/session-state.md` at batch boundaries
-7. Check for `POC4/CLUTCH` at batch boundaries
+6. Update progress file after each job completes any stage
+7. Update `POC4/session-state.md` at batch boundaries
+8. Check for `POC4/CLUTCH` at batch boundaries
 
 ## Outputs
 
@@ -50,6 +71,9 @@ For each job in scope:
 - `POC4/Artifacts/{job_name}/test-strategy.md`
 - `POC4/Artifacts/{job_name}/fsd-review.md`
 - `POC4/Artifacts/{job_name}/test-review.md`
+
+Global:
+- `POC4/Artifacts/e2-progress.md`
 
 ## Stop Condition
 

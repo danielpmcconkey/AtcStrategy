@@ -16,29 +16,52 @@
 - **Builders** — spawn as worker subagents, assign batches of jobs
 - **Reviewers** — spawn as independent subagents
 
+## Concurrency Target
+
+**Keep 8-12 subagents in flight at all times.** When one finishes, immediately
+launch the next. Do not wait for a full batch to complete before starting the
+next batch. The goal is maximum throughput — idle slots are waste.
+
+**Exception: `dotnet build` is serialized.** Only ONE build at a time. Concurrent
+Roslyn compilations will brick the machine. Builders write code; Orchestrator
+manages build serialization between batches.
+
+## Progress Reporting
+
+Maintain a structured progress file at `POC4/Artifacts/e4-progress.md` that BD
+can poll. Update it every time a job completes a stage. Format:
+
+```markdown
+# E.4 Progress
+
+| Job | Builder | Config | Tests | Build | Smoke | Review | Status |
+|-----|---------|--------|-------|-------|-------|--------|--------|
+| {name} | done/in-progress/pending | done/pending | done/pending | pass/fail/pending | pass/fail/pending | pass/fail/pending | {overall} |
+```
+
 ## Execution
 
-1. Start MockEtlFramework long-running processes if not already running
-2. Assign jobs to builder workers in batches
-3. Each builder, for each assigned job:
+1. Assign jobs to builder workers — launch as many as possible in parallel
+   (up to concurrency target)
+2. Each builder, for each assigned job:
    - Read the FSD and test strategy
    - Build V4 job configuration at `JobExecutor/Jobs/{job_name}_v4.json`
    - Build External modules only if justified per FSD (last resort — evidence required)
    - Create appropriate entry in the jobs table
    - Write unit tests per test strategy
-4. **CRITICAL — serialize builds.** Only ONE `dotnet build` at a time. Concurrent Roslyn compilations will brick the machine. Orchestrator manages build serialization between batches.
-5. After each batch:
-   - Run `dotnet build` — must compile cleanly
+3. After each batch:
+   - Run `dotnet build` — must compile cleanly (ONE AT A TIME)
    - Run `dotnet test` — all tests must pass
-   - Smoke test: run V4 jobs for ETL effective dates Oct 1-7, 2024, ensure no errors
+   - Smoke test: populate task queue with V4 jobs for Oct 1-7, 2024 and run
+     queue service. **Append-mode jobs must be queued with execution_mode = 'serial'.**
    - Check for `POC4/CLUTCH`
-   - Update `POC4/session-state.md`
-6. For each completed job, spawn independent reviewers:
+   - Update progress file and `POC4/session-state.md`
+4. For each completed job, spawn independent reviewers:
    - **Review 1 — Test coverage:** All unit tests cover all test cases from test strategy
    - **Review 2 — Anti-pattern elimination:** All cited anti-patterns either eliminated or have evidence for why they're required for output fidelity. "Output fidelity" means the files the job creates. Fidelity to original code or flow is NOT acceptable rationale.
    - **Review 3 — Smoke test:** Smoke test succeeded appropriately
-7. If reviewer rejects, send feedback to a fresh builder worker for revision.
-8. After ALL reviews pass: delete all artifacts and job run history from smoke tests (only after independent confirmation that smoke test review is complete)
+5. If reviewer rejects, send feedback to a fresh builder worker for revision.
+6. After ALL reviews pass: delete all artifacts and job run history from smoke tests (only after independent confirmation that smoke test review is complete)
 
 ## Outputs
 
@@ -52,6 +75,7 @@ Global:
 - All tests passing (`dotnet test`)
 - Clean build (`dotnet build`)
 - Smoke test artifacts cleaned up
+- `POC4/Artifacts/e4-progress.md`
 
 ## Stop Condition
 
