@@ -1,0 +1,34 @@
+comparison_target: "DansTransactionSpecial transactions by state/province V1 vs V4"
+reader: csv
+threshold: 100.0
+csv:
+  header_rows: 1
+  trailer_rows: 0  # writeMode: Append, no trailerFormat on the by-state writer.
+
+# All columns STRICT — no FUZZY/EXCLUDED overrides.
+#
+# Columns in file: ifw_effective_date, state_province, transaction_count, total_amount,
+#                  etl_effective_date
+#
+# This is a cumulative Append file. Each date partition contains ALL accumulated rows
+# from prior partitions plus the current day's new state/province aggregates.
+#
+# total_amount: SUM(amount) in SQLite. Both V1 and V4 use the SAME Transformation SQL
+# against the same transaction_details DataFrame (itself produced by identical SQL in
+# both jobs). FSD Open Question 4 notes: "V1 also uses SQLite for the same aggregation
+# (Transformation module). So both V1 and V4 should produce identical results." STRICT.
+#
+# ifw_effective_date in this output carries the original transaction effective date as
+# a GROUP BY key, formatted as ISO 8601 with time component (e.g., 2024-10-02T00:00:00).
+# This comes directly from the transaction_details GROUP BY — no transformation applied.
+# Both V1 and V4 produce the same format. STRICT.
+#
+# etl_effective_date: Framework overwrites to current run date for ALL accumulated rows.
+# Identical behavior in V1 and V4. STRICT.
+#
+# Note: The address dedup non-determinism concern from the details output (FSD FR9)
+# propagates into state_province here — if V1 and V4 pick different addresses for a
+# tied customer, the state_province GROUP BY keys could differ, producing different
+# aggregate rows. This risk is the same as for the details output: both use identical
+# SQL, same data, same engine. Keeping STRICT. If Proofmark reports mismatches,
+# investigate whether ties in addresses.start_date are the root cause.

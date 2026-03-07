@@ -1,0 +1,23 @@
+comparison_target: "CreditScoreDelta V1 vs V4"
+reader: csv
+threshold: 100.0
+csv:
+  header_rows: 1
+  trailer_rows: 0  # writeMode: Overwrite, no trailerFormat configured.
+
+# All columns STRICT — no FUZZY/EXCLUDED overrides.
+#
+# Columns in file: customer_id, sort_name, bureau, current_score, prior_score,
+#                  etl_effective_date
+#
+# prior_score is NULL when no prior score exists (first occurrence). Both V1 and V4
+# render NULL as empty string in CSV (RFC 4180). STRICT comparison handles this
+# correctly — empty string == empty string.
+#
+# V4 is config-level anti-pattern fixes only (AP1/AP10: added additionalFilter to
+# customers DataSourcing). The SQL transformation is identical to V1. No logic changes
+# that could introduce numeric or ordering divergence.
+#
+# Note: CreditScoreDelta is expected to FAIL for dates with no credit_scores data
+# (framework SQLite error "no such table: todays_scores"). Those dates will not produce
+# output files; Proofmark comparison is skipped by the bash sequencer when files are absent.

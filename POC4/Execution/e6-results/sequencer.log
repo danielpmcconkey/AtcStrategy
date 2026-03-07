@@ -1,0 +1,122 @@
+[2026-03-07 14:03:02] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[2026-03-07 14:03:02] E.6 SEQUENCER STARTING
+[2026-03-07 14:03:02] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[2026-03-07 14:03:02] Running Proofmark setup agent (one-time config derivation)...
+[2026-03-07 14:08:12] Proofmark setup complete: 6 comparisons configured
+[2026-03-07 14:08:12] Starting ETL queue service...
+[2026-03-07 14:08:17] ETL queue service started (PID: 47134)
+[2026-03-07 14:08:17] Initializing work queue: 2024-10-01 through 2024-10-10
+[2026-03-07 14:08:17] Queued 10 dates
+[2026-03-07 14:08:17] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[2026-03-07 14:08:17] DATE: 2024-10-01 | JOBS: "all" | QUEUE: 9 remaining
+[2026-03-07 14:08:17] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[2026-03-07 14:08:17] Spawning date coordinator for 2024-10-01 (jobs: "all")
+[2026-03-07 14:09:11] Coordinator for 2024-10-01 completed
+[2026-03-07 14:09:12]   Queued 6 Proofmark comparisons for 2024-10-01
+[2026-03-07 14:09:17]   All Proofmark comparisons complete for 2024-10-01
+[2026-03-07 14:09:17]   Proofmark evaluation: 5 passed, 0 failed, 0 skipped
+[2026-03-07 14:09:17] PASSED: 2024-10-01
+[2026-03-07 14:09:17] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[2026-03-07 14:09:17] DATE: 2024-10-02 | JOBS: "all" | QUEUE: 8 remaining
+[2026-03-07 14:09:17] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[2026-03-07 14:09:17] Spawning date coordinator for 2024-10-02 (jobs: "all")
+[2026-03-07 14:10:20] Coordinator for 2024-10-02 completed
+[2026-03-07 14:10:21]   Queued 6 Proofmark comparisons for 2024-10-02
+[2026-03-07 14:10:26]   All Proofmark comparisons complete for 2024-10-02
+[2026-03-07 14:10:26]   Proofmark evaluation: 5 passed, 0 failed, 0 skipped
+[2026-03-07 14:10:26] PASSED: 2024-10-02
+[2026-03-07 14:10:26] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[2026-03-07 14:10:26] DATE: 2024-10-03 | JOBS: "all" | QUEUE: 7 remaining
+[2026-03-07 14:10:26] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[2026-03-07 14:10:26] Spawning date coordinator for 2024-10-03 (jobs: "all")
+[2026-03-07 14:11:17] Coordinator for 2024-10-03 completed
+[2026-03-07 14:11:17]   Queued 6 Proofmark comparisons for 2024-10-03
+[2026-03-07 14:11:22]   All Proofmark comparisons complete for 2024-10-03
+[2026-03-07 14:11:22]   Proofmark evaluation: 5 passed, 0 failed, 0 skipped
+[2026-03-07 14:11:22] PASSED: 2024-10-03
+[2026-03-07 14:11:22] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[2026-03-07 14:11:22] DATE: 2024-10-04 | JOBS: "all" | QUEUE: 6 remaining
+[2026-03-07 14:11:22] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[2026-03-07 14:11:22] Spawning date coordinator for 2024-10-04 (jobs: "all")
+[2026-03-07 14:12:22] Coordinator for 2024-10-04 completed
+[2026-03-07 14:12:23]   Queued 6 Proofmark comparisons for 2024-10-04
+[2026-03-07 14:12:28]   All Proofmark comparisons complete for 2024-10-04
+[2026-03-07 14:12:28]   Proofmark evaluation: 5 passed, 0 failed, 0 skipped
+[2026-03-07 14:12:28] PASSED: 2024-10-04
+[2026-03-07 14:12:28] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[2026-03-07 14:12:28] DATE: 2024-10-05 | JOBS: "all" | QUEUE: 5 remaining
+[2026-03-07 14:12:28] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[2026-03-07 14:12:28] Spawning date coordinator for 2024-10-05 (jobs: "all")
+[2026-03-07 14:13:17] Coordinator for 2024-10-05 completed
+[2026-03-07 14:13:17]   Queued 6 Proofmark comparisons for 2024-10-05
+[2026-03-07 14:13:22]   All Proofmark comparisons complete for 2024-10-05
+[2026-03-07 14:13:23]   Proofmark evaluation: 5 passed, 0 failed, 0 skipped
+[2026-03-07 14:13:23] PASSED: 2024-10-05
+[2026-03-07 14:13:23] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[2026-03-07 14:13:23] DATE: 2024-10-06 | JOBS: "all" | QUEUE: 4 remaining
+[2026-03-07 14:13:23] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[2026-03-07 14:13:23] Spawning date coordinator for 2024-10-06 (jobs: "all")
+[2026-03-07 14:14:14] Coordinator for 2024-10-06 completed
+[2026-03-07 14:14:14]   Queued 6 Proofmark comparisons for 2024-10-06
+[2026-03-07 14:14:19]   All Proofmark comparisons complete for 2024-10-06
+[2026-03-07 14:14:19]   Proofmark evaluation: 5 passed, 0 failed, 0 skipped
+[2026-03-07 14:14:19] PASSED: 2024-10-06
+[2026-03-07 14:14:20] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[2026-03-07 14:14:20] DATE: 2024-10-07 | JOBS: "all" | QUEUE: 3 remaining
+[2026-03-07 14:14:20] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[2026-03-07 14:14:20] Spawning date coordinator for 2024-10-07 (jobs: "all")
+[2026-03-07 14:15:27] Coordinator for 2024-10-07 completed
+[2026-03-07 14:15:27]   Queued 6 Proofmark comparisons for 2024-10-07
+[2026-03-07 14:15:32]   All Proofmark comparisons complete for 2024-10-07
+[2026-03-07 14:15:33]   Proofmark evaluation: 5 passed, 0 failed, 0 skipped
+[2026-03-07 14:15:33] PASSED: 2024-10-07
+[2026-03-07 14:15:33] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[2026-03-07 14:15:33] DATE: 2024-10-08 | JOBS: "all" | QUEUE: 2 remaining
+[2026-03-07 14:15:33] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[2026-03-07 14:15:33] Spawning date coordinator for 2024-10-08 (jobs: "all")
+[2026-03-07 14:16:20] Coordinator for 2024-10-08 completed
+[2026-03-07 14:16:21]   Queued 6 Proofmark comparisons for 2024-10-08
+[2026-03-07 14:16:26]   All Proofmark comparisons complete for 2024-10-08
+[2026-03-07 14:16:26]   Proofmark evaluation: 5 passed, 0 failed, 0 skipped
+[2026-03-07 14:16:26] PASSED: 2024-10-08
+[2026-03-07 14:16:26] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[2026-03-07 14:16:26] DATE: 2024-10-09 | JOBS: "all" | QUEUE: 1 remaining
+[2026-03-07 14:16:26] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[2026-03-07 14:16:26] Spawning date coordinator for 2024-10-09 (jobs: "all")
+[2026-03-07 14:17:27] Coordinator for 2024-10-09 completed
+[2026-03-07 14:17:27]   Queued 6 Proofmark comparisons for 2024-10-09
+[2026-03-07 14:17:32]   All Proofmark comparisons complete for 2024-10-09
+[2026-03-07 14:17:33]   Proofmark evaluation: 5 passed, 0 failed, 0 skipped
+[2026-03-07 14:17:33] PASSED: 2024-10-09
+[2026-03-07 14:17:33] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[2026-03-07 14:17:33] DATE: 2024-10-10 | JOBS: "all" | QUEUE: 0 remaining
+[2026-03-07 14:17:33] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[2026-03-07 14:17:33] Spawning date coordinator for 2024-10-10 (jobs: "all")
+[2026-03-07 14:18:19] Coordinator for 2024-10-10 completed
+[2026-03-07 14:18:20]   Queued 6 Proofmark comparisons for 2024-10-10
+[2026-03-07 14:18:25]   All Proofmark comparisons complete for 2024-10-10
+[2026-03-07 14:18:25]   Proofmark evaluation: 5 passed, 0 failed, 0 skipped
+[2026-03-07 14:18:25] PASSED: 2024-10-10
+[2026-03-07 14:18:25] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[2026-03-07 14:18:25] E.6 SEQUENCER COMPLETE
+[2026-03-07 14:18:25]   Processed: 10
+[2026-03-07 14:18:25]   Passed:    10
+[2026-03-07 14:18:25]   Failed:    0
+[2026-03-07 14:18:25]   Triaged:   0
+[2026-03-07 14:18:25]   Built:     0
+[2026-03-07 14:18:25]   Errors:    0
+[2026-03-07 14:18:25] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[2026-03-07 14:18:25] Stopping ETL queue service (PID: 47134)...
+[2026-03-07 14:18:25] Done.
+[2026-03-07 14:21:47] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[2026-03-07 14:21:47] E.6 SEQUENCER STARTING
+[2026-03-07 14:21:47] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[2026-03-07 14:21:47] Comparison manifest exists — skipping Proofmark setup
+[2026-03-07 14:21:47] Starting ETL queue service...
+[2026-03-07 14:21:52] ETL queue service started (PID: 53394)
+[2026-03-07 14:21:52] Initializing work queue: 2024-10-01 through 2024-10-31
+[2026-03-07 14:21:52] Queued 31 dates
+[2026-03-07 14:21:52] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[2026-03-07 14:21:52] DATE: 2024-10-01 | JOBS: "all" | QUEUE: 30 remaining
+[2026-03-07 14:21:52] ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[2026-03-07 14:21:52] Spawning date coordinator for 2024-10-01 (jobs: "all")

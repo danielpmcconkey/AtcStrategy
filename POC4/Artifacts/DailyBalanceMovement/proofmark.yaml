@@ -1,0 +1,28 @@
+comparison_target: "DailyBalanceMovement V1 vs V4"
+reader: csv
+threshold: 100.0
+csv:
+  header_rows: 1
+  trailer_rows: 0  # writeMode: Overwrite, no trailerFormat configured.
+
+# All columns STRICT — no FUZZY/EXCLUDED overrides.
+#
+# Columns in file: account_id, customer_id, debit_total, credit_total, net_movement,
+#                  ifw_effective_date, etl_effective_date
+#
+# Considered but rejected:
+#   debit_total / credit_total / net_movement (FUZZY): FSD FR4 acknowledges V1 uses C#
+#   double accumulation (foreach, dictionary insertion order) while V4 uses SQLite REAL
+#   SUM(). Both are IEEE 754 64-bit doubles. FSD explicitly notes "amounts in the test
+#   data are exact binary fractions (e.g., 142.5, 357.5) so this risk is minimal."
+#   Sample output confirms exact values (142.5, 500, 357.5, 220, etc.). No confirmed
+#   precision divergence. Keeping STRICT.
+#
+#   ifw_effective_date format: V4 SQL explicitly uses strftime('%m/%d/%Y', ...) to
+#   reproduce V1's DateOnly.ToString() default MM/DD/YYYY format. Both sides should
+#   produce identical format. STRICT.
+#
+# Note: V4 uses INNER JOIN where V1 used a dict lookup with GetValueOrDefault(0).
+# Any account_id without a matching accounts row would appear in V1 output with
+# customer_id=0 but would be excluded from V4 output. Proofmark will surface this
+# if it occurs in the data.

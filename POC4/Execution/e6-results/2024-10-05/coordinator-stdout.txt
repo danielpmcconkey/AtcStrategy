@@ -1,0 +1,1 @@
+Done. **2024-10-05: 10/10 succeeded, 0 failed.** Result written to `coordinator-result.json`.

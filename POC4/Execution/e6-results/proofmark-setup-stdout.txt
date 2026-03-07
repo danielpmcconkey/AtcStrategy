@@ -1,0 +1,39 @@
+Done. Here's what was produced and every non-obvious decision made:
+
+---
+
+## Output: 6 YAML configs + 1 manifest
+
+### Files written
+
+| File | Job |
+|---|---|
+| `POC4/Artifacts/PeakTransactionTimes/proofmark.yaml` | PeakTransactionTimes |
+| `POC4/Artifacts/DailyBalanceMovement/proofmark.yaml` | DailyBalanceMovement |
+| `POC4/Artifacts/CreditScoreDelta/proofmark.yaml` | CreditScoreDelta |
+| `POC4/Artifacts/BranchVisitsByCustomerCsvAppendTrailer/proofmark.yaml` | BranchVisitsByCustomerCsvAppendTrailer |
+| `POC4/Artifacts/DansTransactionSpecial/proofmark-details.yaml` | DansTransactionSpecial (output 1) |
+| `POC4/Artifacts/DansTransactionSpecial/proofmark-by-state.yaml` | DansTransactionSpecial (output 2) |
+| `POC4/Execution/e6-results/comparison-manifest.json` | All 6 comparisons |
+
+---
+
+### Decision log
+
+**PeakTransactionTimes — `trailer_rows: 1`**
+Both V1 (`PeakTransactionTimesWriter.cs`) and V4 (`PeakTransactionTimesWriterV4.cs`) External modules write Overwrite-style date-partitioned files with a trailing `TRAILER|{inputCount}|{date}` line. No CsvFileWriter involved. Treated as Overwrite + trailer → `trailer_rows: 1`. The output manifest claiming "not date-partitioned" is stale; the code clearly builds `.../{dateStr}/peak_transaction_times.csv`.
+
+**PeakTransactionTimes `total_amount` — kept STRICT**
+FSD FR2 flags a potential banker's-rounding vs half-away-from-zero divergence. However, the FSD immediately says to check whether midpoint values actually occur in the data before acting. No confirmed divergence. Rule says clear evidence required — left STRICT with a comment pointing at the code path if it needs to be revisited.
+
+**DailyBalanceMovement `debit_total/credit_total/net_movement` — kept STRICT**
+FSD FR4 flags float accumulation order between V1's `foreach`/dictionary and V4's SQLite SUM(). FSD itself says "In practice, the amounts in the test data are exact binary fractions (142.5, 357.5)... so this risk is minimal." Sample output confirms. Kept STRICT.
+
+**DailyBalanceMovement V4 INNER JOIN note**
+V4 config uses `INNER JOIN` where V1 used a dict lookup with `GetValueOrDefault(accountId, 0)`. This is a fidelity difference — accounts with no matching accounts row would appear in V1 (customer_id=0) but be dropped by V4. This is a real comparison concern but it's a V4 implementation issue, not a Proofmark config issue. Proofmark will catch it if it happens.
+
+**BranchVisits + DansTransactionSpecial by-state — `trailer_rows: 0` (Append)**
+Per the derivation rules, Append mode → `trailer_rows: 0`. For BranchVisits, the trailer IS the last line of the output file, but per the rule the trailer line will be included in the comparison as a data row — which is fine since both V1 and V4 produce identical trailer content from the same framework writer config.
+
+**DansTransactionSpecial address columns — kept STRICT**
+FSD FR9 identifies potential non-determinism in `city`/`state_province`/`postal_code` from ROW_NUMBER() tiebreaking. But both V1 and V4 execute the **identical** SQL against the same data on the same SQLite engine. SQLite's ROW_NUMBER() with a given ORDER BY is deterministic for a given input — the "non-determinism" is only a concern across *different* SQLite versions or input orderings, not between two runs of the same query on the same data. Kept STRICT with comments. If Proofmark reports mismatches on those columns, the EXCLUDED override is already documented in the YAML.

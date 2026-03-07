@@ -1,0 +1,19 @@
+comparison_target: "PeakTransactionTimes V1 vs V4"
+reader: csv
+threshold: 100.0
+csv:
+  header_rows: 1
+  trailer_rows: 1  # Both V1 and V4 External modules write Overwrite-style files; TRAILER|{inputCount}|{date} is always the final line.
+
+# All columns STRICT — no FUZZY/EXCLUDED overrides.
+#
+# Columns in file: hour_of_day, txn_count, total_amount, ifw_effective_date
+#
+# Considered but rejected:
+#   total_amount (FUZZY): FSD FR2 notes that V1 uses Math.Round (banker's rounding,
+#   MidpointRounding.ToEven) while V4 SQLite uses ROUND() (half-away-from-zero). The
+#   FSD explicitly notes this MAY differ for midpoint values (e.g., x.xx5) but states
+#   "Evidence from observed V1 output should be checked to determine whether any midpoint
+#   values actually occur." No confirmed divergence exists in the data. Both V1 and V4
+#   then store as decimal and format with F2. Keeping STRICT; add FUZZY here if Proofmark
+#   reports mismatches on this column.

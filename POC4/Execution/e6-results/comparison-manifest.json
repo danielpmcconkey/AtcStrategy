@@ -1,0 +1,40 @@
+{
+  "comparisons": [
+    {
+      "job_key": "PeakTransactionTimes",
+      "config_path": "/workspace/AtcStrategy/POC4/Artifacts/PeakTransactionTimes/proofmark.yaml",
+      "lhs_template": "/workspace/MockEtlFramework/Output/curated/peak_transaction_times/peak_transaction_times/{date}/peak_transaction_times.csv",
+      "rhs_template": "/workspace/MockEtlFramework/Output/double_secret_curated/peak_transaction_times/peak_transaction_times/{date}/peak_transaction_times.csv"
+    },
+    {
+      "job_key": "DailyBalanceMovement",
+      "config_path": "/workspace/AtcStrategy/POC4/Artifacts/DailyBalanceMovement/proofmark.yaml",
+      "lhs_template": "/workspace/MockEtlFramework/Output/curated/daily_balance_movement/daily_balance_movement/{date}/daily_balance_movement.csv",
+      "rhs_template": "/workspace/MockEtlFramework/Output/double_secret_curated/daily_balance_movement/daily_balance_movement/{date}/daily_balance_movement.csv"
+    },
+    {
+      "job_key": "CreditScoreDelta",
+      "config_path": "/workspace/AtcStrategy/POC4/Artifacts/CreditScoreDelta/proofmark.yaml",
+      "lhs_template": "/workspace/MockEtlFramework/Output/curated/credit_score_delta/credit_score_delta/{date}/credit_score_delta.csv",
+      "rhs_template": "/workspace/MockEtlFramework/Output/double_secret_curated/credit_score_delta/credit_score_delta/{date}/credit_score_delta.csv"
+    },
+    {
+      "job_key": "BranchVisitsByCustomerCsvAppendTrailer",
+      "config_path": "/workspace/AtcStrategy/POC4/Artifacts/BranchVisitsByCustomerCsvAppendTrailer/proofmark.yaml",
+      "lhs_template": "/workspace/MockEtlFramework/Output/curated/branch_visits_by_customer/branch_visits_by_customer/{date}/branch_visits_by_customer.csv",
+      "rhs_template": "/workspace/MockEtlFramework/Output/double_secret_curated/branch_visits_by_customer/branch_visits_by_customer/{date}/branch_visits_by_customer.csv"
+    },
+    {
+      "job_key": "DansTransactionSpecial_details",
+      "config_path": "/workspace/AtcStrategy/POC4/Artifacts/DansTransactionSpecial/proofmark-details.yaml",
+      "lhs_template": "/workspace/MockEtlFramework/Output/curated/dans_transaction_special/dans_transaction_details/{date}/dans_transaction_details.csv",
+      "rhs_template": "/workspace/MockEtlFramework/Output/double_secret_curated/dans_transaction_special/dans_transaction_details/{date}/dans_transaction_details.csv"
+    },
+    {
+      "job_key": "DansTransactionSpecial_by_state",
+      "config_path": "/workspace/AtcStrategy/POC4/Artifacts/DansTransactionSpecial/proofmark-by-state.yaml",
+      "lhs_template": "/workspace/MockEtlFramework/Output/curated/dans_transaction_special/dans_transactions_by_state_province/{date}/dans_transactions_by_state_province.csv",
+      "rhs_template": "/workspace/MockEtlFramework/Output/double_secret_curated/dans_transaction_special/dans_transactions_by_state_province/{date}/dans_transactions_by_state_province.csv"
+    }
+  ]
+}

@@ -1,0 +1,1146 @@
+[TaskQueueService] Starting queue executor...
+[TaskQueueService] 4 parallel thread(s) + 1 serial thread
+[TaskQueueService] Loaded 10 active job(s) from registry.
+[P0] Worker started (mode=parallel)
+[S0] Worker started (mode=serial)
+[P1] Worker started (mode=parallel)
+[P2] Worker started (mode=parallel)
+[P3] Worker started (mode=parallel)
+[P0] Queue empty. Sleeping 5000ms...
+[P1] Queue empty. Sleeping 5000ms...
+[P3] Queue empty. Sleeping 5000ms...
+[S0] Queue empty. Sleeping 5000ms...
+[P2] All threads idle (cycle 1/30). Sleeping 30000ms...
+[P0] All threads idle (cycle 2/30). Sleeping 30000ms...
+[P1] All threads idle (cycle 3/30). Sleeping 30000ms...
+[P3] All threads idle (cycle 4/30). Sleeping 30000ms...
+[S0] All threads idle (cycle 5/30). Sleeping 30000ms...
+[P2] Claimed task 521: PeakTransactionTimes @ 2024-10-01
+[JobRunner] Starting job: PeakTransactionTimes
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   External
+[JobRunner] Job complete: PeakTransactionTimes
+[P2] Task 521 SUCCEEDED: PeakTransactionTimes @ 2024-10-01
+[P2] Claimed task 522: DailyBalanceMovement @ 2024-10-01
+[JobRunner] Starting job: DailyBalanceMovement
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   External
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DailyBalanceMovement
+[P2] Task 522 SUCCEEDED: DailyBalanceMovement @ 2024-10-01
+[P2] Claimed task 523: CreditScoreDelta @ 2024-10-01
+[JobRunner] Starting job: CreditScoreDelta
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: CreditScoreDelta
+[P2] Task 523 SUCCEEDED: CreditScoreDelta @ 2024-10-01
+[P2] Claimed task 526: PeakTransactionTimesV4 @ 2024-10-01
+[JobRunner] Starting job: PeakTransactionTimesV4
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   External
+[JobRunner] Job complete: PeakTransactionTimesV4
+[P2] Task 526 SUCCEEDED: PeakTransactionTimesV4 @ 2024-10-01
+[P2] Claimed task 527: DailyBalanceMovementV4 @ 2024-10-01
+[JobRunner] Starting job: DailyBalanceMovementV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DailyBalanceMovementV4
+[P2] Task 527 SUCCEEDED: DailyBalanceMovementV4 @ 2024-10-01
+[P2] Claimed task 528: CreditScoreDeltaV4 @ 2024-10-01
+[JobRunner] Starting job: CreditScoreDeltaV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: CreditScoreDeltaV4
+[P2] Task 528 SUCCEEDED: CreditScoreDeltaV4 @ 2024-10-01
+[P2] All threads idle (cycle 1/30). Sleeping 30000ms...
+[P0] All threads idle (cycle 2/30). Sleeping 30000ms...
+[P1] All threads idle (cycle 3/30). Sleeping 30000ms...
+[P3] All threads idle (cycle 4/30). Sleeping 30000ms...
+[S0] Claimed task 524: BranchVisitsByCustomerCsvAppendTrailer @ 2024-10-01
+[JobRunner] Starting job: BranchVisitsByCustomerCsvAppendTrailer
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: BranchVisitsByCustomerCsvAppendTrailer
+[S0] Task 524 SUCCEEDED: BranchVisitsByCustomerCsvAppendTrailer @ 2024-10-01
+[S0] Claimed task 525: DansTransactionSpecial @ 2024-10-01
+[JobRunner] Starting job: DansTransactionSpecial
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DansTransactionSpecial
+[S0] Task 525 SUCCEEDED: DansTransactionSpecial @ 2024-10-01
+[S0] Claimed task 529: BranchVisitsByCustomerCsvAppendTrailerV4 @ 2024-10-01
+[JobRunner] Starting job: BranchVisitsByCustomerCsvAppendTrailerV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: BranchVisitsByCustomerCsvAppendTrailerV4
+[S0] Task 529 SUCCEEDED: BranchVisitsByCustomerCsvAppendTrailerV4 @ 2024-10-01
+[S0] Claimed task 530: DansTransactionSpecialV4 @ 2024-10-01
+[JobRunner] Starting job: DansTransactionSpecialV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DansTransactionSpecialV4
+[S0] Task 530 SUCCEEDED: DansTransactionSpecialV4 @ 2024-10-01
+[S0] All threads idle (cycle 1/30). Sleeping 30000ms...
+[P2] All threads idle (cycle 2/30). Sleeping 30000ms...
+[P0] All threads idle (cycle 3/30). Sleeping 30000ms...
+[P1] All threads idle (cycle 4/30). Sleeping 30000ms...
+[P3] All threads idle (cycle 5/30). Sleeping 30000ms...
+[S0] All threads idle (cycle 6/30). Sleeping 30000ms...
+[P2] Claimed task 531: PeakTransactionTimes @ 2024-10-02
+[JobRunner] Starting job: PeakTransactionTimes
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   External
+[JobRunner] Job complete: PeakTransactionTimes
+[P2] Task 531 SUCCEEDED: PeakTransactionTimes @ 2024-10-02
+[P2] Claimed task 532: DailyBalanceMovement @ 2024-10-02
+[JobRunner] Starting job: DailyBalanceMovement
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   External
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DailyBalanceMovement
+[P2] Task 532 SUCCEEDED: DailyBalanceMovement @ 2024-10-02
+[P2] Claimed task 533: CreditScoreDelta @ 2024-10-02
+[JobRunner] Starting job: CreditScoreDelta
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: CreditScoreDelta
+[P2] Task 533 SUCCEEDED: CreditScoreDelta @ 2024-10-02
+[P2] Claimed task 536: PeakTransactionTimesV4 @ 2024-10-02
+[JobRunner] Starting job: PeakTransactionTimesV4
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   External
+[JobRunner] Job complete: PeakTransactionTimesV4
+[P2] Task 536 SUCCEEDED: PeakTransactionTimesV4 @ 2024-10-02
+[P2] Claimed task 537: DailyBalanceMovementV4 @ 2024-10-02
+[JobRunner] Starting job: DailyBalanceMovementV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DailyBalanceMovementV4
+[P2] Task 537 SUCCEEDED: DailyBalanceMovementV4 @ 2024-10-02
+[P2] Claimed task 538: CreditScoreDeltaV4 @ 2024-10-02
+[JobRunner] Starting job: CreditScoreDeltaV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: CreditScoreDeltaV4
+[P2] Task 538 SUCCEEDED: CreditScoreDeltaV4 @ 2024-10-02
+[P2] All threads idle (cycle 1/30). Sleeping 30000ms...
+[P0] All threads idle (cycle 2/30). Sleeping 30000ms...
+[P1] All threads idle (cycle 3/30). Sleeping 30000ms...
+[P3] All threads idle (cycle 4/30). Sleeping 30000ms...
+[S0] Claimed task 534: BranchVisitsByCustomerCsvAppendTrailer @ 2024-10-02
+[JobRunner] Starting job: BranchVisitsByCustomerCsvAppendTrailer
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: BranchVisitsByCustomerCsvAppendTrailer
+[S0] Task 534 SUCCEEDED: BranchVisitsByCustomerCsvAppendTrailer @ 2024-10-02
+[S0] Claimed task 535: DansTransactionSpecial @ 2024-10-02
+[JobRunner] Starting job: DansTransactionSpecial
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DansTransactionSpecial
+[S0] Task 535 SUCCEEDED: DansTransactionSpecial @ 2024-10-02
+[S0] Claimed task 539: BranchVisitsByCustomerCsvAppendTrailerV4 @ 2024-10-02
+[JobRunner] Starting job: BranchVisitsByCustomerCsvAppendTrailerV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: BranchVisitsByCustomerCsvAppendTrailerV4
+[S0] Task 539 SUCCEEDED: BranchVisitsByCustomerCsvAppendTrailerV4 @ 2024-10-02
+[S0] Claimed task 540: DansTransactionSpecialV4 @ 2024-10-02
+[JobRunner] Starting job: DansTransactionSpecialV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DansTransactionSpecialV4
+[S0] Task 540 SUCCEEDED: DansTransactionSpecialV4 @ 2024-10-02
+[S0] All threads idle (cycle 1/30). Sleeping 30000ms...
+[P2] All threads idle (cycle 2/30). Sleeping 30000ms...
+[P0] All threads idle (cycle 3/30). Sleeping 30000ms...
+[P3] All threads idle (cycle 4/30). Sleeping 30000ms...
+[P1] All threads idle (cycle 5/30). Sleeping 30000ms...
+[S0] All threads idle (cycle 6/30). Sleeping 30000ms...
+[P2] Claimed task 541: PeakTransactionTimes @ 2024-10-03
+[JobRunner] Starting job: PeakTransactionTimes
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   External
+[JobRunner] Job complete: PeakTransactionTimes
+[P2] Task 541 SUCCEEDED: PeakTransactionTimes @ 2024-10-03
+[P2] Claimed task 542: DailyBalanceMovement @ 2024-10-03
+[JobRunner] Starting job: DailyBalanceMovement
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   External
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DailyBalanceMovement
+[P2] Task 542 SUCCEEDED: DailyBalanceMovement @ 2024-10-03
+[P2] Claimed task 543: CreditScoreDelta @ 2024-10-03
+[JobRunner] Starting job: CreditScoreDelta
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: CreditScoreDelta
+[P2] Task 543 SUCCEEDED: CreditScoreDelta @ 2024-10-03
+[P2] Claimed task 546: PeakTransactionTimesV4 @ 2024-10-03
+[JobRunner] Starting job: PeakTransactionTimesV4
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   External
+[JobRunner] Job complete: PeakTransactionTimesV4
+[P2] Task 546 SUCCEEDED: PeakTransactionTimesV4 @ 2024-10-03
+[P2] Claimed task 547: DailyBalanceMovementV4 @ 2024-10-03
+[JobRunner] Starting job: DailyBalanceMovementV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DailyBalanceMovementV4
+[P2] Task 547 SUCCEEDED: DailyBalanceMovementV4 @ 2024-10-03
+[P2] Claimed task 548: CreditScoreDeltaV4 @ 2024-10-03
+[JobRunner] Starting job: CreditScoreDeltaV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: CreditScoreDeltaV4
+[P2] Task 548 SUCCEEDED: CreditScoreDeltaV4 @ 2024-10-03
+[P2] All threads idle (cycle 1/30). Sleeping 30000ms...
+[P0] All threads idle (cycle 2/30). Sleeping 30000ms...
+[P1] All threads idle (cycle 3/30). Sleeping 30000ms...
+[P3] All threads idle (cycle 4/30). Sleeping 30000ms...
+[S0] Claimed task 544: BranchVisitsByCustomerCsvAppendTrailer @ 2024-10-03
+[JobRunner] Starting job: BranchVisitsByCustomerCsvAppendTrailer
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: BranchVisitsByCustomerCsvAppendTrailer
+[S0] Task 544 SUCCEEDED: BranchVisitsByCustomerCsvAppendTrailer @ 2024-10-03
+[S0] Claimed task 545: DansTransactionSpecial @ 2024-10-03
+[JobRunner] Starting job: DansTransactionSpecial
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DansTransactionSpecial
+[S0] Task 545 SUCCEEDED: DansTransactionSpecial @ 2024-10-03
+[S0] Claimed task 549: BranchVisitsByCustomerCsvAppendTrailerV4 @ 2024-10-03
+[JobRunner] Starting job: BranchVisitsByCustomerCsvAppendTrailerV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: BranchVisitsByCustomerCsvAppendTrailerV4
+[S0] Task 549 SUCCEEDED: BranchVisitsByCustomerCsvAppendTrailerV4 @ 2024-10-03
+[S0] Claimed task 550: DansTransactionSpecialV4 @ 2024-10-03
+[JobRunner] Starting job: DansTransactionSpecialV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DansTransactionSpecialV4
+[S0] Task 550 SUCCEEDED: DansTransactionSpecialV4 @ 2024-10-03
+[S0] All threads idle (cycle 1/30). Sleeping 30000ms...
+[P2] All threads idle (cycle 2/30). Sleeping 30000ms...
+[P0] All threads idle (cycle 3/30). Sleeping 30000ms...
+[P1] All threads idle (cycle 4/30). Sleeping 30000ms...
+[P3] All threads idle (cycle 5/30). Sleeping 30000ms...
+[S0] All threads idle (cycle 6/30). Sleeping 30000ms...
+[P2] Claimed task 551: PeakTransactionTimes @ 2024-10-04
+[JobRunner] Starting job: PeakTransactionTimes
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   External
+[JobRunner] Job complete: PeakTransactionTimes
+[P2] Task 551 SUCCEEDED: PeakTransactionTimes @ 2024-10-04
+[P2] Claimed task 552: DailyBalanceMovement @ 2024-10-04
+[JobRunner] Starting job: DailyBalanceMovement
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   External
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DailyBalanceMovement
+[P2] Task 552 SUCCEEDED: DailyBalanceMovement @ 2024-10-04
+[P2] Claimed task 553: CreditScoreDelta @ 2024-10-04
+[JobRunner] Starting job: CreditScoreDelta
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: CreditScoreDelta
+[P2] Task 553 SUCCEEDED: CreditScoreDelta @ 2024-10-04
+[P2] Claimed task 556: PeakTransactionTimesV4 @ 2024-10-04
+[JobRunner] Starting job: PeakTransactionTimesV4
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   External
+[JobRunner] Job complete: PeakTransactionTimesV4
+[P2] Task 556 SUCCEEDED: PeakTransactionTimesV4 @ 2024-10-04
+[P2] Claimed task 557: DailyBalanceMovementV4 @ 2024-10-04
+[JobRunner] Starting job: DailyBalanceMovementV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DailyBalanceMovementV4
+[P2] Task 557 SUCCEEDED: DailyBalanceMovementV4 @ 2024-10-04
+[P2] Claimed task 558: CreditScoreDeltaV4 @ 2024-10-04
+[JobRunner] Starting job: CreditScoreDeltaV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: CreditScoreDeltaV4
+[P2] Task 558 SUCCEEDED: CreditScoreDeltaV4 @ 2024-10-04
+[P2] All threads idle (cycle 1/30). Sleeping 30000ms...
+[P3] All threads idle (cycle 4/30). Sleeping 30000ms...
+[P0] All threads idle (cycle 4/30). Sleeping 30000ms...
+[P1] All threads idle (cycle 4/30). Sleeping 30000ms...
+[S0] Claimed task 554: BranchVisitsByCustomerCsvAppendTrailer @ 2024-10-04
+[JobRunner] Starting job: BranchVisitsByCustomerCsvAppendTrailer
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: BranchVisitsByCustomerCsvAppendTrailer
+[S0] Task 554 SUCCEEDED: BranchVisitsByCustomerCsvAppendTrailer @ 2024-10-04
+[S0] Claimed task 555: DansTransactionSpecial @ 2024-10-04
+[JobRunner] Starting job: DansTransactionSpecial
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DansTransactionSpecial
+[S0] Task 555 SUCCEEDED: DansTransactionSpecial @ 2024-10-04
+[S0] Claimed task 559: BranchVisitsByCustomerCsvAppendTrailerV4 @ 2024-10-04
+[JobRunner] Starting job: BranchVisitsByCustomerCsvAppendTrailerV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: BranchVisitsByCustomerCsvAppendTrailerV4
+[S0] Task 559 SUCCEEDED: BranchVisitsByCustomerCsvAppendTrailerV4 @ 2024-10-04
+[S0] Claimed task 560: DansTransactionSpecialV4 @ 2024-10-04
+[JobRunner] Starting job: DansTransactionSpecialV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DansTransactionSpecialV4
+[S0] Task 560 SUCCEEDED: DansTransactionSpecialV4 @ 2024-10-04
+[S0] All threads idle (cycle 1/30). Sleeping 30000ms...
+[P2] All threads idle (cycle 2/30). Sleeping 30000ms...
+[P0] All threads idle (cycle 4/30). Sleeping 30000ms...
+[P1] All threads idle (cycle 5/30). Sleeping 30000ms...
+[P3] All threads idle (cycle 4/30). Sleeping 30000ms...
+[S0] All threads idle (cycle 6/30). Sleeping 30000ms...
+[P2] Claimed task 561: PeakTransactionTimes @ 2024-10-05
+[JobRunner] Starting job: PeakTransactionTimes
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   External
+[JobRunner] Job complete: PeakTransactionTimes
+[P2] Task 561 SUCCEEDED: PeakTransactionTimes @ 2024-10-05
+[P2] Claimed task 562: DailyBalanceMovement @ 2024-10-05
+[JobRunner] Starting job: DailyBalanceMovement
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   External
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DailyBalanceMovement
+[P2] Task 562 SUCCEEDED: DailyBalanceMovement @ 2024-10-05
+[P2] Claimed task 563: CreditScoreDelta @ 2024-10-05
+[JobRunner] Starting job: CreditScoreDelta
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: CreditScoreDelta
+[P2] Task 563 SUCCEEDED: CreditScoreDelta @ 2024-10-05
+[P2] Claimed task 566: PeakTransactionTimesV4 @ 2024-10-05
+[JobRunner] Starting job: PeakTransactionTimesV4
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   External
+[JobRunner] Job complete: PeakTransactionTimesV4
+[P2] Task 566 SUCCEEDED: PeakTransactionTimesV4 @ 2024-10-05
+[P2] Claimed task 567: DailyBalanceMovementV4 @ 2024-10-05
+[JobRunner] Starting job: DailyBalanceMovementV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DailyBalanceMovementV4
+[P2] Task 567 SUCCEEDED: DailyBalanceMovementV4 @ 2024-10-05
+[P2] Claimed task 568: CreditScoreDeltaV4 @ 2024-10-05
+[JobRunner] Starting job: CreditScoreDeltaV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: CreditScoreDeltaV4
+[P2] Task 568 SUCCEEDED: CreditScoreDeltaV4 @ 2024-10-05
+[P2] All threads idle (cycle 1/30). Sleeping 30000ms...
+[P0] All threads idle (cycle 2/30). Sleeping 30000ms...
+[P3] All threads idle (cycle 3/30). Sleeping 30000ms...
+[P1] All threads idle (cycle 4/30). Sleeping 30000ms...
+[S0] Claimed task 564: BranchVisitsByCustomerCsvAppendTrailer @ 2024-10-05
+[JobRunner] Starting job: BranchVisitsByCustomerCsvAppendTrailer
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: BranchVisitsByCustomerCsvAppendTrailer
+[S0] Task 564 SUCCEEDED: BranchVisitsByCustomerCsvAppendTrailer @ 2024-10-05
+[S0] Claimed task 565: DansTransactionSpecial @ 2024-10-05
+[JobRunner] Starting job: DansTransactionSpecial
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DansTransactionSpecial
+[S0] Task 565 SUCCEEDED: DansTransactionSpecial @ 2024-10-05
+[S0] Claimed task 569: BranchVisitsByCustomerCsvAppendTrailerV4 @ 2024-10-05
+[JobRunner] Starting job: BranchVisitsByCustomerCsvAppendTrailerV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: BranchVisitsByCustomerCsvAppendTrailerV4
+[S0] Task 569 SUCCEEDED: BranchVisitsByCustomerCsvAppendTrailerV4 @ 2024-10-05
+[S0] Claimed task 570: DansTransactionSpecialV4 @ 2024-10-05
+[JobRunner] Starting job: DansTransactionSpecialV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DansTransactionSpecialV4
+[S0] Task 570 SUCCEEDED: DansTransactionSpecialV4 @ 2024-10-05
+[S0] All threads idle (cycle 1/30). Sleeping 30000ms...
+[P2] All threads idle (cycle 2/30). Sleeping 30000ms...
+[P0] All threads idle (cycle 3/30). Sleeping 30000ms...
+[P3] All threads idle (cycle 4/30). Sleeping 30000ms...
+[P1] All threads idle (cycle 5/30). Sleeping 30000ms...
+[S0] All threads idle (cycle 6/30). Sleeping 30000ms...
+[P2] Claimed task 571: PeakTransactionTimes @ 2024-10-06
+[JobRunner] Starting job: PeakTransactionTimes
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   External
+[JobRunner] Job complete: PeakTransactionTimes
+[P2] Task 571 SUCCEEDED: PeakTransactionTimes @ 2024-10-06
+[P2] Claimed task 572: DailyBalanceMovement @ 2024-10-06
+[JobRunner] Starting job: DailyBalanceMovement
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   External
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DailyBalanceMovement
+[P2] Task 572 SUCCEEDED: DailyBalanceMovement @ 2024-10-06
+[P2] Claimed task 573: CreditScoreDelta @ 2024-10-06
+[JobRunner] Starting job: CreditScoreDelta
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: CreditScoreDelta
+[P2] Task 573 SUCCEEDED: CreditScoreDelta @ 2024-10-06
+[P2] Claimed task 576: PeakTransactionTimesV4 @ 2024-10-06
+[JobRunner] Starting job: PeakTransactionTimesV4
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   External
+[JobRunner] Job complete: PeakTransactionTimesV4
+[P2] Task 576 SUCCEEDED: PeakTransactionTimesV4 @ 2024-10-06
+[P2] Claimed task 577: DailyBalanceMovementV4 @ 2024-10-06
+[JobRunner] Starting job: DailyBalanceMovementV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DailyBalanceMovementV4
+[P2] Task 577 SUCCEEDED: DailyBalanceMovementV4 @ 2024-10-06
+[P2] Claimed task 578: CreditScoreDeltaV4 @ 2024-10-06
+[JobRunner] Starting job: CreditScoreDeltaV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: CreditScoreDeltaV4
+[P0] Queue empty. Sleeping 5000ms...
+[P2] Task 578 SUCCEEDED: CreditScoreDeltaV4 @ 2024-10-06
+[P2] All threads idle (cycle 1/30). Sleeping 30000ms...
+[P3] All threads idle (cycle 2/30). Sleeping 30000ms...
+[P1] All threads idle (cycle 3/30). Sleeping 30000ms...
+[P0] All threads idle (cycle 4/30). Sleeping 30000ms...
+[S0] Claimed task 574: BranchVisitsByCustomerCsvAppendTrailer @ 2024-10-06
+[JobRunner] Starting job: BranchVisitsByCustomerCsvAppendTrailer
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: BranchVisitsByCustomerCsvAppendTrailer
+[S0] Task 574 SUCCEEDED: BranchVisitsByCustomerCsvAppendTrailer @ 2024-10-06
+[S0] Claimed task 575: DansTransactionSpecial @ 2024-10-06
+[JobRunner] Starting job: DansTransactionSpecial
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DansTransactionSpecial
+[S0] Task 575 SUCCEEDED: DansTransactionSpecial @ 2024-10-06
+[S0] Claimed task 579: BranchVisitsByCustomerCsvAppendTrailerV4 @ 2024-10-06
+[JobRunner] Starting job: BranchVisitsByCustomerCsvAppendTrailerV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: BranchVisitsByCustomerCsvAppendTrailerV4
+[S0] Task 579 SUCCEEDED: BranchVisitsByCustomerCsvAppendTrailerV4 @ 2024-10-06
+[S0] Claimed task 580: DansTransactionSpecialV4 @ 2024-10-06
+[JobRunner] Starting job: DansTransactionSpecialV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DansTransactionSpecialV4
+[S0] Task 580 SUCCEEDED: DansTransactionSpecialV4 @ 2024-10-06
+[S0] All threads idle (cycle 1/30). Sleeping 30000ms...
+[P2] All threads idle (cycle 2/30). Sleeping 30000ms...
+[P3] All threads idle (cycle 3/30). Sleeping 30000ms...
+[P1] All threads idle (cycle 4/30). Sleeping 30000ms...
+[P0] All threads idle (cycle 5/30). Sleeping 30000ms...
+[S0] All threads idle (cycle 6/30). Sleeping 30000ms...
+[P2] Claimed task 581: PeakTransactionTimes @ 2024-10-07
+[P1] Claimed task 582: DailyBalanceMovement @ 2024-10-07
+[P3] Claimed task 583: CreditScoreDelta @ 2024-10-07
+[JobRunner] Starting job: PeakTransactionTimes
+[JobRunner] Starting job: DailyBalanceMovement
+[JobRunner] Starting job: CreditScoreDelta
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   External
+[JobRunner] Job complete: PeakTransactionTimes
+[JobRunner]   DataSourcing
+[JobRunner]   External
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DailyBalanceMovement
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: CreditScoreDelta
+[P2] Task 581 SUCCEEDED: PeakTransactionTimes @ 2024-10-07
+[P1] Task 582 SUCCEEDED: DailyBalanceMovement @ 2024-10-07
+[P3] Task 583 SUCCEEDED: CreditScoreDelta @ 2024-10-07
+[P2] Claimed task 586: PeakTransactionTimesV4 @ 2024-10-07
+[P3] Claimed task 588: CreditScoreDeltaV4 @ 2024-10-07
+[P1] Claimed task 587: DailyBalanceMovementV4 @ 2024-10-07
+[JobRunner] Starting job: PeakTransactionTimesV4
+[JobRunner] Starting job: DailyBalanceMovementV4
+[JobRunner] Starting job: CreditScoreDeltaV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   External
+[JobRunner] Job complete: PeakTransactionTimesV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[P2] Task 586 SUCCEEDED: PeakTransactionTimesV4 @ 2024-10-07
+[P2] Queue empty. Sleeping 5000ms...
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: CreditScoreDeltaV4
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DailyBalanceMovementV4
+[P3] Task 588 SUCCEEDED: CreditScoreDeltaV4 @ 2024-10-07
+[P3] Queue empty. Sleeping 5000ms...
+[P1] Task 587 SUCCEEDED: DailyBalanceMovementV4 @ 2024-10-07
+[P1] All threads idle (cycle 1/30). Sleeping 30000ms...
+[P0] All threads idle (cycle 2/30). Sleeping 30000ms...
+[P2] All threads idle (cycle 3/30). Sleeping 30000ms...
+[P3] All threads idle (cycle 4/30). Sleeping 30000ms...
+[S0] Claimed task 584: BranchVisitsByCustomerCsvAppendTrailer @ 2024-10-07
+[JobRunner] Starting job: BranchVisitsByCustomerCsvAppendTrailer
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: BranchVisitsByCustomerCsvAppendTrailer
+[S0] Task 584 SUCCEEDED: BranchVisitsByCustomerCsvAppendTrailer @ 2024-10-07
+[S0] Claimed task 585: DansTransactionSpecial @ 2024-10-07
+[JobRunner] Starting job: DansTransactionSpecial
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DansTransactionSpecial
+[S0] Task 585 SUCCEEDED: DansTransactionSpecial @ 2024-10-07
+[S0] Claimed task 589: BranchVisitsByCustomerCsvAppendTrailerV4 @ 2024-10-07
+[JobRunner] Starting job: BranchVisitsByCustomerCsvAppendTrailerV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: BranchVisitsByCustomerCsvAppendTrailerV4
+[S0] Task 589 SUCCEEDED: BranchVisitsByCustomerCsvAppendTrailerV4 @ 2024-10-07
+[S0] Claimed task 590: DansTransactionSpecialV4 @ 2024-10-07
+[JobRunner] Starting job: DansTransactionSpecialV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DansTransactionSpecialV4
+[S0] Task 590 SUCCEEDED: DansTransactionSpecialV4 @ 2024-10-07
+[S0] All threads idle (cycle 1/30). Sleeping 30000ms...
+[P1] All threads idle (cycle 2/30). Sleeping 30000ms...
+[P0] All threads idle (cycle 3/30). Sleeping 30000ms...
+[P2] All threads idle (cycle 4/30). Sleeping 30000ms...
+[P3] All threads idle (cycle 5/30). Sleeping 30000ms...
+[S0] All threads idle (cycle 6/30). Sleeping 30000ms...
+[P1] Claimed task 591: PeakTransactionTimes @ 2024-10-08
+[JobRunner] Starting job: PeakTransactionTimes
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   External
+[JobRunner] Job complete: PeakTransactionTimes
+[P1] Task 591 SUCCEEDED: PeakTransactionTimes @ 2024-10-08
+[P1] Claimed task 592: DailyBalanceMovement @ 2024-10-08
+[JobRunner] Starting job: DailyBalanceMovement
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   External
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DailyBalanceMovement
+[P1] Task 592 SUCCEEDED: DailyBalanceMovement @ 2024-10-08
+[P1] Claimed task 593: CreditScoreDelta @ 2024-10-08
+[JobRunner] Starting job: CreditScoreDelta
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: CreditScoreDelta
+[P1] Task 593 SUCCEEDED: CreditScoreDelta @ 2024-10-08
+[P1] Claimed task 596: PeakTransactionTimesV4 @ 2024-10-08
+[JobRunner] Starting job: PeakTransactionTimesV4
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   External
+[JobRunner] Job complete: PeakTransactionTimesV4
+[P1] Task 596 SUCCEEDED: PeakTransactionTimesV4 @ 2024-10-08
+[P1] Claimed task 597: DailyBalanceMovementV4 @ 2024-10-08
+[JobRunner] Starting job: DailyBalanceMovementV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DailyBalanceMovementV4
+[P1] Task 597 SUCCEEDED: DailyBalanceMovementV4 @ 2024-10-08
+[P1] Claimed task 598: CreditScoreDeltaV4 @ 2024-10-08
+[JobRunner] Starting job: CreditScoreDeltaV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: CreditScoreDeltaV4
+[P1] Task 598 SUCCEEDED: CreditScoreDeltaV4 @ 2024-10-08
+[P1] All threads idle (cycle 1/30). Sleeping 30000ms...
+[P0] All threads idle (cycle 2/30). Sleeping 30000ms...
+[P2] All threads idle (cycle 3/30). Sleeping 30000ms...
+[P3] All threads idle (cycle 4/30). Sleeping 30000ms...
+[S0] Claimed task 594: BranchVisitsByCustomerCsvAppendTrailer @ 2024-10-08
+[JobRunner] Starting job: BranchVisitsByCustomerCsvAppendTrailer
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: BranchVisitsByCustomerCsvAppendTrailer
+[S0] Task 594 SUCCEEDED: BranchVisitsByCustomerCsvAppendTrailer @ 2024-10-08
+[S0] Claimed task 595: DansTransactionSpecial @ 2024-10-08
+[JobRunner] Starting job: DansTransactionSpecial
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DansTransactionSpecial
+[S0] Task 595 SUCCEEDED: DansTransactionSpecial @ 2024-10-08
+[S0] Claimed task 599: BranchVisitsByCustomerCsvAppendTrailerV4 @ 2024-10-08
+[JobRunner] Starting job: BranchVisitsByCustomerCsvAppendTrailerV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: BranchVisitsByCustomerCsvAppendTrailerV4
+[S0] Task 599 SUCCEEDED: BranchVisitsByCustomerCsvAppendTrailerV4 @ 2024-10-08
+[S0] Claimed task 600: DansTransactionSpecialV4 @ 2024-10-08
+[JobRunner] Starting job: DansTransactionSpecialV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DansTransactionSpecialV4
+[S0] Task 600 SUCCEEDED: DansTransactionSpecialV4 @ 2024-10-08
+[S0] All threads idle (cycle 1/30). Sleeping 30000ms...
+[P1] All threads idle (cycle 2/30). Sleeping 30000ms...
+[P0] All threads idle (cycle 3/30). Sleeping 30000ms...
+[P2] All threads idle (cycle 4/30). Sleeping 30000ms...
+[P3] All threads idle (cycle 5/30). Sleeping 30000ms...
+[S0] All threads idle (cycle 6/30). Sleeping 30000ms...
+[P1] Claimed task 601: PeakTransactionTimes @ 2024-10-09
+[JobRunner] Starting job: PeakTransactionTimes
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   External
+[JobRunner] Job complete: PeakTransactionTimes
+[P1] Task 601 SUCCEEDED: PeakTransactionTimes @ 2024-10-09
+[P1] Claimed task 602: DailyBalanceMovement @ 2024-10-09
+[JobRunner] Starting job: DailyBalanceMovement
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   External
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DailyBalanceMovement
+[P1] Task 602 SUCCEEDED: DailyBalanceMovement @ 2024-10-09
+[P1] Claimed task 603: CreditScoreDelta @ 2024-10-09
+[JobRunner] Starting job: CreditScoreDelta
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: CreditScoreDelta
+[P1] Task 603 SUCCEEDED: CreditScoreDelta @ 2024-10-09
+[P1] Claimed task 606: PeakTransactionTimesV4 @ 2024-10-09
+[JobRunner] Starting job: PeakTransactionTimesV4
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   External
+[JobRunner] Job complete: PeakTransactionTimesV4
+[P1] Task 606 SUCCEEDED: PeakTransactionTimesV4 @ 2024-10-09
+[P1] Claimed task 607: DailyBalanceMovementV4 @ 2024-10-09
+[JobRunner] Starting job: DailyBalanceMovementV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DailyBalanceMovementV4
+[P1] Task 607 SUCCEEDED: DailyBalanceMovementV4 @ 2024-10-09
+[P1] Claimed task 608: CreditScoreDeltaV4 @ 2024-10-09
+[JobRunner] Starting job: CreditScoreDeltaV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: CreditScoreDeltaV4
+[P1] Task 608 SUCCEEDED: CreditScoreDeltaV4 @ 2024-10-09
+[P1] All threads idle (cycle 1/30). Sleeping 30000ms...
+[P0] All threads idle (cycle 2/30). Sleeping 30000ms...
+[P2] All threads idle (cycle 3/30). Sleeping 30000ms...
+[P3] All threads idle (cycle 4/30). Sleeping 30000ms...
+[S0] Claimed task 604: BranchVisitsByCustomerCsvAppendTrailer @ 2024-10-09
+[JobRunner] Starting job: BranchVisitsByCustomerCsvAppendTrailer
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: BranchVisitsByCustomerCsvAppendTrailer
+[S0] Task 604 SUCCEEDED: BranchVisitsByCustomerCsvAppendTrailer @ 2024-10-09
+[S0] Claimed task 605: DansTransactionSpecial @ 2024-10-09
+[JobRunner] Starting job: DansTransactionSpecial
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DansTransactionSpecial
+[S0] Task 605 SUCCEEDED: DansTransactionSpecial @ 2024-10-09
+[S0] Claimed task 609: BranchVisitsByCustomerCsvAppendTrailerV4 @ 2024-10-09
+[JobRunner] Starting job: BranchVisitsByCustomerCsvAppendTrailerV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: BranchVisitsByCustomerCsvAppendTrailerV4
+[S0] Task 609 SUCCEEDED: BranchVisitsByCustomerCsvAppendTrailerV4 @ 2024-10-09
+[S0] Claimed task 610: DansTransactionSpecialV4 @ 2024-10-09
+[JobRunner] Starting job: DansTransactionSpecialV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DansTransactionSpecialV4
+[S0] Task 610 SUCCEEDED: DansTransactionSpecialV4 @ 2024-10-09
+[S0] All threads idle (cycle 1/30). Sleeping 30000ms...
+[P1] All threads idle (cycle 2/30). Sleeping 30000ms...
+[P0] All threads idle (cycle 3/30). Sleeping 30000ms...
+[P2] All threads idle (cycle 4/30). Sleeping 30000ms...
+[P3] All threads idle (cycle 5/30). Sleeping 30000ms...
+[S0] All threads idle (cycle 6/30). Sleeping 30000ms...
+[P1] Claimed task 611: PeakTransactionTimes @ 2024-10-10
+[JobRunner] Starting job: PeakTransactionTimes
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   External
+[JobRunner] Job complete: PeakTransactionTimes
+[P1] Task 611 SUCCEEDED: PeakTransactionTimes @ 2024-10-10
+[P1] Claimed task 612: DailyBalanceMovement @ 2024-10-10
+[JobRunner] Starting job: DailyBalanceMovement
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   External
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DailyBalanceMovement
+[P1] Task 612 SUCCEEDED: DailyBalanceMovement @ 2024-10-10
+[P1] Claimed task 613: CreditScoreDelta @ 2024-10-10
+[JobRunner] Starting job: CreditScoreDelta
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: CreditScoreDelta
+[P1] Task 613 SUCCEEDED: CreditScoreDelta @ 2024-10-10
+[P1] Claimed task 616: PeakTransactionTimesV4 @ 2024-10-10
+[JobRunner] Starting job: PeakTransactionTimesV4
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   External
+[JobRunner] Job complete: PeakTransactionTimesV4
+[P1] Task 616 SUCCEEDED: PeakTransactionTimesV4 @ 2024-10-10
+[P1] Claimed task 617: DailyBalanceMovementV4 @ 2024-10-10
+[JobRunner] Starting job: DailyBalanceMovementV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DailyBalanceMovementV4
+[P1] Task 617 SUCCEEDED: DailyBalanceMovementV4 @ 2024-10-10
+[P1] Claimed task 618: CreditScoreDeltaV4 @ 2024-10-10
+[JobRunner] Starting job: CreditScoreDeltaV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: CreditScoreDeltaV4
+[P1] Task 618 SUCCEEDED: CreditScoreDeltaV4 @ 2024-10-10
+[P1] All threads idle (cycle 1/30). Sleeping 30000ms...
+[P0] All threads idle (cycle 2/30). Sleeping 30000ms...
+[P2] All threads idle (cycle 3/30). Sleeping 30000ms...
+[P3] All threads idle (cycle 4/30). Sleeping 30000ms...
+[S0] Claimed task 614: BranchVisitsByCustomerCsvAppendTrailer @ 2024-10-10
+[JobRunner] Starting job: BranchVisitsByCustomerCsvAppendTrailer
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: BranchVisitsByCustomerCsvAppendTrailer
+[S0] Task 614 SUCCEEDED: BranchVisitsByCustomerCsvAppendTrailer @ 2024-10-10
+[S0] Claimed task 615: DansTransactionSpecial @ 2024-10-10
+[JobRunner] Starting job: DansTransactionSpecial
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DansTransactionSpecial
+[S0] Task 615 SUCCEEDED: DansTransactionSpecial @ 2024-10-10
+[S0] Claimed task 619: BranchVisitsByCustomerCsvAppendTrailerV4 @ 2024-10-10
+[JobRunner] Starting job: BranchVisitsByCustomerCsvAppendTrailerV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: BranchVisitsByCustomerCsvAppendTrailerV4
+[S0] Task 619 SUCCEEDED: BranchVisitsByCustomerCsvAppendTrailerV4 @ 2024-10-10
+[S0] Claimed task 620: DansTransactionSpecialV4 @ 2024-10-10
+[JobRunner] Starting job: DansTransactionSpecialV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DansTransactionSpecialV4
+[S0] Task 620 SUCCEEDED: DansTransactionSpecialV4 @ 2024-10-10
+[S0] All threads idle (cycle 1/30). Sleeping 30000ms...
+[P1] All threads idle (cycle 2/30). Sleeping 30000ms...
+[P0] All threads idle (cycle 3/30). Sleeping 30000ms...
+[P2] All threads idle (cycle 4/30). Sleeping 30000ms...
+[P3] All threads idle (cycle 5/30). Sleeping 30000ms...
+[S0] All threads idle (cycle 6/30). Sleeping 30000ms...
+[P1] All threads idle (cycle 7/30). Sleeping 30000ms...
+[P0] All threads idle (cycle 8/30). Sleeping 30000ms...
+[P2] All threads idle (cycle 9/30). Sleeping 30000ms...
+[P3] All threads idle (cycle 10/30). Sleeping 30000ms...
+[S0] All threads idle (cycle 11/30). Sleeping 30000ms...
+[P1] All threads idle (cycle 12/30). Sleeping 30000ms...
+[P0] All threads idle (cycle 13/30). Sleeping 30000ms...
+[P2] All threads idle (cycle 14/30). Sleeping 30000ms...
+[P3] All threads idle (cycle 15/30). Sleeping 30000ms...
+[S0] All threads idle (cycle 16/30). Sleeping 30000ms...
+[P1] All threads idle (cycle 17/30). Sleeping 30000ms...
+[P0] All threads idle (cycle 18/30). Sleeping 30000ms...
+[P2] All threads idle (cycle 19/30). Sleeping 30000ms...
+[P3] All threads idle (cycle 20/30). Sleeping 30000ms...
+[S0] All threads idle (cycle 21/30). Sleeping 30000ms...
+[P1] All threads idle (cycle 22/30). Sleeping 30000ms...
+[P0] All threads idle (cycle 23/30). Sleeping 30000ms...
+[P2] All threads idle (cycle 24/30). Sleeping 30000ms...
+[P3] All threads idle (cycle 25/30). Sleeping 30000ms...
+[S0] All threads idle (cycle 26/30). Sleeping 30000ms...
+[P1] All threads idle (cycle 27/30). Sleeping 30000ms...
+[P0] All threads idle (cycle 28/30). Sleeping 30000ms...
+[P2] All threads idle (cycle 29/30). Sleeping 30000ms...
+[P3] All threads idle (cycle 30/30). Sleeping 30000ms...
+[P3] Reached maximum idle cycles (30). Signaling shutdown after 5 minutes of no work.
+[S0] Worker exiting.
+[P1] Worker exiting.
+[P0] Worker exiting.
+[P2] Worker exiting.
+[TaskQueueService] All threads finished. Queue empty. Shutting down.
+Queue execution completed in 790789ms.
+[TaskQueueService] Starting queue executor...
+[TaskQueueService] 4 parallel thread(s) + 1 serial thread
+[TaskQueueService] Loaded 10 active job(s) from registry.
+[P0] Worker started (mode=parallel)
+[P1] Worker started (mode=parallel)
+[P2] Worker started (mode=parallel)
+[P3] Worker started (mode=parallel)
+[S0] Worker started (mode=serial)
+[P0] Queue empty. Sleeping 5000ms...
+[P2] Queue empty. Sleeping 5000ms...
+[P1] Queue empty. Sleeping 5000ms...
+[P3] Queue empty. Sleeping 5000ms...
+[S0] All threads idle (cycle 1/30). Sleeping 30000ms...
+[P0] All threads idle (cycle 2/30). Sleeping 30000ms...
+[P3] All threads idle (cycle 3/30). Sleeping 30000ms...
+[P2] All threads idle (cycle 4/30). Sleeping 30000ms...
+[P1] All threads idle (cycle 5/30). Sleeping 30000ms...
+[S0] Claimed task 624: BranchVisitsByCustomerCsvAppendTrailer @ 2024-10-01
+[JobRunner] Starting job: BranchVisitsByCustomerCsvAppendTrailer
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: BranchVisitsByCustomerCsvAppendTrailer
+[S0] Task 624 SUCCEEDED: BranchVisitsByCustomerCsvAppendTrailer @ 2024-10-01
+[S0] Claimed task 625: DansTransactionSpecial @ 2024-10-01
+[JobRunner] Starting job: DansTransactionSpecial
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DansTransactionSpecial
+[S0] Task 625 SUCCEEDED: DansTransactionSpecial @ 2024-10-01
+[S0] Claimed task 629: BranchVisitsByCustomerCsvAppendTrailerV4 @ 2024-10-01
+[JobRunner] Starting job: BranchVisitsByCustomerCsvAppendTrailerV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: BranchVisitsByCustomerCsvAppendTrailerV4
+[S0] Task 629 SUCCEEDED: BranchVisitsByCustomerCsvAppendTrailerV4 @ 2024-10-01
+[S0] Claimed task 630: DansTransactionSpecialV4 @ 2024-10-01
+[JobRunner] Starting job: DansTransactionSpecialV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DansTransactionSpecialV4
+[S0] Task 630 SUCCEEDED: DansTransactionSpecialV4 @ 2024-10-01
+[S0] All threads idle (cycle 1/30). Sleeping 30000ms...
+[P0] Claimed task 621: PeakTransactionTimes @ 2024-10-01
+[P1] Claimed task 626: PeakTransactionTimesV4 @ 2024-10-01
+[P3] Claimed task 622: DailyBalanceMovement @ 2024-10-01
+[P2] Claimed task 623: CreditScoreDelta @ 2024-10-01
+[JobRunner] Starting job: PeakTransactionTimes
+[JobRunner] Starting job: PeakTransactionTimesV4
+[JobRunner] Starting job: DailyBalanceMovement
+[JobRunner] Starting job: CreditScoreDelta
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   External
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: CreditScoreDelta
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   External
+[JobRunner] Job complete: PeakTransactionTimesV4
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DailyBalanceMovement
+[JobRunner]   External
+[JobRunner] Job complete: PeakTransactionTimes
+[P2] Task 623 SUCCEEDED: CreditScoreDelta @ 2024-10-01
+[P3] Task 622 SUCCEEDED: DailyBalanceMovement @ 2024-10-01
+[P1] Task 626 SUCCEEDED: PeakTransactionTimesV4 @ 2024-10-01
+[P0] Task 621 SUCCEEDED: PeakTransactionTimes @ 2024-10-01
+[P1] Queue empty. Sleeping 5000ms...
+[P0] Queue empty. Sleeping 5000ms...
+[P2] Claimed task 627: DailyBalanceMovementV4 @ 2024-10-01
+[P3] Claimed task 628: CreditScoreDeltaV4 @ 2024-10-01
+[JobRunner] Starting job: DailyBalanceMovementV4
+[JobRunner] Starting job: CreditScoreDeltaV4
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   DataSourcing
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: CreditScoreDeltaV4
+[JobRunner]   DataSourcing
+[P3] Task 628 SUCCEEDED: CreditScoreDeltaV4 @ 2024-10-01
+[P3] Queue empty. Sleeping 5000ms...
+[JobRunner]   Transformation
+[JobRunner]   CsvFileWriter
+[JobRunner] Job complete: DailyBalanceMovementV4
+[P2] Task 627 SUCCEEDED: DailyBalanceMovementV4 @ 2024-10-01
+[P2] All threads idle (cycle 1/30). Sleeping 30000ms...
+[P0] All threads idle (cycle 2/30). Sleeping 30000ms...
+[P1] All threads idle (cycle 3/30). Sleeping 30000ms...
+[P3] All threads idle (cycle 4/30). Sleeping 30000ms...
+[S0] All threads idle (cycle 5/30). Sleeping 30000ms...
+[P2] All threads idle (cycle 6/30). Sleeping 30000ms...

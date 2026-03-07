@@ -1,0 +1,31 @@
+comparison_target: "DansTransactionSpecial transaction details V1 vs V4"
+reader: csv
+threshold: 100.0
+csv:
+  header_rows: 1
+  trailer_rows: 0  # writeMode: Overwrite, no trailerFormat on the details writer.
+
+# All columns STRICT — no FUZZY/EXCLUDED overrides.
+#
+# Columns in file: transaction_id, account_id, customer_id, sort_name, txn_timestamp,
+#                  txn_type, amount, description, account_type, account_status,
+#                  current_balance, city, state_province, postal_code,
+#                  ifw_effective_date, etl_effective_date
+#
+# V4 is config-level anti-pattern fixes only (AP4: removed first_name/last_name from
+# customers DataSourcing). The SQL transformation is identical to V1. No logic changes.
+#
+# Considered but rejected:
+#   city / state_province / postal_code (EXCLUDED): FSD FR9 documents a non-deterministic
+#   address dedup tiebreaker — when multiple addresses for the same customer share the
+#   same start_date, ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY start_date DESC)
+#   produces an arbitrary winner. However, both V1 and V4 execute the IDENTICAL SQL
+#   against the same datalake data using the same SQLite engine version. SQLite's
+#   ROW_NUMBER() tiebreaking behavior is deterministic within a given engine version and
+#   input data set — the same query on the same data produces the same result. No
+#   confirmed cross-run divergence between V1 and V4. Keeping STRICT. Add EXCLUDED here
+#   if Proofmark reports mismatches specifically on these address columns.
+#
+# ifw_effective_date appears as ISO 8601 with time component (e.g., 2024-10-07T00:00:00)
+# because it is explicitly sourced from transactions table and passed through as-is.
+# Both V1 and V4 source this column identically. STRICT.

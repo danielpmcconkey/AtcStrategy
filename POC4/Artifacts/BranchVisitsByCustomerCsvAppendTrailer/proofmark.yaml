@@ -1,0 +1,28 @@
+comparison_target: "BranchVisitsByCustomerCsvAppendTrailer V1 vs V4"
+reader: csv
+threshold: 100.0
+csv:
+  header_rows: 1
+  trailer_rows: 0  # writeMode: Append — per derivation rules, trailer_rows: 0 for Append mode.
+
+# All columns STRICT — no FUZZY/EXCLUDED overrides.
+#
+# Columns in file: visit_id, customer_id, sort_name, branch_id, visit_timestamp,
+#                  visit_purpose, etl_effective_date
+#
+# This is a cumulative Append file. Each date partition contains ALL accumulated rows
+# from prior partitions plus the current day's new rows. The comparison is between the
+# V1 and V4 output files for the same effective date — both should contain identical
+# accumulated content.
+#
+# etl_effective_date: The framework overwrites this to the CURRENT run date for ALL rows
+# (including accumulated prior rows) during Append. Both V1 and V4 use the same framework
+# CsvFileWriter logic. STRICT.
+#
+# visit_timestamp: Passed through as ISO 8601 string from DataSourcing. Both V1 and V4
+# use identical SQL (no timestamp transformation). STRICT.
+#
+# trailerFormat "TRAILER|{row_count}|{date}" is present in both V1 and V4 configs.
+# The trailer line appears at the end of the output file. With trailer_rows: 0, Proofmark
+# includes the trailer line in the row comparison. Both sides produce identical trailer
+# content since both use the same framework writer with the same trailerFormat config.
