@@ -1,5 +1,5 @@
 # Saboteur Plans (§2.2)
 
-**ORCHESTRATOR EYES ONLY.** The blind lead never sees this directory.
+**DAN EYES ONLY.** Orchestrator and all worker agents are barred from this directory.
 
 **Status:** Not yet populated. Saboteur planning happens during Phase III (Process Design).

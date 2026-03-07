@@ -1,17 +1,18 @@
 # Phase V — Execution Phase Definitions
 
-**Status:** DRAFT — Pending Dan approval
+**Status:** APPROVED — Dan authored and approved 2026-03-06
 **Created:** 2026-03-06
 **Step 11 output:** Defines the structure of POC4 execution.
 **Source:** Dan's execution design (`Execution/temp_dans_PhaseV_execution_details_suggestion.md`)
+**Role model:** Revised 2026-03-06, finalized 2026-03-07. See `ProgramDoctrine/change-log-role-restructure.md`.
 
 ---
 
 ## Operating Model
 
-**BD is not the orchestrator.** Dan instructs BD. BD launches the orchestrator as a
-background process. The orchestrator starts and stops agents, assigns work, and ensures
-the agent team completes its phase. When the orchestrator is done, it reports back to BD.
+**BD is not Orchestrator.** Dan instructs BD. BD launches Orchestrator as a
+background process. Orchestrator starts and stops agents, assigns work, and ensures
+the agent team completes its phase. When Orchestrator is done, it reports back to BD.
 BD validates that required outputs exist and reports to Dan.
 
 **Every phase boundary follows the same ritual:**
@@ -25,9 +26,9 @@ BD validates that required outputs exist and reports to Dan.
 
 ## E.1 — Infer Business Requirements
 
-**Configuration:** Agent teams. BD launches orchestrator in background.
+**Configuration:** Agent teams. BD launches Orchestrator in background.
 
-**The orchestrator ensures the agent team does the following:**
+**Orchestrator ensures the agent team does the following:**
 1. Start the MockEtlFramework long-running processes (if not already running)
 2. Run all V1 jobs for ETL effective dates Oct 1-7, 2024
 3. Review all V1 code
@@ -49,9 +50,9 @@ BD validates that required outputs exist and reports to Dan.
 
 ## E.2 — Functional Specs and Test Strategy
 
-**Configuration:** Agent teams. BD launches orchestrator in background.
+**Configuration:** Agent teams. BD launches Orchestrator in background.
 
-**The orchestrator ensures the agent team does the following:**
+**Orchestrator ensures the agent team does the following:**
 1. Review all BRDs
 2. Write FSDs:
    - Note any anti-patterns discovered in V1 code
@@ -86,15 +87,16 @@ BD validates that required outputs exist and reports to Dan.
 3. Do NOT edit V1 code
 4. Propagate the same error through the BRD, FSD, and test documents as if the
    error originated in the BRD and was allowed to persist downstream
-5. Document each act of sabotage in a directory that the orchestrator and all
+5. Document each act of sabotage in a directory that Orchestrator and all
    reverse engineering agents are barred from viewing
 
 **Saboteur stops and reports.**
 
-**BD validates:** Evidence of sabotage and whether each planted error is appropriately
-plausible (not trivially obvious, not impossibly subtle).
+**BD validates:** Evidence of sabotage exists (each job has a documented planted error).
 
-**Dan manually approves.**
+**Dan reviews and approves:** Assesses whether each planted error is appropriately
+plausible (not trivially obvious, not impossibly subtle). This is a judgment call —
+Dan makes it, BD provides the evidence.
 
 **Sabotage reconciliation:** Dan reconciles the sabotage log against proofmark results
 after E.6 completes. If a sabotaged job passes proofmark, the error was caught somewhere
@@ -105,9 +107,9 @@ know which errors are sabotage vs. organic — that's the point.
 
 ## E.4 — Build
 
-**Configuration:** Agent teams. BD launches orchestrator in background.
+**Configuration:** Agent teams. BD launches Orchestrator in background.
 
-**The orchestrator ensures the agent team does the following:**
+**Orchestrator ensures the agent team does the following:**
 1. Start the MockEtlFramework long-running processes (if not already running)
 2. Build V4 code per FSD and test architecture:
    - Job configurations
@@ -152,9 +154,9 @@ know which errors are sabotage vs. organic — that's the point.
 
 **Saboteur stops and reports.**
 
-**BD validates:** Evidence of sabotage and plausibility.
+**BD validates:** Evidence of sabotage exists.
 
-**Dan manually approves.**
+**Dan reviews and approves:** Assesses plausibility. Same judgment split as E.3.
 
 **Reconciliation:** Same as E.3 — Dan reconciles after E.6.
 
@@ -162,9 +164,9 @@ know which errors are sabotage vs. organic — that's the point.
 
 ## E.6 — Validate
 
-**Configuration:** Agent teams. BD launches orchestrator in background.
+**Configuration:** Agent teams. BD launches Orchestrator in background.
 
-**The orchestrator ensures the agent team does the following:**
+**Orchestrator ensures the agent team does the following:**
 
 ### Effective Date Progression
 1. Start MockEtlFramework and Proofmark long-running processes (if not already running)
@@ -210,7 +212,7 @@ know which errors are sabotage vs. organic — that's the point.
 
 **Orchestrator stops and reports.**
 
-**Post-orchestrator:**
+**Post-Orchestrator:**
 - BD validates existence of all required outputs and reports completion to Dan
 - BD launches Pat in background to audit the evidence accumulated across all of
   E.1-E.6

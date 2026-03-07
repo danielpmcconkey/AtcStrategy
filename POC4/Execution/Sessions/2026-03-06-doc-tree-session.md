@@ -13,7 +13,7 @@ Full directory structure for all POC4 artifacts. Five top-level sections:
 - `Governance/` — anti-patterns, runbook, canonical steps, doc registry, prerequisites, scope manifest, FMEA, audit trail, doctrine amendments
 - `Design/` — blueprints, phase definitions (empty, populated at Step 7 equivalent)
 - `Execution/` — sessions, errata, phase output, proofmark
-- `Saboteur/` — orchestrator eyes only
+- `Saboteur/` — Dan eyes only (Orchestrator and workers barred)
 
 ### 2. File Moves
 - `BdStartup/program-doctrine.md` → `ProgramDoctrine/`

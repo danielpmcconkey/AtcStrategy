@@ -100,7 +100,7 @@ Steps within this phase have a default ordering but some can run in parallel.
 | 12 | Agent Architecture | ⬜ NOT STARTED | 11 |
 | 13 | Errata System Design | ⬜ NOT STARTED | 12 |
 | 14 | Session Boundary Implementation | ⬜ NOT STARTED | 11, 12 |
-| 15 | Named Blueprints (all roles incl. orchestrator) | ⬜ NOT STARTED | 12, 13 |
+| 15 | Named Blueprints (all roles incl. Orchestrator) | ⬜ NOT STARTED | 12, 13 |
 | 16 | Runbook (Dan's process checklist) | ⬜ NOT STARTED | 11-15 |
 
 ### Step 8 — Scope & Success Criteria
@@ -141,7 +141,7 @@ runbook (Step 16) is the sequence and gates.
 Completed 2026-03-06. Seven execution phases defined in `Design/PhaseDefinitions/phase-v-execution.md`:
 E.1 (BRD + output manifest), E.2 (FSD + test strategy), E.3 (sabotage round 1), E.4 (build),
 E.5 (sabotage round 2), E.6 (validate — 92 effective dates, errata, non-strict column audit),
-E.7 (close-out). BD/orchestrator separation formalized. Dan approval + BD recycle at every boundary.
+E.7 (close-out). Operating model formalized: Dan instructs BD, BD launches Orchestrator, Orchestrator manages agent teams. Dan approval + BD recycle at every boundary.
 
 Doctrine: §3.5 (session boundaries), §2.3 (phase gates as hard stops)
 
@@ -163,15 +163,15 @@ authority get activated without depending on the entity being constrained?
 Doctrine: §3.5 (agent session boundaries), §2.3 (phase gates as hard stops)
 
 ### Step 15 — Named Blueprints
-One blueprint per worker role — complete operating context. Includes orchestrator blueprint.
-Reviewed by Layer 2. Immutable post-readiness-gate.
+One blueprint per worker role and Orchestrator — complete operating context. Orchestrator may have
+different blueprints per execution phase. Reviewed by Layer 2. Immutable post-readiness-gate.
 
 Doctrine: §3.6 (named blueprints), §1.2 (code quality + anti-patterns), §1.4 (enforcement layers)
 
 ### Step 16 — Runbook
-Dan's process checklist. Evidence trail that the POC followed its own rules. NOT the
-orchestrator's operating manual (that's a blueprint). Ties phases, agents, blueprints,
-boundaries, and governance together.
+Dan's process checklist. Evidence trail that the POC followed its own rules. NOT
+Orchestrator's operating manual (that's a blueprint). Ties phases, agents, blueprints, boundaries,
+and governance together.
 
 Doctrine: §3.4 (Jim's firing points), §3.5 (boundary enforcement), §3.7 (doctrine change management)
 

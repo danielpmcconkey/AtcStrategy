@@ -7,7 +7,7 @@
 | Document | Location | Created | Intent | Status |
 |----------|----------|---------|--------|--------|
 | Program Doctrine | ProgramDoctrine/program-doctrine.md | 2026-03-04 | Governing document for POC4 and all future ATC work | Active |
-| Condensed Mission | ProgramDoctrine/condensed-mission.md | 2026-03-04 | Layer 1 enforcement — loaded every working session | Active |
+| Condensed Mission | ProgramDoctrine/condensed-mission.md | 2026-03-04 | Layer 1 enforcement — loaded by BD at planning session start; Orchestrator gets mission elements via blueprint | Active |
 | Anti-Patterns | Governance/anti-patterns.md | 2026-03-03 | Code quality elimination targets, authority from doctrine §1.2 | Active |
 | Canonical Steps | Governance/canonical-steps.md | 2026-03-06 | Single source of truth for POC4 step sequence | Active |
 | Runbook | Governance/runbook.md | 2026-03-06 | Dan's process checklist and evidence trail | Placeholder |
@@ -21,7 +21,7 @@
 | Step 4 Close-Out | Governance/Prerequisites/step4-closeout.md | 2026-03-06 | Governance close-out for write mode decision & implementation | Active |
 | Readiness Gate | Governance/Prerequisites/readiness-gate.md | 2026-03-06 | Tracks prerequisite completion, formal gate clearance | Active |
 | Amendment 001 | Governance/Amendments/001-proofmark-status.md | 2026-03-06 | Doctrine §2.5 amendment — Proofmark status update | Approved |
-| Saboteur Plans | Saboteur/plans.md | 2026-03-06 | Orchestrator-only mutation plans (§2.2) | Placeholder |
+| Saboteur Plans | Saboteur/plans.md | 2026-03-06 | Dan-only mutation plans (§2.2) — Orchestrator and all worker agents barred | Placeholder |
 | Session: Doc Tree | Execution/Sessions/2026-03-06-doc-tree-session.md | 2026-03-06 | Session handoff — doc tree build and canonical steps draft | Reference |
 | Step 5 Close-Out | Governance/Prerequisites/step5-closeout.md | 2026-03-06 | Governance close-out for tooling & framework changes | Active |
 | Step 6 Close-Out | Governance/Prerequisites/step6-closeout.md | 2026-03-06 | Governance close-out for job config triage | Active |
@@ -44,3 +44,4 @@
 | Job Scope Manifest | Governance/ScopeManifest/job-scope-manifest.json | 2026-03-06 | Step 10 output — sealed list of 105 in-scope jobs. Blocking governance doc per §3.3 | Active |
 | Phase V Execution Definitions | Design/PhaseDefinitions/phase-v-execution.md | 2026-03-06 | Step 11 output — E.1-E.7 phase structure, operating model, sabotage rounds | Active |
 | Session: Steps 8/10/11 | Execution/Sessions/2026-03-06-step8-10-11-session.md | 2026-03-06 | Session handoff — definition of success, scope manifest, execution phases, dry run | Reference |
+| Role Restructure Change Log | ProgramDoctrine/change-log-role-restructure.md | 2026-03-06 | Documents all changes from role model restructuring (BD no longer orchestrator) | Active |
