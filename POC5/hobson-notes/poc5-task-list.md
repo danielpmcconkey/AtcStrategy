@@ -12,7 +12,7 @@ Created 2026-03-08. Phases execute in order. Tasks within a phase may be reorder
 - [x] Set `ETL_RE_OUTPUT` env var in Docker (`compose.yml`)
 - [x] Change MockEtlFramework sleep timer from 15 minutes to 8 hours (see [Note 1](#note-1))
 - [x] Confirm that the path changes to MockEtlFramework are correct
-- [ ] Tokenise the 10 inconsistent DB rows in control.jobs (missing {ETL_ROOT} prefix)
+- [x] Tokenise the 10 inconsistent DB rows in control.jobs (missing {ETL_ROOT} prefix)
 - [x] Change MockEtlFramework's parallelism approach (see [Note 1](#note-1))
 - [x] Confirm that MockEtlFramework Documentation directory is correct
 - [ ] Start running MockEtlFramework as a long-running "service"
