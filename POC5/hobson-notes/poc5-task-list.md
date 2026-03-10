@@ -34,12 +34,12 @@ Created 2026-03-08. Phases execute in order. Tasks within a phase may be reorder
 
 ## Phase 4 — Basement Prep (Hobson's final phase)
 
-- [ ] Make sure all host code is committed and pushed
-- [ ] Update all code repos on the basement side
+- [x] Make sure all host code is committed and pushed
+- [x] Update all code repos on the basement side
 - [x] Confirm network boundary supports Dan's "who can read and write what" strategy
-- [ ] Install Briggsy's tooling chain into BD's Docker
-- [ ] Clean BD's resurrection file, memory, and CLAUDE.md of distracting context
-- [ ] Write BD's wake-up prompt (see [Note 3](#note-3))
+- [x] Install Briggsy's tooling chain into BD's Docker
+- [x] Clean BD's resurrection file, memory, and CLAUDE.md of distracting context
+- [x] Write BD's wake-up prompt (see [Note 3](#note-3))
 
 ## Phase 5 — RE Planning & Execution (BD-led, with Dan)
 
