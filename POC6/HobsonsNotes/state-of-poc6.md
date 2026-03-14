@@ -1,8 +1,8 @@
 # State of POC6
 
-**Date:** 2026-03-13
+**Date:** 2026-03-14
 **Author:** Hobson
-**Status:** Framework complete. CSV + Parquet validation complete. Network isolation complete.
+**Status:** Framework complete. Validation complete. Network isolation complete. Orchestrator v0.1 complete (BD). Orchestrator v0.2 in progress (BD).
 
 ---
 
@@ -108,15 +108,42 @@ Proofmark is the independent output comparison tool used to validate the Python 
 
 **Manual test suite (23 fixtures):** All correct. `005_should_fail_sneaky_line_break` passes as expected (known gap — csv.reader strips quotes before Proofmark sees data values, documented in FSD Section 12, deliberately deferred).
 
-### 2.6 Orchestrator Design (BD — sessions 1-3)
+### 2.6 Orchestrator / Workflow Engine (BD — sessions 1-12)
 
-BD has been working on the agent pipeline that will use the Python framework:
+BD has built the deterministic workflow engine in Python (pivoted from C# during implementation). Repo: `EtlReverseEngineering`. Cloned to both `/media/dan/fdrive/codeprojects/EtlReverseEngineering/` (Hobson) and `/workspace/EtlReverseEngineering/` (BD).
 
-- **Agent taxonomy designed:** Full per-job waterfall pipeline with 5 stages (Plan, Define, Design, Build, Validate). Each leaf node is an atomic agent.
-- **Adversarial review completed:** Reviewed taxonomy against Dan's POC5 vision.
-- **Architecture decided:** C# orchestrator (EtlReverseEngineering repo), DB-backed task queue, 6 worker threads, state machine per job, agents invoked via `claude -p` CLI.
-- **GSD project initiated:** 27 v1 requirements across 5 categories, 6-phase roadmap.
-- **Status:** Phase 1 planning/discussion stage. No orchestrator code written yet.
+**v0.1 — State Machine (COMPLETE, sessions 1-10):**
+
+- **Agent taxonomy designed:** Full per-job waterfall pipeline with 5 stages (Plan, Define, Design, Build, Validate). ~30 leaf nodes, each an atomic agent.
+- **27-node happy path** with 7 response nodes for failure paths.
+- **Three-outcome review model:** Approve / Conditional / Fail. Conditional limit 3 per review node (4th auto-promotes to Fail). Fail rewinds to write node.
+- **FBR gauntlet:** 6 serial gates (BrdCheck through UnitTestCheck). Any gate failure routes to fix, then restarts entire gauntlet from top.
+- **Proofmark triage sub-pipeline:** 7-step diagnostic (T1-T7). T1-T2 context gathering, T3-T6 layer checks, T7 routing logic. Routes to earliest fault or DEAD_LETTER.
+- **92 tests, 38 requirements satisfied.** Skeptical auditor confirmed code faithfully implements the spec (all 71 edges match).
+- **Stubs throughout:** StubWorkNode/StubReviewNode return random outcomes. No real agent invocations yet.
+
+**v0.2 — Parallel Execution Infrastructure (IN PROGRESS, sessions 11-12):**
+
+- Replace synchronous `Engine.run_job()` with work-stealing executor.
+- Postgres `re_task_queue` in `control` schema (`172.18.0.1:5432`, user=`claude`).
+- N worker threads (default 6, configurable), `SELECT ... FOR UPDATE SKIP LOCKED`.
+- Node completion enqueues next task — no direct invocation.
+- 16 new requirements (TQ-01–04, JS-01–03, WK-01–04, SM-10–11, TS-01–03).
+- 4 phases (4-7). **Phase 4 not yet started.**
+- Dan's standing order: no vestigial test harnesses — tests must exercise the real execution path.
+
+**Key design principles (non-negotiable):**
+
+- No errata accumulation between attempts. Writer gets only the most recent rejection reason.
+- Fresh context every agent invocation. No state carried between invocations.
+- Parallelism at job level (105 jobs), not within a single job's pipeline.
+- Deterministic orchestrator, no LLM in the control loop.
+
+**Source of truth docs (BD's notes):**
+
+- `state-machine-transitions.md` — full transition table
+- `poc6-architecture.md` — queue design, agent model
+- `agent-taxonomy.md` — blueprint reference
 
 ---
 
@@ -291,7 +318,7 @@ Proofmark already supports `{ETL_ROOT}`, `{ETL_RE_OUTPUT}`, `{ETL_RE_ROOT}` toke
 | Faithfully reproduce C# bugs | External modules reproduce all known C# bugs so Proofmark passes. Fix bugs later, not during porting. | 014 |
 | Dumb orchestrator + atomic workers | Smart orchestrator (POC5) suffered context rot and cheating. Dumb loop + fresh-context agents fixes both. | BD-1 |
 | 103 horizontal waterfalls, not 1 vertical | Each job gets its own pipeline. No cross-job contamination. | BD-1 |
-| C# orchestrator, Python artifacts | Orchestrator in EtlReverseEngineering (C#), agents produce Python artifacts for MockEtlFrameworkPython. | BD-2 |
+| C# orchestrator, Python artifacts | Originally planned as C#. Pivoted to Python during implementation. Agents produce Python artifacts for MockEtlFrameworkPython. | BD-2 |
 | ATC model (human governance, agent autonomy) | Agents are pilots, humans are air traffic control. Inversion of Microsoft's "Copilot" framing. | 021 |
 | Network isolation via Docker boundary | Agents can read anything, write only to their workspace and queue tables. Validation on host only. | 021 |
 | Simplify to 2 env vars | `ETL_RE_ROOT` and `ETL_RE_OUTPUT` are POC5 C# artifacts. Python's dynamic loading makes them unnecessary. | 021 |
@@ -333,6 +360,16 @@ Proofmark already supports `{ETL_ROOT}`, `{ETL_RE_OUTPUT}`, `{ETL_RE_ROOT}` toke
 | Python OG output | `MockEtlFrameworkPython/Output/curated/` |
 | Documentation | `MockEtlFrameworkPython/Documentation/` |
 
+### Orchestrator
+
+| What | Path |
+|------|------|
+| Orchestrator repo (Hobson) | `/media/dan/fdrive/codeprojects/EtlReverseEngineering/` |
+| Orchestrator repo (BD) | `/media/dan/fdrive/ai-sandbox/workspace/EtlReverseEngineering/` |
+| Workflow engine source | `EtlReverseEngineering/src/workflow_engine/` |
+| Planning docs | `EtlReverseEngineering/.planning/` |
+| Transition table (source of truth) | `AtcStrategy/POC6/BDsNotes/state-machine-transitions.md` |
+
 ### Strategy and Notes
 
 | What | Path |
@@ -373,6 +410,10 @@ Proofmark already supports `{ETL_ROOT}`, `{ETL_RE_OUTPUT}`, `{ETL_RE_ROOT}` toke
 | 020 | 2026-03-12 | Memory leak F1/F6 fixes. Telemetry. Test table isolation. Queue rebuild. |
 | 021 | 2026-03-12 | System health verified. Swap 2→16GiB. Proofmark gold star (1,215/0/51s). Manual test suite (23/23). Network isolation design. Env var simplification. C# output deleted (5.4GB). |
 | 023 | 2026-03-13 | Network isolation implemented. Env vars simplified (4→2). Docker ro mount. Dead tokens removed from all source + docs. Basement DB connection confirmed (172.18.0.1). |
+| 024 | 2026-03-14 | Housekeeping. AtcStrategy synced (commit + push + pull BD's changes). EtlReverseEngineering cloned to codeprojects. State-of-poc6 updated. Stale .idea dir removed. |
 | BD-1 | 2026-03-10 | Agent taxonomy designed. Adversarial review. Architecture doc. |
 | BD-2 | 2026-03-10 | C# orchestrator, DB-backed queue, state machine, polyglot architecture. |
 | BD-3 | 2026-03-10 | GSD project. 27 requirements. 6-phase roadmap. Ready for Phase 1. |
+| BD-4–10 | 2026-03-10–12 | v0.1 phases 1-3 built. State machine, review branching, FBR gauntlet, triage pipeline. 92 tests, 38 requirements. |
+| BD-11 | 2026-03-12 | v0.1 declared complete. v0.2 scoped (parallel execution). Two options identified: de-stub or multi-thread. |
+| BD-12 | 2026-03-13 | v0.2 milestone initialized. 16 requirements, 4-phase roadmap (phases 4-7). Dan chose multi-threaded executor first. |
