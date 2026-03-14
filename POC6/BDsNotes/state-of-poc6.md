@@ -1,6 +1,6 @@
 # State of POC6
 
-**Last updated:** 2026-03-14 (session 13)
+**Last updated:** 2026-03-14 (session 18)
 
 ## Milestones
 
@@ -22,9 +22,32 @@ Phases 4-7. 40 new tests (132 total), 16 requirements. Replaced synchronous engi
 - **Phase 6:** `WorkerPool` — N configurable threads (default 6, `RE_WORKER_COUNT` env var), claim-execute loop, pluggable `TaskHandler`
 - **Phase 7:** `StepHandler` — per-step SM logic through queue, Engine rewritten as manifest-ingest → pool wrapper, all engine tests rewritten for queue execution, `run_job()` deleted
 
-### v0.3 Agent Integration — NOT STARTED
+### v0.3 Agent Integration — FIRST RUN DONE, FIXING PATH ISSUES
 
-Replace node stubs with Claude CLI agent invocations. Hobson is writing agent blueprints upstairs.
+Replaced node stubs with Claude CLI agent invocations. First full pipeline run
+on job 373 (`dans_transaction_special`) got through all build + FBR gates but
+failed at the validate stage:
+- `ExecuteJobRuns` ran ETL framework locally instead of queuing to `control.task_queue`
+- `ExecuteProofmark` queued correctly but used wrong paths — all 62 tasks failed
+- Publisher overwrote OG job registration in `control.jobs` (fixed)
+
+**Session 18 fixes:**
+- Hobson designed path architecture v2 — `RE/` directories, symlinked to host
+- All blueprints updated for `_re` naming, `{ETL_ROOT}` literal tokens, RE/ paths
+- DB cleaned, OG job registration restored, artifacts wiped for fresh run
+- Awaiting: container rebuild (re-curated mount), Hobson's symlinks, re-seed
+
+## Path Architecture (v2)
+
+- **One literal token: `{ETL_ROOT}`** — never resolved by orchestrator, host
+  expands at runtime from its own env var
+- **RE artifacts** deploy to `{ETL_ROOT}/RE/Jobs/` and `{ETL_ROOT}/RE/externals/`
+  (symlinked from host codeprojects to container workspace)
+- **`_re` suffix** on all RE identifiers: jobName, typeName, module filenames,
+  control.jobs registration
+- **OG output** at `{ETL_ROOT}/Output/curated/` (ro mount)
+- **RE output** at `{ETL_ROOT}/Output/re-curated/` (ro mount, host writes here)
+- See: `AtcStrategy/POC6/HobsonsNotes/path-changes-for-bd-v2.md`
 
 ## Architecture
 
@@ -48,8 +71,10 @@ Replace node stubs with Claude CLI agent invocations. Hobson is writing agent bl
 | `src/workflow_engine/schema.sql` | DDL for re_task_queue, re_job_state |
 | `src/workflow_engine/engine.py` | Engine — manifest ingest + pool wrapper |
 | `src/workflow_engine/transitions.py` | Transition table, routing dicts, validation |
-| `src/workflow_engine/nodes.py` | Node ABC, stub implementations |
+| `src/workflow_engine/nodes.py` | Node ABC, stub implementations, agent registry |
+| `src/workflow_engine/agent_node.py` | AgentNode — Claude CLI invocation per blueprint |
 | `src/workflow_engine/models.py` | JobState, EngineConfig, Outcome, NodeType |
+| `blueprints/_conventions.md` | Agent conventions, path tokens, RE naming rules |
 
 ## Design Principles (standing)
 
@@ -63,5 +88,5 @@ Replace node stubs with Claude CLI agent invocations. Hobson is writing agent bl
 
 ## Division of Labor
 
-- **Hobson** (host): Agent blueprints, MockEtlFrameworkPython, anything touching the host filesystem
-- **BD** (container): Workflow engine, queue plumbing, agent invocation wiring, tests
+- **Hobson** (host): MockEtlFrameworkPython, host-side infrastructure (symlinks, mounts, external.py), Proofmark
+- **BD** (container): Workflow engine, agent blueprints, queue plumbing, agent invocation wiring, tests
