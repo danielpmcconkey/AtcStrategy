@@ -45,7 +45,6 @@ These only appear on failure paths. On the happy path they're never entered.
 | BuildJobArtifactsResponse   | Build    | builder            | ReviewJobArtifacts     |
 | BuildProofmarkResponse      | Build    | proofmark-builder  | ReviewProofmarkConfig  |
 | BuildUnitTestsResponse      | Build    | test-writer        | ReviewUnitTests        |
-| TriageProofmarkFailures     | Validate | triage             | ExecuteProofmark       |
 
 ## FBR Failure Routing
 
