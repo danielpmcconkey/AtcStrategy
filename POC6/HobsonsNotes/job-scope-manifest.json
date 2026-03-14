@@ -8,517 +8,517 @@
         {
             "job_id": 1,
             "job_name": "CustomerAccountSummary",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/customer_account_summary.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/customer_account_summary.json"
         },
         {
             "job_id": 2,
             "job_name": "DailyTransactionSummary",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/daily_transaction_summary.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/daily_transaction_summary.json"
         },
         {
             "job_id": 3,
             "job_name": "TransactionCategorySummary",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/transaction_category_summary.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/transaction_category_summary.json"
         },
         {
             "job_id": 4,
             "job_name": "LargeTransactionLog",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/large_transaction_log.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/large_transaction_log.json"
         },
         {
             "job_id": 5,
             "job_name": "DailyTransactionVolume",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/daily_transaction_volume.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/daily_transaction_volume.json"
         },
         {
             "job_id": 6,
             "job_name": "MonthlyTransactionTrend",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/monthly_transaction_trend.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/monthly_transaction_trend.json"
         },
         {
             "job_id": 7,
             "job_name": "CustomerDemographics",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/customer_demographics.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/customer_demographics.json"
         },
         {
             "job_id": 8,
             "job_name": "CustomerContactInfo",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/customer_contact_info.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/customer_contact_info.json"
         },
         {
             "job_id": 9,
             "job_name": "CustomerSegmentMap",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/customer_segment_map.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/customer_segment_map.json"
         },
         {
             "job_id": 10,
             "job_name": "CustomerAddressHistory",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/customer_address_history.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/customer_address_history.json"
         },
         {
             "job_id": 11,
             "job_name": "CustomerFullProfile",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/customer_full_profile.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/customer_full_profile.json"
         },
         {
             "job_id": 12,
             "job_name": "AccountBalanceSnapshot",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/account_balance_snapshot.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/account_balance_snapshot.json"
         },
         {
             "job_id": 13,
             "job_name": "AccountStatusSummary",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/account_status_summary.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/account_status_summary.json"
         },
         {
             "job_id": 14,
             "job_name": "AccountTypeDistribution",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/account_type_distribution.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/account_type_distribution.json"
         },
         {
             "job_id": 15,
             "job_name": "HighBalanceAccounts",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/high_balance_accounts.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/high_balance_accounts.json"
         },
         {
             "job_id": 16,
             "job_name": "AccountCustomerJoin",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/account_customer_join.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/account_customer_join.json"
         },
         {
             "job_id": 17,
             "job_name": "CreditScoreSnapshot",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/credit_score_snapshot.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/credit_score_snapshot.json"
         },
         {
             "job_id": 18,
             "job_name": "CreditScoreAverage",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/credit_score_average.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/credit_score_average.json"
         },
         {
             "job_id": 19,
             "job_name": "LoanPortfolioSnapshot",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/loan_portfolio_snapshot.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/loan_portfolio_snapshot.json"
         },
         {
             "job_id": 20,
             "job_name": "LoanRiskAssessment",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/loan_risk_assessment.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/loan_risk_assessment.json"
         },
         {
             "job_id": 21,
             "job_name": "CustomerCreditSummary",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/customer_credit_summary.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/customer_credit_summary.json"
         },
         {
             "job_id": 22,
             "job_name": "BranchDirectory",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/branch_directory.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/branch_directory.json"
         },
         {
             "job_id": 23,
             "job_name": "BranchVisitLog",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/branch_visit_log.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/branch_visit_log.json"
         },
         {
             "job_id": 24,
             "job_name": "BranchVisitSummary",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/branch_visit_summary.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/branch_visit_summary.json"
         },
         {
             "job_id": 25,
             "job_name": "BranchVisitPurposeBreakdown",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/branch_visit_purpose_breakdown.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/branch_visit_purpose_breakdown.json"
         },
         {
             "job_id": 26,
             "job_name": "TopBranches",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/top_branches.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/top_branches.json"
         },
         {
             "job_id": 28,
             "job_name": "CustomerTransactionActivity",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/customer_transaction_activity.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/customer_transaction_activity.json"
         },
         {
             "job_id": 29,
             "job_name": "CustomerBranchActivity",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/customer_branch_activity.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/customer_branch_activity.json"
         },
         {
             "job_id": 30,
             "job_name": "CustomerValueScore",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/customer_value_score.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/customer_value_score.json"
         },
         {
             "job_id": 31,
             "job_name": "ExecutiveDashboard",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/executive_dashboard.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/executive_dashboard.json"
         },
         {
             "job_id": 32,
             "job_name": "CustomerAddressDeltas",
-            "job_conf_path": "JobExecutor/Jobs/customer_address_deltas.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/customer_address_deltas.json"
         },
         {
             "job_id": 33,
             "job_name": "CoveredTransactions",
-            "job_conf_path": "JobExecutor/Jobs/covered_transactions.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/covered_transactions.json"
         },
         {
             "job_id": 97,
             "job_name": "CardTransactionDaily",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/card_transaction_daily.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/card_transaction_daily.json"
         },
         {
             "job_id": 98,
             "job_name": "CardSpendingByMerchant",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/card_spending_by_merchant.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/card_spending_by_merchant.json"
         },
         {
             "job_id": 99,
             "job_name": "CardFraudFlags",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/card_fraud_flags.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/card_fraud_flags.json"
         },
         {
             "job_id": 100,
             "job_name": "CardAuthorizationSummary",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/card_authorization_summary.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/card_authorization_summary.json"
         },
         {
             "job_id": 101,
             "job_name": "CardCustomerSpending",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/card_customer_spending.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/card_customer_spending.json"
         },
         {
             "job_id": 102,
             "job_name": "HighRiskMerchantActivity",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/high_risk_merchant_activity.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/high_risk_merchant_activity.json"
         },
         {
             "job_id": 103,
             "job_name": "CardStatusSnapshot",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/card_status_snapshot.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/card_status_snapshot.json"
         },
         {
             "job_id": 104,
             "job_name": "CardTypeDistribution",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/card_type_distribution.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/card_type_distribution.json"
         },
         {
             "job_id": 105,
             "job_name": "MerchantCategoryDirectory",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/merchant_category_directory.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/merchant_category_directory.json"
         },
         {
             "job_id": 106,
             "job_name": "CardExpirationWatch",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/card_expiration_watch.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/card_expiration_watch.json"
         },
         {
             "job_id": 107,
             "job_name": "PortfolioValueSummary",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/portfolio_value_summary.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/portfolio_value_summary.json"
         },
         {
             "job_id": 108,
             "job_name": "HoldingsBySector",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/holdings_by_sector.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/holdings_by_sector.json"
         },
         {
             "job_id": 109,
             "job_name": "InvestmentRiskProfile",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/investment_risk_profile.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/investment_risk_profile.json"
         },
         {
             "job_id": 110,
             "job_name": "SecuritiesDirectory",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/securities_directory.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/securities_directory.json"
         },
         {
             "job_id": 111,
             "job_name": "TopHoldingsByValue",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/top_holdings_by_value.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/top_holdings_by_value.json"
         },
         {
             "job_id": 112,
             "job_name": "InvestmentAccountOverview",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/investment_account_overview.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/investment_account_overview.json"
         },
         {
             "job_id": 113,
             "job_name": "PortfolioConcentration",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/portfolio_concentration.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/portfolio_concentration.json"
         },
         {
             "job_id": 114,
             "job_name": "CustomerInvestmentSummary",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/customer_investment_summary.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/customer_investment_summary.json"
         },
         {
             "job_id": 115,
             "job_name": "BondMaturitySchedule",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/bond_maturity_schedule.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/bond_maturity_schedule.json"
         },
         {
             "job_id": 116,
             "job_name": "FundAllocationBreakdown",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/fund_allocation_breakdown.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/fund_allocation_breakdown.json"
         },
         {
             "job_id": 117,
             "job_name": "ComplianceEventSummary",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/compliance_event_summary.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/compliance_event_summary.json"
         },
         {
             "job_id": 118,
             "job_name": "WireTransferDaily",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/wire_transfer_daily.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/wire_transfer_daily.json"
         },
         {
             "job_id": 119,
             "job_name": "LargeWireReport",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/large_wire_report.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/large_wire_report.json"
         },
         {
             "job_id": 120,
             "job_name": "WireDirectionSummary",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/wire_direction_summary.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/wire_direction_summary.json"
         },
         {
             "job_id": 121,
             "job_name": "ComplianceOpenItems",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/compliance_open_items.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/compliance_open_items.json"
         },
         {
             "job_id": 122,
             "job_name": "CustomerComplianceRisk",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/customer_compliance_risk.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/customer_compliance_risk.json"
         },
         {
             "job_id": 124,
             "job_name": "ComplianceResolutionTime",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/compliance_resolution_time.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/compliance_resolution_time.json"
         },
         {
             "job_id": 125,
             "job_name": "DailyWireVolume",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/daily_wire_volume.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/daily_wire_volume.json"
         },
         {
             "job_id": 126,
             "job_name": "RegulatoryExposureSummary",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/regulatory_exposure_summary.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/regulatory_exposure_summary.json"
         },
         {
             "job_id": 127,
             "job_name": "OverdraftDailySummary",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/overdraft_daily_summary.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/overdraft_daily_summary.json"
         },
         {
             "job_id": 128,
             "job_name": "OverdraftByAccountType",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/overdraft_by_account_type.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/overdraft_by_account_type.json"
         },
         {
             "job_id": 129,
             "job_name": "FeeWaiverAnalysis",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/fee_waiver_analysis.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/fee_waiver_analysis.json"
         },
         {
             "job_id": 131,
             "job_name": "OverdraftAmountDistribution",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/overdraft_amount_distribution.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/overdraft_amount_distribution.json"
         },
         {
             "job_id": 132,
             "job_name": "FeeRevenueDaily",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/fee_revenue_daily.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/fee_revenue_daily.json"
         },
         {
             "job_id": 133,
             "job_name": "OverdraftCustomerProfile",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/overdraft_customer_profile.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/overdraft_customer_profile.json"
         },
         {
             "job_id": 134,
             "job_name": "OverdraftRecoveryRate",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/overdraft_recovery_rate.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/overdraft_recovery_rate.json"
         },
         {
             "job_id": 135,
             "job_name": "AccountOverdraftHistory",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/account_overdraft_history.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/account_overdraft_history.json"
         },
         {
             "job_id": 136,
             "job_name": "OverdraftFeeSummary",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/overdraft_fee_summary.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/overdraft_fee_summary.json"
         },
         {
             "job_id": 137,
             "job_name": "PreferenceSummary",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/preference_summary.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/preference_summary.json"
         },
         {
             "job_id": 138,
             "job_name": "EmailOptInRate",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/email_opt_in_rate.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/email_opt_in_rate.json"
         },
         {
             "job_id": 139,
             "job_name": "SmsOptInRate",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/sms_opt_in_rate.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/sms_opt_in_rate.json"
         },
         {
             "job_id": 140,
             "job_name": "MarketingEligibleCustomers",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/marketing_eligible_customers.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/marketing_eligible_customers.json"
         },
         {
             "job_id": 141,
             "job_name": "DoNotContactList",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/do_not_contact_list.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/do_not_contact_list.json"
         },
         {
             "job_id": 142,
             "job_name": "PreferenceChangeCount",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/preference_change_count.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/preference_change_count.json"
         },
         {
             "job_id": 143,
             "job_name": "CommunicationChannelMap",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/communication_channel_map.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/communication_channel_map.json"
         },
         {
             "job_id": 144,
             "job_name": "PreferenceBySegment",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/preference_by_segment.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/preference_by_segment.json"
         },
         {
             "job_id": 145,
             "job_name": "CustomerContactability",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/customer_contactability.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/customer_contactability.json"
         },
         {
             "job_id": 146,
             "job_name": "PreferenceTrend",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/preference_trend.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/preference_trend.json"
         },
         {
             "job_id": 147,
             "job_name": "Customer360Snapshot",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/customer_360_snapshot.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/customer_360_snapshot.json"
         },
         {
             "job_id": 148,
             "job_name": "WealthTierAnalysis",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/wealth_tier_analysis.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/wealth_tier_analysis.json"
         },
         {
             "job_id": 149,
             "job_name": "PaymentChannelMix",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/payment_channel_mix.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/payment_channel_mix.json"
         },
         {
             "job_id": 150,
             "job_name": "CrossSellCandidates",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/cross_sell_candidates.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/cross_sell_candidates.json"
         },
         {
             "job_id": 151,
             "job_name": "CustomerAttritionSignals",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/customer_attrition_signals.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/customer_attrition_signals.json"
         },
         {
             "job_id": 152,
             "job_name": "MonthlyRevenueBreakdown",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/monthly_revenue_breakdown.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/monthly_revenue_breakdown.json"
         },
         {
             "job_id": 153,
             "job_name": "BranchCardActivity",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/branch_card_activity.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/branch_card_activity.json"
         },
         {
             "job_id": 154,
             "job_name": "ProductPenetration",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/product_penetration.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/product_penetration.json"
         },
         {
             "job_id": 155,
             "job_name": "ComplianceTransactionRatio",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/compliance_transaction_ratio.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/compliance_transaction_ratio.json"
         },
         {
             "job_id": 156,
             "job_name": "QuarterlyExecutiveKpis",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/quarterly_executive_kpis.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/quarterly_executive_kpis.json"
         },
         {
             "job_id": 157,
             "job_name": "WeekendTransactionPattern",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/weekend_transaction_pattern.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/weekend_transaction_pattern.json"
         },
         {
             "job_id": 158,
             "job_name": "DebitCreditRatio",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/debit_credit_ratio.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/debit_credit_ratio.json"
         },
         {
             "job_id": 159,
             "job_name": "TransactionSizeBuckets",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/transaction_size_buckets.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/transaction_size_buckets.json"
         },
         {
             "job_id": 160,
             "job_name": "DormantAccountDetection",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/dormant_account_detection.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/dormant_account_detection.json"
         },
         {
             "job_id": 161,
             "job_name": "AccountVelocityTracking",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/account_velocity_tracking.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/account_velocity_tracking.json"
         },
         {
             "job_id": 162,
             "job_name": "BranchTransactionVolume",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/branch_transaction_volume.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/branch_transaction_volume.json"
         },
         {
             "job_id": 163,
             "job_name": "TransactionAnomalyFlags",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/transaction_anomaly_flags.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/transaction_anomaly_flags.json"
         },
         {
             "job_id": 164,
             "job_name": "InterAccountTransfers",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/inter_account_transfers.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/inter_account_transfers.json"
         },
         {
             "job_id": 165,
             "job_name": "PeakTransactionTimes",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/peak_transaction_times.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/peak_transaction_times.json"
         },
         {
             "job_id": 166,
             "job_name": "DailyBalanceMovement",
-            "job_conf_path": "MockEtlFrameworkPython/JobExecutor/Jobs/daily_balance_movement.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/daily_balance_movement.json"
         },
         {
             "job_id": 369,
             "job_name": "CreditScoreDelta",
-            "job_conf_path": "JobExecutor/Jobs/credit_score_delta.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/credit_score_delta.json"
         },
         {
             "job_id": 371,
             "job_name": "BranchVisitsByCustomerCsvAppendTrailer",
-            "job_conf_path": "JobExecutor/Jobs/branch_visits_by_customer_csv_append_trailer.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/branch_visits_by_customer_csv_append_trailer.json"
         },
         {
             "job_id": 373,
             "job_name": "DansTransactionSpecial",
-            "job_conf_path": "JobExecutor/Jobs/dans_transaction_special.json"
+            "job_conf_path": "{ETL_ROOT}/JobExecutor/Jobs/dans_transaction_special.json"
         }
     ]
 }
