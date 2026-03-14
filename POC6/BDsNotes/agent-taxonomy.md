@@ -99,7 +99,10 @@ RE Job Pipeline
 │       ├── Re-execute artifact reviewer
 │       ├── Re-execute proofmark config reviewer
 │       ├── Re-execute UT reviewer
-│       ├── Verify publication paths are correct
+│       ├── Audit evidence and traceability (mechanical verification)
+│       │   ├── Verify every BRD→BDD→FSD→Code→Test traceability link exists
+│       │   ├── Verify every file:line citation points to real content
+│       │   └── Verify proofmark config covers all output columns
 │       ├── All pass → queue Validate
 │       └── Any fail → route feedback to appropriate layer
 └── Validate
@@ -132,3 +135,5 @@ RE Job Pipeline
 - **Re-review agents** in Define and Design are triggered by Build L7 final review
 - **Each leaf node = one atomic agent** — claim task, do work, queue next step, die
 - **All agents cite evidence** — BRD#, BDD scenario#, code references. No unsupported claims.
+- **Evidence auditor** is the final FBR gate — mechanical (not judgmental) verification that all citations and traceability links are real
+- **Executor agents (test-executor, job-executor)** have a leash of 3 self-fix attempts before returning FAIL

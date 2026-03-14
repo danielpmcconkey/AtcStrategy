@@ -27,10 +27,11 @@
 | 21 | FBR_FsdCheck             | Build    | fsd-reviewer       | FBR_ArtifactCheck      |
 | 22 | FBR_ArtifactCheck        | Build    | artifact-reviewer  | FBR_ProofmarkCheck     |
 | 23 | FBR_ProofmarkCheck       | Build    | proofmark-reviewer | FBR_UnitTestCheck      |
-| 24 | FBR_UnitTestCheck        | Build    | test-reviewer      | ExecuteJobRuns         |
-| 25 | ExecuteJobRuns           | Validate | job-executor       | ExecuteProofmark       |
-| 26 | ExecuteProofmark         | Validate | proofmark-executor | FinalSignOff           |
-| 27 | FinalSignOff             | Validate | signoff            | COMPLETE               |
+| 24 | FBR_UnitTestCheck        | Build    | test-reviewer      | FBR_EvidenceAudit      |
+| 25 | FBR_EvidenceAudit        | Build    | evidence-auditor   | ExecuteJobRuns         |
+| 26 | ExecuteJobRuns           | Validate | job-executor       | ExecuteProofmark       |
+| 27 | ExecuteProofmark         | Validate | proofmark-executor | FinalSignOff           |
+| 28 | FinalSignOff             | Validate | signoff            | COMPLETE               |
 
 ## Review Response Nodes (same blueprint as writer, different routing)
 
@@ -59,9 +60,18 @@ the entire FBR gauntlet from the top. Depth cap on total FBR restarts prevents i
 | FBR_ArtifactCheck     | BuildJobArtifactsResponse  | → ReviewJobArtifacts → restart at FBR_BrdCheck  |
 | FBR_ProofmarkCheck    | BuildProofmarkResponse     | → ReviewProofmarkConfig → restart at FBR_BrdCheck|
 | FBR_UnitTestCheck     | BuildUnitTestsResponse     | → ReviewUnitTests → restart at FBR_BrdCheck     |
+| FBR_EvidenceAudit     | (routes to layer with broken traceability) | → fix → review → restart at FBR_BrdCheck |
 
 Note: Restart is always from FBR_BrdCheck (top of gauntlet), because a downstream
 fix could invalidate an upstream pass.
+
+### FM-16 Fix: FBR Code-Fix Path Must Include Test Re-Execution
+
+When an FBR gate failure results in code changes (FBR_ArtifactCheck,
+FBR_ProofmarkCheck, or FBR_UnitTestCheck failures that route to builder or
+test-writer response nodes), the fix path must route through
+BuildUnitTests → ReviewUnitTests → ExecuteUnitTests → Publish before
+re-entering the FBR gauntlet. Rebuilt code must not re-enter FBR untested.
 
 ## In-Flow Review Failure Edges
 
@@ -165,6 +175,20 @@ T7 is pure orchestrator logic, no agent. It reads the outputs of T3-T6 and route
 Triage has its own retry limit. Each complete pass through the triage sub-pipeline
 (T1-T7 → fix → re-execute proofmark → fail again) increments the counter.
 Exhaustion → DEAD_LETTER.
+
+## Executor Failure Routing
+
+ExecuteUnitTests and ExecuteJobRuns are work nodes (SUCCESS/FAIL), not review
+nodes. Each has a built-in leash of 3 self-fix attempts before returning FAIL.
+
+| State              | On FAIL (after 3 attempts exhausted)        |
+|--------------------|---------------------------------------------|
+| ExecuteUnitTests   | DEAD_LETTER → human reviews test/code failures |
+| ExecuteJobRuns     | DEAD_LETTER → human reviews execution failures |
+
+The agents attempt to diagnose and fix issues themselves (test bugs, code bugs,
+SQL typos). If they can't resolve within 3 attempts, the failure is beyond
+autonomous repair and requires human intervention.
 
 ## Terminal Failures
 
