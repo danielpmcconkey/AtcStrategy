@@ -1,65 +1,67 @@
 # State of POC6
 
-## What Exists
+**Last updated:** 2026-03-14 (session 13)
 
-### Network Isolation (done — Hobson)
-- BD writes code/confs to `/workspace/MockEtlFrameworkPython/`
-- Inserts tokenized paths into `control.jobs` table (Postgres at 172.18.0.1)
-- Host-side framework picks up jobs and runs them
-- OG output (answer key): `/workspace/og-curated/` (read-only)
-- RE output: `/workspace/re-curated/` (read-only, framework writes here)
-- Only upward channel: structured data in queue tables
+## Milestones
 
-### Architecture (done — BD + Dan)
+### v0.1 State Machine Mechanics — SHIPPED (2026-03-13)
+
+Phases 1-3. 92 tests, 38 requirements. Deterministic state machine with stubbed nodes:
+- 27 happy-path nodes (Plan → Define → Design → Build → Validate)
+- Three-outcome review model (Approve / Conditional / Fail)
+- FBR 6-gate gauntlet with restart semantics
+- Triage 7-step diagnostic sub-pipeline with earliest-fault routing
+- Counter mechanics: main retry (N), conditional (M), auto-promotion, DEAD_LETTER
+- Structured JSON logging for every transition
+
+### v0.2 Parallel Execution Infrastructure — SHIPPED (2026-03-14)
+
+Phases 4-7. 40 new tests (132 total), 16 requirements. Replaced synchronous engine with queue-based execution:
+- **Phase 4:** Postgres `re_task_queue` + `re_job_state` in `control` schema, psycopg3 pool, CRUD, `SKIP LOCKED` concurrency proof, one-active-per-job constraint
+- **Phase 5:** `enqueue_next` (transition lookup → enqueue) and `ingest_manifest` (bulk-load jobs from manifest JSON)
+- **Phase 6:** `WorkerPool` — N configurable threads (default 6, `RE_WORKER_COUNT` env var), claim-execute loop, pluggable `TaskHandler`
+- **Phase 7:** `StepHandler` — per-step SM logic through queue, Engine rewritten as manifest-ingest → pool wrapper, all engine tests rewritten for queue execution, `run_job()` deleted
+
+### v0.3 Agent Integration — NOT STARTED
+
+Replace node stubs with Claude CLI agent invocations. Hobson is writing agent blueprints upstairs.
+
+## Architecture
+
 - Dumb Python orchestrator, no LLM in the control loop
 - Deterministic state machine drives workflow
 - Atomic agents: claim task, do one thing, queue next step, die
 - Fresh Claude CLI context per invocation (no rot)
 - Postgres task queue with `SELECT ... FOR UPDATE SKIP LOCKED`
 - Per-agent blueprints as system prompts
-- 105 independent job pipelines, zero cross-contamination
+- 103 independent job pipelines (from manifest), zero cross-contamination
 - See: `poc6-architecture.md`
 
-### Agent Taxonomy (done — BD + Dan)
-- Full waterfall: Plan → Define → Design → Build → Validate
-- ~30 leaf nodes, each one an atomic agent
-- See: `agent-taxonomy.md`
+## Key Files (EtlReverseEngineering repo)
 
-### State Machine Transition Table (done — BD + Dan)
-- 27 happy path nodes (Plan through FinalSignOff)
-- FinalBuildReview exploded into 6 serial gates (FBR_BrdCheck through FBR_UnitTestCheck)
-- Three-outcome review model: Approve / Conditional / Fail
-  - Conditional: targeted fix via response node, no downstream invalidation, 3 per review node max
-  - Fail: rewind to write node, replay full pipeline forward from there
-  - 4th conditional auto-promotes to Fail
-- No errata accumulation. Writer gets only the most recent rejection reason. Fresh context always.
-- Proofmark triage: 7-step diagnostic sub-pipeline (T1-T7)
-  - T1-T2: context gathering (data profiling, OG flow analysis)
-  - T3-T6: layer checks (BRD, FSD, code, proofmark config), each returns clean/fault
-  - T7: pure orchestrator logic, routes to earliest fault or DEAD_LETTER
-  - Each triage pass is fresh — no carryover from prior triage runs
-- Retry exhaustion at any node → DEAD_LETTER → human escalation
-- See: `state-machine-transitions.md`
-
-## What's Next
-
-Build the state machine / workflow engine in Python with stubbed nodes.
-- Each node is a stub with a comment describing what the real agent will do
-- Review nodes use RNG to return Approve / Conditional / Fail
-- Non-review nodes use RNG to return Success / Failure
-- Basic logging: job ID, node name, outcome, retry counts, transitions
-- Run a handful of jobs through it to validate the workflow honors the
-  transition table (rewinds, conditionals, FBR gauntlet restarts, triage
-  routing, DEAD_LETTER on retry exhaustion)
-- No Postgres, no Claude CLI, no real agents. Pure workflow validation.
+| File | What |
+|------|------|
+| `src/workflow_engine/step_handler.py` | Per-step SM logic — the TaskHandler for workers |
+| `src/workflow_engine/worker.py` | WorkerPool — N threads, claim-execute-enqueue loop |
+| `src/workflow_engine/queue_ops.py` | enqueue_next, ingest_manifest |
+| `src/workflow_engine/db.py` | Postgres pool, task queue + job state CRUD |
+| `src/workflow_engine/schema.sql` | DDL for re_task_queue, re_job_state |
+| `src/workflow_engine/engine.py` | Engine — manifest ingest + pool wrapper |
+| `src/workflow_engine/transitions.py` | Transition table, routing dicts, validation |
+| `src/workflow_engine/nodes.py` | Node ABC, stub implementations |
+| `src/workflow_engine/models.py` | JobState, EngineConfig, Outcome, NodeType |
 
 ## Design Principles (standing)
 
 - No errata accumulation. Retry counter is the only memory between attempts.
+- Two counter types only: main retry (N) and conditional (M).
 - Keep agents dumb. Let the state machine's structure handle complexity.
-- Parallelism is at the job level (105 jobs), not within a single job's pipeline.
+- Parallelism is at the job level, not within a single job's pipeline.
 - Fresh context every agent invocation. No state carried between invocations.
+- Deterministic orchestrator. No LLM in the control loop.
+- No vestigial test harnesses — tests exercise the real execution path.
 
-## Stale Artifacts
+## Division of Labor
 
-The GSD planning in `/workspace/EtlReverseEngineering/.planning/` was built for a C#/.NET 8 stack that no longer applies. Left in place for now but not current.
+- **Hobson** (host): Agent blueprints, MockEtlFrameworkPython, anything touching the host filesystem
+- **BD** (container): Workflow engine, queue plumbing, agent invocation wiring, tests
