@@ -2,7 +2,7 @@
 
 **Date:** 2026-03-14
 **Author:** Hobson
-**Status:** Framework complete. Validation complete. Network isolation complete. Orchestrator v0.1 complete (BD). Orchestrator v0.2 in progress (BD).
+**Status:** Framework complete. Validation complete. Network isolation v2 implemented. Orchestrator v0.2 complete (BD). v0.3 (agent integration) next.
 
 ---
 
@@ -13,13 +13,13 @@ POC6 is the Python rewrite of the MockEtlFramework, replacing the original C# im
 POC6 has two parallel workstreams:
 
 1. **Framework rewrite (Hobson):** Rebuild the ETL framework in Python so that agents can produce Python artifacts (job confs, external modules) without requiring a C# compile-rebuild cycle. **This workstream is complete.**
-2. **Orchestrator design (BD):** Design and build a dumb deterministic orchestrator that runs 103 independent per-job waterfall pipelines using atomic Claude Code CLI agents. This workstream is in early design/planning.
+2. **Orchestrator design (BD):** Design and build a dumb deterministic orchestrator that runs 103 independent per-job waterfall pipelines using atomic Claude Code CLI agents. **v0.2 complete. v0.3 (agent integration) next.**
 
 ---
 
 ## 2. What Has Been Built
 
-### 2.1 Python ETL Framework (Hobson — sessions 011-017)
+### 2.1 Python ETL Framework (Hobson — sessions 011-017, 025)
 
 The entire C# framework has been ported to Python. All build plan steps (1-21) are complete.
 
@@ -28,7 +28,7 @@ The entire C# framework has been ported to Python. All build plan steps (1-21) a
 | Component | File | Notes |
 |-----------|------|-------|
 | Config system | `src/etl/app_config.py` | Layered: defaults, appsettings.json, env vars |
-| Path resolution | `src/etl/path_helper.py` | Token expansion for `{ETL_ROOT}`, `{ETL_RE_OUTPUT}`, `{ETL_RE_ROOT}` |
+| Path resolution | `src/etl/path_helper.py` | Token expansion for `{ETL_ROOT}` |
 | DB connections | `src/etl/connection_helper.py` | DSN builder for psycopg v3 |
 | Job conf parser | `src/etl/job_conf.py` | JSON deserialization, same format as C# |
 | Module factory | `src/etl/module_factory.py` | Creates module instances from conf entries |
@@ -40,8 +40,9 @@ The entire C# framework has been ported to Python. All build plan steps (1-21) a
 | CsvFileWriter | `src/etl/modules/csv_file_writer.py` | Date-partitioned CSV, RFC 4180, trailer support |
 | ParquetFileWriter | `src/etl/modules/parquet_file_writer.py` | Date-partitioned Parquet via pyarrow |
 | DataFrameWriter | `src/etl/modules/dataframe_writer.py` | Writes to Postgres curated schema |
-| External dispatcher | `src/etl/modules/external.py` | Registry-based dispatcher (was stub, now full) |
-| External modules | `src/etl/modules/externals/` | 73 Python files, one per C# ExternalModules class |
+| External dispatcher | `src/etl/modules/external.py` | Registry + dynamic `importlib` loading for OG and RE modules |
+| External modules (OG) | `src/etl/modules/externals/` | 73 Python files, one per C# ExternalModules class |
+| External modules (RE) | `RE/externals/` | Dynamic loading via `importlib` (session 025) |
 | Control DAL | `src/etl/control/control_db.py` | CRUD for control schema tables |
 | Execution plan | `src/etl/control/execution_plan.py` | Kahn's algorithm topological sort |
 | Job executor | `src/etl/control/job_executor_service.py` | Single-date orchestrator |
@@ -96,7 +97,7 @@ Proofmark is the independent output comparison tool used to validate the Python 
 - Fuzzy matching with configurable tolerance
 - Header/trailer comparison
 - Schema mismatch detection
-- Path token expansion (`{ETL_ROOT}`, `{ETL_RE_OUTPUT}`, `{ETL_RE_ROOT}`)
+- Path token expansion (`{ETL_ROOT}`)
 
 **Memory leak resolved (sessions 019-020):**
 - Persistent DB connections (session 019)
@@ -108,7 +109,7 @@ Proofmark is the independent output comparison tool used to validate the Python 
 
 **Manual test suite (23 fixtures):** All correct. `005_should_fail_sneaky_line_break` passes as expected (known gap — csv.reader strips quotes before Proofmark sees data values, documented in FSD Section 12, deliberately deferred).
 
-### 2.6 Orchestrator / Workflow Engine (BD — sessions 1-12)
+### 2.6 Orchestrator / Workflow Engine (BD — sessions 1-14)
 
 BD has built the deterministic workflow engine in Python (pivoted from C# during implementation). Repo: `EtlReverseEngineering`. Cloned to both `/media/dan/fdrive/codeprojects/EtlReverseEngineering/` (Hobson) and `/workspace/EtlReverseEngineering/` (BD).
 
@@ -122,28 +123,25 @@ BD has built the deterministic workflow engine in Python (pivoted from C# during
 - **92 tests, 38 requirements satisfied.** Skeptical auditor confirmed code faithfully implements the spec (all 71 edges match).
 - **Stubs throughout:** StubWorkNode/StubReviewNode return random outcomes. No real agent invocations yet.
 
-**v0.2 — Parallel Execution Infrastructure (IN PROGRESS, sessions 11-12):**
+**v0.2 — Parallel Execution Infrastructure (COMPLETE, sessions 11-13):**
 
-- Replace synchronous `Engine.run_job()` with work-stealing executor.
-- Postgres `re_task_queue` in `control` schema (`172.18.0.1:5432`, user=`claude`).
-- N worker threads (default 6, configurable), `SELECT ... FOR UPDATE SKIP LOCKED`.
-- Node completion enqueues next task — no direct invocation.
-- 16 new requirements (TQ-01–04, JS-01–03, WK-01–04, SM-10–11, TS-01–03).
-- 4 phases (4-7). **Phase 4 not yet started.**
-- Dan's standing order: no vestigial test harnesses — tests must exercise the real execution path.
+- Replaced synchronous `Engine.run_job()` with queue-based work-stealing executor.
+- Postgres `re_task_queue` + `re_job_state` in `control` schema.
+- N worker threads (default 6, configurable via `RE_WORKER_COUNT`), `SELECT ... FOR UPDATE SKIP LOCKED`.
+- `enqueue_next` (transition lookup → enqueue) and `ingest_manifest` (bulk-load from JSON).
+- `StepHandler` — per-step SM logic through queue. `run_job()` deleted.
+- 132 tests total, 16 requirements (TQ-01–04, JS-01–03, WK-01–04, SM-10–11, TS-01–03).
+
+**v0.3 — Agent Integration (NOT STARTED):**
+
+Replace stub nodes with real Claude CLI agent invocations. BD to update blueprints per path architecture v2.
 
 **Key design principles (non-negotiable):**
 
 - No errata accumulation between attempts. Writer gets only the most recent rejection reason.
 - Fresh context every agent invocation. No state carried between invocations.
-- Parallelism at job level (105 jobs), not within a single job's pipeline.
+- Parallelism at job level (103 jobs), not within a single job's pipeline.
 - Deterministic orchestrator, no LLM in the control loop.
-
-**Source of truth docs (BD's notes):**
-
-- `state-machine-transitions.md` — full transition table
-- `poc6-architecture.md` — queue design, agent model
-- `agent-taxonomy.md` — blueprint reference
 
 ---
 
@@ -193,112 +191,116 @@ Partial jobs all explained by seed data characteristics (weekend gaps, sparse ov
 
 ---
 
-## 4. Network Isolation — COMPLETE
+## 4. Network Isolation — v2 (Session 025)
 
 ### 4.1 The Problem
 
 In POC5, RE agents cheated. They copied OG output to pass Proofmark, and in one case edited OG code/conf to match their versions. The architecture must make cheating structurally impossible.
 
-### 4.2 Design Principle: Air Traffic Control
+### 4.2 Design Principle
 
-The model is **humans as air traffic control, agents as pilots.** Agents have autonomy within their lane. Routing, sequencing, and "cleared to land" decisions are human. Validation instruments (Proofmark, queue tables, control schema) are on the host side where agents can't tamper with them. This is a deliberate inversion of Microsoft's "Copilot" framing.
+**One token: `{ETL_ROOT}`.** Everything the host framework and Proofmark need to find must be expressible as `{ETL_ROOT}/...`. On the host, `ETL_ROOT` = `/media/dan/fdrive/codeprojects/MockEtlFrameworkPython`. In the container, `ETL_ROOT` = `/workspace/MockEtlFrameworkPython`. It never changes.
 
 ### 4.3 Architecture
 
 ```
------------------------------------- host (↑) ------------------------------------
-
-  OG ETL code/conf    OG curated output    Postgres (read+write)
-  MockEtlFrameworkPython service            Proofmark service
-
------------------------------------- network boundary (Docker) --------------------
-
-  Read: OG code (git clone)     Read: OG output (ro mount)
-  Read: control.* tables        Read: re-curated output
-  Write: queue tables only      Write: RE code/conf (workspace)
-
------------------------------------- basement (↓) --------------------------------
+{ETL_ROOT}/
+├── JobExecutor/Jobs/              # OG job confs (existing)
+├── src/etl/modules/externals/     # OG external modules (existing, 73 files)
+├── Output/
+│   ├── curated/                   # OG output (107 job dirs)
+│   └── re-curated/                # RE output (real dir, host-only writes)
+├── RE/                            # gitignored
+│   ├── Jobs/                      # symlink → workspace RE jobs
+│   └── externals/                 # symlink → workspace RE externals
 ```
 
 **Anti-cheat guarantees:**
-- Agents never write to OG output directories → can't copy answer key
-- Agents never write to OG code/conf → can't edit originals to match
+- OG output is ro-mounted into container → agents can't overwrite the answer key
+- RE output is ro-mounted into container → agents can't fake validation results
+- OG code access is via git clone (separate copy) → agents can't edit originals
 - Proofmark runs on host only → agents can't manipulate validation
 - Host never pulls agent git changes → OG repo frozen from RE perspective
-- `DatabaseSettings.Host = localhost` in framework config → basement can't run ETL FW against real DB (localhost inside container = nothing)
+- `DatabaseSettings.Host = localhost` in framework config → basement can't run ETL FW against real DB
 - Only upward channel: queue table writes (structured data, not file paths they control)
 
-### 4.4 Environment Variables — Proposed Simplification
+### 4.4 Environment Variables
 
-**POC5 (dead):** 4 env vars (`ETL_ROOT`, `ETL_RE_OUTPUT`, `ETL_RE_ROOT`, `ETL_DB_PASSWORD`)
+**2 env vars only:**
 
-**POC6 (implemented):** 2 env vars
+| Var | Host | Basement |
+|-----|------|----------|
+| `ETL_ROOT` | `/media/dan/fdrive/codeprojects/MockEtlFrameworkPython` | `/workspace/MockEtlFrameworkPython` |
+| `ETL_DB_PASSWORD` | *(set)* | *(same)* |
 
-| Var | Host (OG runs) | Host (RE validation) | Basement |
-|-----|----------------|---------------------|----------|
-| `ETL_ROOT` | `/media/dan/fdrive/codeprojects/MockEtlFrameworkPython` | `/media/dan/fdrive/ai-sandbox/workspace/MockEtlFrameworkPython` | `/workspace/MockEtlFrameworkPython` |
-| `ETL_DB_PASSWORD` | *(set)* | *(same)* | *(same)* |
+`ETL_ROOT` never changes. No flipping between OG and RE roots.
 
-`ETL_RE_ROOT` and `ETL_RE_OUTPUT` were POC5 artifacts from C#'s inability to dynamically load external modules. Removed from `.bashrc`, `compose.yml`, Proofmark, and ETL FW source (session 023).
-
-The host flips `ETL_ROOT` depending on whether it's running OG or validating RE output. Same framework code, different artifact source.
-
-### 4.5 Docker Mounts — Implemented
+### 4.5 Docker Mounts
 
 | Host path | Container path | Mode |
 |-----------|---------------|------|
-| `/media/dan/fdrive/ai-sandbox/workspace/` | `/workspace/` | rw (existing) |
-| `/media/dan/fdrive/codeprojects/MockEtlFrameworkPython/Output/curated/` | `/workspace/og-curated/` | **ro** (session 023) |
+| `/media/dan/fdrive/ai-sandbox/workspace/` | `/workspace/` | rw |
+| `{ETL_ROOT}/Output/curated/` | `{ETL_ROOT}/Output/curated/` | ro |
+| `{ETL_ROOT}/Output/re-curated/` | `{ETL_ROOT}/Output/re-curated/` | ro |
 
-**Important:** Only mount output directories, not git repos. OG code access is via git clone (separate `.git`, no conflicts).
+### 4.6 Symlinks (host side)
 
-### 4.6 Output Directory Layout — Implemented
+Two symlinks bridge the OG repo to the workspace so the host framework can find RE artifacts deployed by the publisher:
 
-| Directory | Purpose | Who writes | Who reads |
-|-----------|---------|-----------|-----------|
-| `/media/dan/fdrive/codeprojects/MockEtlFrameworkPython/Output/curated/` | OG output | Host ETL FW (OG runs) | Host Proofmark (LHS) |
-| `/media/dan/fdrive/ai-sandbox/workspace/re-curated/` | RE output | Host ETL FW (RE validation runs) | Host Proofmark (RHS), Basement (read via mount) |
-| `/workspace/og-curated/` (container) | OG output mirror | Nobody (ro mount) | Basement RE team (reference) |
+```
+{ETL_ROOT}/RE/Jobs/      → /media/dan/fdrive/ai-sandbox/workspace/MockEtlFrameworkPython/RE/Jobs/
+{ETL_ROOT}/RE/externals/ → /media/dan/fdrive/ai-sandbox/workspace/MockEtlFrameworkPython/RE/externals/
+```
 
-### 4.7 Path Tokenization
+This is a POC stand-in for a proper CI/CD pipeline (Azure/Databricks in production).
 
-Proofmark already supports `{ETL_ROOT}`, `{ETL_RE_OUTPUT}`, `{ETL_RE_ROOT}` token expansion in queue paths (`app_config.py` → `PathSettings.resolve()`). The ETL framework has the same token expansion in `path_helper.py`.
+### 4.7 Dynamic External Module Loading (Sessions 025-026)
 
-**Implemented:** Agents write all paths using `{ETL_ROOT}/...` tokens. Both Proofmark and the ETL framework expand them on the host side. No string replacement hacks needed. Simplified to `{ETL_ROOT}` only — `{ETL_RE_OUTPUT}` and `{ETL_RE_ROOT}` removed from all source code (session 023).
+`external.py` loads modules from two directories using the same `importlib` directory-scan mechanism:
+1. **OG:** `src/etl/modules/externals/` — scanned at runtime via `_load_from_dir()`
+2. **RE:** `RE/externals/` — scanned at runtime via `_load_from_dir()`
 
-### 4.8 Use Cases and Resolution
+No hardcoded import lists. Drop a `.py` file in either directory, framework finds it next run. Remove a file, nothing breaks. 156 tests passing.
 
-| # | Use Case | Resolution |
-|---|----------|-----------|
-| 1 | RE team reads OG code/conf | Git clone in basement. Separate repo, separate `.git`. |
-| 2 | RE team reads OG curated output | Read-only Docker mount at `/workspace/og-curated/` |
-| 3 | RE team writes code/conf that host FW executes | Write to `/workspace/MockEtlFrameworkPython/`. Host sees via bind mount at `/media/dan/fdrive/ai-sandbox/workspace/MockEtlFrameworkPython/`. |
-| 4 | Host FW writes RE output without overwriting OG | Writes to `/media/dan/fdrive/ai-sandbox/workspace/re-curated/`. Basement reads via bind mount. |
-| 5 | RE team writes Proofmark queue entries with resolvable paths | All paths use `{ETL_ROOT}/...` tokens. Host Proofmark expands them. |
-| 6 | RE team registers jobs in `control.jobs` with resolvable paths | Same token expansion. `{ETL_ROOT}/JobExecutor/Jobs/my_job.json`. |
-| 7 | RE team specifies external module paths in job conf JSON | Same token expansion. `{ETL_ROOT}/src/etl/modules/externals/my_module.py`. |
+**Session 026 fix:** The original session 025 implementation used a hardcoded 75-line import list for OG modules while RE modules used dynamic loading. The two burned jobs (`repeat_overdraft_customer_processor`, `suspicious_wire_flag_processor`) were still in that list despite their `.py` files being deleted, which crashed `_load_all()` on every External module invocation. Replaced the hardcoded list with the same `_load_from_dir()` pattern used for RE modules.
 
-### 4.9 Implementation — DONE (Session 023)
+### 4.8 Output Routing
 
-| Task | Where | Status |
-|------|-------|--------|
-| Update host `ETL_ROOT` to MockEtlFrameworkPython | `.bashrc` line 120 | Done |
-| Update basement `ETL_ROOT` to `/workspace/MockEtlFrameworkPython` | `compose.yml` | Done |
-| Kill `ETL_RE_ROOT` and `ETL_RE_OUTPUT` from Docker config | `compose.yml` | Done |
-| Kill `ETL_RE_ROOT` and `ETL_RE_OUTPUT` from host `.bashrc` | `.bashrc` | Done |
-| Remove `ETL_RE_ROOT`/`ETL_RE_OUTPUT` from Proofmark's `PathSettings` | `proofmark/app_config.py` | Done |
-| Remove `ETL_RE_ROOT`/`ETL_RE_OUTPUT` from ETL FW's `path_helper.py` + `app_config.py` | `MockEtlFrameworkPython/src/etl/` | Done |
-| Add read-only Docker mount for OG curated output | `compose.yml` | Done |
-| Create `re-curated` directory | `/media/dan/fdrive/ai-sandbox/workspace/re-curated/` | Done |
-| Create host-side symlink for og-curated | `og-curated` → OG curated output | Done |
-| Update documentation (6 files across both repos) | Proofmark + ETL FW docs | Done |
-| Verify Proofmark path token expansion | 206 tests passing | Done |
-| Verify ETL FW path token expansion | 156 tests passing | Done |
-| Confirm basement DB connection (bridge gateway IP) | `172.18.0.1`, `claude` role, 103 jobs visible | Done |
+OG and RE output are separated by the `outputDirectory` field in job confs:
+
+| Job type | `outputDirectory` value | Resolves to (host) |
+|----------|------------------------|---------------------|
+| OG | `Output/curated` | `{ETL_ROOT}/Output/curated/` |
+| RE | `Output/re-curated` | `{ETL_ROOT}/Output/re-curated/` |
+
+The builder blueprint must set `outputDirectory` to `Output/re-curated` for RE job confs.
+
+### 4.9 Three Task Queues
+
+| Queue | Purpose | Who inserts | Who processes |
+|-------|---------|------------|---------------|
+| `control.task_queue` | ETL job execution | Basement agents | Host (`python cli.py --service`) |
+| `control.proofmark_test_queue` | Output comparison | Basement agents | Host (`proofmark serve`) |
+| `control.re_task_queue` | Workflow state machine | BD's orchestrator | BD's orchestrator (internal) |
+
+### 4.10 RE Pipeline — Step by Step
+
+1. **Builder** writes job conf to `/workspace/EtlReverseEngineering/jobs/{job}/jobconf.json`
+2. **Builder** writes external module to `/workspace/EtlReverseEngineering/jobs/{job}/{module}.py`
+3. **Builder** sets `outputDirectory` to `Output/re-curated` in the job conf
+4. **Publisher** copies job conf to `/workspace/MockEtlFrameworkPython/RE/Jobs/{job}/jobconf.json`
+5. **Publisher** copies external module to `/workspace/MockEtlFrameworkPython/RE/externals/{module}.py`
+6. **Publisher** registers in `control.jobs` with path `{ETL_ROOT}/RE/Jobs/{job}/jobconf.json`
+7. **ExecuteJobRuns** inserts into `control.task_queue` (job_name + effective_date, no paths)
+8. **ExecuteJobRuns** polls `control.task_queue` for results
+9. **ExecuteJobRuns** monitors `{ETL_ROOT}/Output/re-curated` for output files
+10. **BuildProofmarkConfig** writes config to `/workspace/EtlReverseEngineering/jobs/{job}/proofmark-config.yaml`
+11. **ProofmarkExecutor** copies config to `/workspace/MockEtlFrameworkPython/RE/Jobs/{job}/proofmark-config.yaml`
+12. **ProofmarkExecutor** inserts into `control.proofmark_test_queue` with LHS `{ETL_ROOT}/Output/curated/...` and RHS `{ETL_ROOT}/Output/re-curated/...`
 
 ---
 
-## 5. System Health (as of 2026-03-12)
+## 5. System Health (as of 2026-03-14)
 
 - **Swap:** Increased from 2GB to 16GiB (`/swapfile` on SSD). Prevents OOM death spiral.
 - **RAM:** 16GB (2×8GB DDR4). Third stick (8GB) to be installed this weekend → 24GB via Intel flex mode.
@@ -318,12 +320,16 @@ Proofmark already supports `{ETL_ROOT}`, `{ETL_RE_OUTPUT}`, `{ETL_RE_ROOT}` toke
 | Faithfully reproduce C# bugs | External modules reproduce all known C# bugs so Proofmark passes. Fix bugs later, not during porting. | 014 |
 | Dumb orchestrator + atomic workers | Smart orchestrator (POC5) suffered context rot and cheating. Dumb loop + fresh-context agents fixes both. | BD-1 |
 | 103 horizontal waterfalls, not 1 vertical | Each job gets its own pipeline. No cross-job contamination. | BD-1 |
-| C# orchestrator, Python artifacts | Originally planned as C#. Pivoted to Python during implementation. Agents produce Python artifacts for MockEtlFrameworkPython. | BD-2 |
+| Python orchestrator (pivoted from C#) | Agents produce Python artifacts for MockEtlFrameworkPython. | BD-2 |
 | ATC model (human governance, agent autonomy) | Agents are pilots, humans are air traffic control. Inversion of Microsoft's "Copilot" framing. | 021 |
 | Network isolation via Docker boundary | Agents can read anything, write only to their workspace and queue tables. Validation on host only. | 021 |
-| Simplify to 2 env vars | `ETL_RE_ROOT` and `ETL_RE_OUTPUT` are POC5 C# artifacts. Python's dynamic loading makes them unnecessary. | 021 |
-| localhost DB config as cheat prevention | Framework's DB host = localhost. Doesn't resolve inside container. Agents can't run the real framework. | 021 (carried from POC5) |
+| localhost DB config as cheat prevention | Framework's DB host = localhost. Doesn't resolve inside container. Agents can't run the real framework. | 021 |
 | Never pull agent git changes | OG repo on host is frozen. Agents can push whatever they want — host ignores it. | 021 |
+| One token (`ETL_ROOT`), everything under it | All resolvable paths derive from `{ETL_ROOT}`. No flipping, no second root. | 025 |
+| RE code in `RE/` dir with symlinks to workspace | POC stand-in for CI/CD. Symlinks bridge host repo to workspace. | 025 |
+| Dynamic external module loading via `importlib` | Framework scans both `externals/` dirs at runtime. No hardcoded list, no rebuild. | 025-026 |
+| RE output via `Output/re-curated` | Builder sets `outputDirectory` differently. OG and RE output never collide. | 025 |
+| Blueprints for workers, skills for supervisors | Skills (progressive disclosure) don't fit short-lived atomic agents. May matter later for a supervisory agent. | 023 |
 
 ---
 
@@ -343,7 +349,8 @@ Proofmark already supports `{ETL_ROOT}`, `{ETL_RE_OUTPUT}`, `{ETL_RE_ROOT}` toke
 - All CSV formatting differences: **RESOLVED.** All categorised, zero data bugs.
 - RAM/OOM risk: **MITIGATED.** Swap 2GB→16GiB. RAM upgrade planned (16→24GB).
 - ETL_ROOT env var not persistent: **RESOLVED.** Updated in `.bashrc` (session 023).
-- Network isolation: **RESOLVED.** Fully implemented (session 023). See section 4.
+- Network isolation v1: **SUPERSEDED** by v2 (session 025). See section 4.
+- Path tokenization confusion: **RESOLVED.** One token, everything under ETL_ROOT (session 025).
 
 ---
 
@@ -353,12 +360,16 @@ Proofmark already supports `{ETL_ROOT}`, `{ETL_RE_OUTPUT}`, `{ETL_RE_ROOT}` toke
 
 | What | Path |
 |------|------|
-| Python repo | `/media/dan/fdrive/codeprojects/MockEtlFrameworkPython/` |
+| Python repo (host) | `/media/dan/fdrive/codeprojects/MockEtlFrameworkPython/` |
 | C# repo (reference only) | `/media/dan/fdrive/codeprojects/MockEtlFramework/` |
 | Proofmark | `/media/dan/fdrive/codeprojects/proofmark/` |
-| Job confs | `MockEtlFrameworkPython/JobExecutor/Jobs/` |
-| Python OG output | `MockEtlFrameworkPython/Output/curated/` |
-| Documentation | `MockEtlFrameworkPython/Documentation/` |
+| OG job confs | `{ETL_ROOT}/JobExecutor/Jobs/` |
+| OG external modules | `{ETL_ROOT}/src/etl/modules/externals/` |
+| RE job confs | `{ETL_ROOT}/RE/Jobs/` (symlink → workspace) |
+| RE external modules | `{ETL_ROOT}/RE/externals/` (symlink → workspace) |
+| OG output | `{ETL_ROOT}/Output/curated/` |
+| RE output | `{ETL_ROOT}/Output/re-curated/` |
+| Documentation | `{ETL_ROOT}/Documentation/` |
 
 ### Orchestrator
 
@@ -367,6 +378,7 @@ Proofmark already supports `{ETL_ROOT}`, `{ETL_RE_OUTPUT}`, `{ETL_RE_ROOT}` toke
 | Orchestrator repo (Hobson) | `/media/dan/fdrive/codeprojects/EtlReverseEngineering/` |
 | Orchestrator repo (BD) | `/media/dan/fdrive/ai-sandbox/workspace/EtlReverseEngineering/` |
 | Workflow engine source | `EtlReverseEngineering/src/workflow_engine/` |
+| Agent blueprints | `EtlReverseEngineering/blueprints/` |
 | Planning docs | `EtlReverseEngineering/.planning/` |
 | Transition table (source of truth) | `AtcStrategy/POC6/BDsNotes/state-machine-transitions.md` |
 
@@ -376,20 +388,17 @@ Proofmark already supports `{ETL_ROOT}`, `{ETL_RE_OUTPUT}`, `{ETL_RE_ROOT}` toke
 |------|------|
 | Hobson's notes | `AtcStrategy/POC6/HobsonsNotes/` |
 | BD's notes | `/media/dan/fdrive/ai-sandbox/workspace/AtcStrategy/POC6/BDsNotes/` |
+| Path architecture v2 (for BD) | `HobsonsNotes/path-changes-for-bd-v2.md` |
 | Build plan | `HobsonsNotes/python-rewrite-build-plan.md` |
 | Job scope manifest | `HobsonsNotes/job-scope-manifest.json` |
 | Env var mapping | `HobsonsNotes/env-var-mapping.md` |
-| Memory leak RCA | `HobsonsNotes/rca-memory-leak-pipeline.md` |
-| CSV failure RCAs | `HobsonsNotes/rca-csv-failures-batch1.md` through `batch5.md` |
-| Proofmark FSD (quote gap) | `proofmark/Documentation/OriginalBuildDocs/Design/FSD-v1.md` (Section 12) |
 
 ### Docker / Sandbox
 
 | What | Path |
 |------|------|
 | AI sandbox | `/media/dan/fdrive/ai-sandbox/` |
-| Launch script | `/media/dan/fdrive/ai-sandbox/launch.sh` |
-| Docker guide | `/home/dan/Desktop/claude-docker-guide.md` |
+| compose.yml | `/media/dan/fdrive/ai-sandbox/compose.yml` |
 | Basement workspace | `/media/dan/fdrive/ai-sandbox/workspace/` (host) = `/workspace/` (container) |
 
 ---
@@ -409,11 +418,15 @@ Proofmark already supports `{ETL_ROOT}`, `{ETL_RE_OUTPUT}`, `{ETL_RE_ROOT}` toke
 | 019 | 2026-03-11 | Persistent DB connections in Proofmark. CLI cleanup. 206 Proofmark tests pass. |
 | 020 | 2026-03-12 | Memory leak F1/F6 fixes. Telemetry. Test table isolation. Queue rebuild. |
 | 021 | 2026-03-12 | System health verified. Swap 2→16GiB. Proofmark gold star (1,215/0/51s). Manual test suite (23/23). Network isolation design. Env var simplification. C# output deleted (5.4GB). |
-| 023 | 2026-03-13 | Network isolation implemented. Env vars simplified (4→2). Docker ro mount. Dead tokens removed from all source + docs. Basement DB connection confirmed (172.18.0.1). |
-| 024 | 2026-03-14 | Housekeeping. AtcStrategy synced (commit + push + pull BD's changes). EtlReverseEngineering cloned to codeprojects. State-of-poc6 updated. Stale .idea dir removed. |
-| BD-1 | 2026-03-10 | Agent taxonomy designed. Adversarial review. Architecture doc. |
+| 023 | 2026-03-13 | Network isolation v1 implemented. Env vars simplified (4→2). Docker ro mount. Dead tokens removed from all source + docs. Basement DB connection confirmed (172.18.0.1). |
+| 024 | 2026-03-14 | Housekeeping. AtcStrategy synced. EtlReverseEngineering cloned. State-of-poc6 updated. |
+| 025 | 2026-03-14 | Network isolation v2. Path consolidation under ETL_ROOT. RE/ directory with symlinks. Dynamic external module loading (`importlib`). 10 blueprints updated. compose.yml: 3 mounts. 156 tests passing. |
+| 026 | 2026-03-15 | Replaced hardcoded OG import list in `external.py` with `_load_from_dir()` directory scan. Fixed crash from burned jobs still in import list. 156 tests passing. |
+| BD-1| 2026-03-10 | Agent taxonomy designed. Adversarial review. Architecture doc. |
 | BD-2 | 2026-03-10 | C# orchestrator, DB-backed queue, state machine, polyglot architecture. |
 | BD-3 | 2026-03-10 | GSD project. 27 requirements. 6-phase roadmap. Ready for Phase 1. |
 | BD-4–10 | 2026-03-10–12 | v0.1 phases 1-3 built. State machine, review branching, FBR gauntlet, triage pipeline. 92 tests, 38 requirements. |
-| BD-11 | 2026-03-12 | v0.1 declared complete. v0.2 scoped (parallel execution). Two options identified: de-stub or multi-thread. |
-| BD-12 | 2026-03-13 | v0.2 milestone initialized. 16 requirements, 4-phase roadmap (phases 4-7). Dan chose multi-threaded executor first. |
+| BD-11 | 2026-03-12 | v0.1 declared complete. v0.2 scoped (parallel execution). |
+| BD-12 | 2026-03-13 | v0.2 milestone initialized. 16 requirements, 4-phase roadmap (phases 4-7). |
+| BD-13 | 2026-03-14 | v0.2 shipped. All 4 phases in one session. 132 tests, 16 requirements. |
+| BD-14 | 2026-03-14 | v0.3 scoped. Agent integration docs. Blueprint updates. |

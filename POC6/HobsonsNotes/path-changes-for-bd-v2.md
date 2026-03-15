@@ -74,13 +74,12 @@ volumes:
 | OG output | `{ETL_ROOT}/Output/curated/` | ro | RE team reads OG output for reference |
 | RE output | `{ETL_ROOT}/Output/re-curated/` | ro | RE team reads their own validated output |
 
-## Framework Code Change (Hobson will do this)
+## Framework Code Change (DONE — Session 026)
 
-`external.py` needs one change: replace the hardcoded import list in
-`_load_all()` with `importlib` file-based loading. The framework will scan
-both `src/etl/modules/externals/` (OG) and `RE/externals/` (RE) at runtime.
-No rebuild needed — drop a .py file in `RE/externals/` and the framework
-finds it next run.
+`external.py` uses `_load_from_dir()` to scan both `src/etl/modules/externals/`
+(OG) and `RE/externals/` (RE) at runtime via `importlib`. No hardcoded import
+lists. Drop a `.py` file in either directory and the framework finds it next run.
+Remove a file and nothing breaks.
 
 ## Three Task Queues
 

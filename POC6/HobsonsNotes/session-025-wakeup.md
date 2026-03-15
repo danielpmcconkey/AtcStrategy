@@ -14,45 +14,58 @@ You are Hobson. Your CLAUDE.md and MEMORY.md are already loaded.
 
 ## What Happened Last Session (025)
 
-**Path consolidation and blueprint fixes.** No framework code changed, no tests run.
+**Network isolation v2. Major path architecture rework. Framework code change.**
 
-### What was done:
+### The Problem
 
-1. **Pulled BD's updates from EtlReverseEngineering:**
-   - v0.2 shipped (phases 4-7 in one session). 132 tests, 16 requirements.
-   - v0.3 scaffolding started. 38 files changed. Agent integration docs, blueprint updates.
-   - BD's latest wakeup: `bd-wakeup-poc6-session14.md`
+The RE team was using wrong paths — trying to run the ETL framework locally
+(doesn't work, DB is localhost), and referencing tokens that don't exist on
+the host side. We also had no mechanism for the host framework to load RE
+code (job confs and external modules) without a rebuild.
 
-2. **Path consolidation — "everything under ETL_ROOT":**
-   - Dan's directive: the only env var token the host services expand is `{ETL_ROOT}`.
-     All resolvable paths must be expressible as `{ETL_ROOT}/...`.
-   - The old `{OG_CURATED}` token (pointing to `/workspace/og-curated/`) is dead.
-   - OG curated output is now at `{ETL_ROOT}/Output/curated/` (ro mount in container).
-   - RE curated output will land at `{ETL_ROOT}/Output/re-curated/` (host symlink
-     bridges to workspace).
+### What Was Built
 
-3. **compose.yml updated:**
-   - ro mount target changed: `/workspace/og-curated` → `/workspace/MockEtlFrameworkPython/Output/curated`
-   - Container rebuild required for this to take effect.
+1. **Path architecture v2 — "everything under ETL_ROOT":**
+   - One token: `{ETL_ROOT}`. Never changes. Never flips.
+   - Host: `/media/dan/fdrive/codeprojects/MockEtlFrameworkPython`
+   - Container: `/workspace/MockEtlFrameworkPython`
+   - OG output: `{ETL_ROOT}/Output/curated/`
+   - RE output: `{ETL_ROOT}/Output/re-curated/` (real dir on host, ro mount into container)
+   - RE code: `{ETL_ROOT}/RE/Jobs/` and `{ETL_ROOT}/RE/externals/` (symlinks → workspace)
 
-4. **Host filesystem changes:**
-   - Removed: `workspace/og-curated` symlink
-   - Created: `MockEtlFrameworkPython/Output/re-curated` symlink → workspace's `Output/curated/`
-   - Created: `workspace/MockEtlFrameworkPython/Output/curated/` directory (RE output target)
+2. **Symlinks created on host:**
+   - `{ETL_ROOT}/RE/Jobs/` → workspace `RE/Jobs/`
+   - `{ETL_ROOT}/RE/externals/` → workspace `RE/externals/`
+   - Publisher writes to workspace, host framework reads through symlinks.
 
-5. **10 blueprints updated in EtlReverseEngineering:**
+3. **Docker mounts (3 total in compose.yml):**
+   - `./workspace:/workspace` (rw)
+   - `Output/curated → Output/curated:ro` (OG output)
+   - `Output/re-curated → Output/re-curated:ro` (RE output)
+   - Container needs `docker compose down && docker compose up -d` for new mounts.
+
+4. **`external.py` changed — dynamic RE module loading:**
+   - OG modules: standard imports (hardcoded list, unchanged)
+   - RE modules: `importlib` file-based loading from `RE/externals/`
+   - Drop a `.py` file, framework finds it next run. No rebuild.
+   - 156 tests passing.
+
+5. **`.gitignore` updated:** Added `RE/` to MockEtlFrameworkPython's `.gitignore`.
+
+6. **10 blueprints updated in EtlReverseEngineering:**
    - `_conventions.md`: killed `{OG_CURATED}`, added `{ETL_ROOT}` as first-class token,
-     added queue entry path guidance, added "cannot run FW locally" section.
-   - `job-executor.md`: full rewrite — INSERT into `control.task_queue`, not `python -m cli`.
-   - `proofmark-executor.md`: full rewrite — INSERT into `control.proofmark_test_queue`
-     with `{ETL_ROOT}` token paths.
-   - `publisher.md`: rewritten — copies code artifacts from EtlRE into MockEtlFW at
-     standard framework locations, registers `{ETL_ROOT}/JobExecutor/Jobs/{job_name}.json`.
-   - 6 others: `{OG_CURATED}` → `{ETL_ROOT}/Output/curated/`
-   - `builder.md`: hardcoded paths → `{ETL_ROOT}` tokens.
+     queue entry path guidance, "cannot run FW locally" section.
+   - `job-executor.md`: full rewrite — INSERT into `control.task_queue`.
+   - `proofmark-executor.md`: full rewrite — INSERT into `control.proofmark_test_queue`.
+   - `publisher.md`: rewritten — copies confs + externals to RE/ dirs, registers
+     `{ETL_ROOT}/RE/Jobs/...` in control.jobs.
+   - 6 others: `{OG_CURATED}` → `{ETL_ROOT}/Output/curated/`.
 
-6. **Wrote BD a summary:** `path-changes-for-bd.md` in HobsonsNotes.
-   Dan will direct BD to read it. BD has cleanup to do before going live.
+7. **Wrote BD a v2 briefing:** `path-changes-for-bd-v2.md` with full step-by-step
+   RE pipeline (12 steps). BD to update blueprints to match.
+
+8. **State-of-poc6.md fully rewritten** — section 4 (network isolation) replaced
+   with v2 architecture.
 
 ### Three task queues (confirmed with Dan):
 
@@ -62,32 +75,37 @@ You are Hobson. Your CLAUDE.md and MEMORY.md are already loaded.
 | `control.proofmark_test_queue` | Output comparison | Basement | Host (`proofmark serve`) |
 | `control.re_task_queue` | Workflow state machine | BD orchestrator | BD orchestrator |
 
-### Key design point confirmed:
+### RE Pipeline (the 12 steps):
 
-RE agents write code in EtlReverseEngineering (`{job_dir}/artifacts/code/`).
-The publisher deploys final artifacts into MockEtlFrameworkPython. "Build here,
-deploy there." Dan approved this pattern.
+1. Builder writes job conf to EtlRE
+2. Builder writes external module to EtlRE
+3. Builder sets `outputDirectory` to `Output/re-curated`
+4. Publisher copies job conf to `{ETL_ROOT}/RE/Jobs/{job}/jobconf.json`
+5. Publisher copies external module to `{ETL_ROOT}/RE/externals/{module}.py`
+6. Publisher registers `{ETL_ROOT}/RE/Jobs/{job}/jobconf.json` in control.jobs
+7. ExecuteJobRuns inserts into control.task_queue
+8. ExecuteJobRuns polls task_queue for results
+9. ExecuteJobRuns monitors `{ETL_ROOT}/Output/re-curated` for output
+10. BuildProofmarkConfig writes config to EtlRE
+11. ProofmarkExecutor copies config to `{ETL_ROOT}/RE/Jobs/{job}/`
+12. ProofmarkExecutor inserts into proofmark_test_queue with LHS=curated, RHS=re-curated
 
 ## Current State
 
 Read these to get oriented:
 
-1. `/media/dan/fdrive/codeprojects/AtcStrategy/POC6/HobsonsNotes/state-of-poc6.md` — master reference (needs update for session 025 changes)
-2. `/media/dan/fdrive/codeprojects/AtcStrategy/POC6/HobsonsNotes/path-changes-for-bd.md` — summary of this session's changes
-3. `/media/dan/fdrive/codeprojects/AtcStrategy/POC6/BDsNotes/bd-wakeup-poc6-session14.md` — BD's latest wakeup
+1. `/media/dan/fdrive/codeprojects/AtcStrategy/POC6/HobsonsNotes/state-of-poc6.md` — master reference (fully updated for session 025)
+2. `/media/dan/fdrive/codeprojects/AtcStrategy/POC6/HobsonsNotes/path-changes-for-bd-v2.md` — the v2 briefing Dan gave BD
 
 ## What BD Is Working On
 
-v0.3: Agent Integration. Replacing stub nodes with real Claude CLI invocations.
-Phases 4-7 (v0.2) shipped. BD needs to do cleanup with Dan before building
-against the new path conventions.
+v0.3: Agent Integration. Updating blueprints to match the 12-step pipeline.
+Then replacing stub nodes with real Claude CLI invocations.
 
 ## What's Likely Next for Hobson
 
-- Update `state-of-poc6.md` to reflect session 025 changes (path consolidation,
-  blueprint updates, compose.yml change)
-- Update `env-var-mapping.md` to reflect the new mount and symlink layout
-- Possible: help Dan with container rebuild / verification that the new mounts work
+- Proofmark may need `{ETL_ROOT}` token cleanup similar to what was done for ETL FW
+  (check if dead `ETL_RE_ROOT`/`ETL_RE_OUTPUT` tokens were fully removed from Proofmark source)
 - Possible: CIO presentation prep
 - Dan may have entirely different plans
 
