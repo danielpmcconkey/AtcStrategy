@@ -1,8 +1,8 @@
 # State of POC6
 
-**Date:** 2026-03-14
+**Date:** 2026-03-16
 **Author:** Hobson
-**Status:** Framework complete. Validation complete. Network isolation v2 implemented. Orchestrator v0.2 complete (BD). v0.3 (agent integration) next.
+**Status:** Framework complete. Validation complete. Network isolation v2 implemented. Append-mode re-run bug fixed. Orchestrator v0.2 complete (BD). v0.3 (agent integration) in progress.
 
 ---
 
@@ -63,7 +63,7 @@ The entire C# framework has been ported to Python. All build plan steps (1-21) a
 
 ### 2.2 Test Suite
 
-**156 unit tests, all passing.**
+**158 unit tests, all passing.**
 
 | Test file | Count | Scope |
 |-----------|-------|-------|
@@ -72,8 +72,8 @@ The entire C# framework has been ported to Python. All build plan steps (1-21) a
 | `test_dataframe_ops.py` | 24 | Pandas operations matching C# DataFrame API |
 | `test_transformation.py` | 10 | SQLite integration, empty tables, joins |
 | `test_module_factory.py` | 23 | Module deserialization, validation |
-| `test_csv_file_writer.py` | 22 | Headers, quoting, trailers, append, encoding |
-| `test_parquet_file_writer.py` | 16 | Multi-part, schemas, append, Decimal coercion |
+| `test_csv_file_writer.py` | 23 | Headers, quoting, trailers, append, encoding, re-run regression |
+| `test_parquet_file_writer.py` | 17 | Multi-part, schemas, append, Decimal coercion, re-run regression |
 | `test_v4_jobs.py` | 27 | Real job SQL transformations with fixture data |
 
 ### 2.3 Job Confs and Output
@@ -326,6 +326,7 @@ The builder blueprint must set `outputDirectory` to `Output/re-curated` for RE j
 | localhost DB config as cheat prevention | Framework's DB host = localhost. Doesn't resolve inside container. Agents can't run the real framework. | 021 |
 | Never pull agent git changes | OG repo on host is frozen. Agents can push whatever they want — host ignores it. | 021 |
 | One token (`ETL_ROOT`), everything under it | All resolvable paths derive from `{ETL_ROOT}`. No flipping, no second root. | 025 |
+| Append-mode partition lookup bounded by effective date | `find_latest_partition(before=effective_date)` prevents re-runs from pulling in future partitions. | 027 |
 | RE code in `RE/` dir with symlinks to workspace | POC stand-in for CI/CD. Symlinks bridge host repo to workspace. | 025 |
 | Dynamic external module loading via `importlib` | Framework scans both `externals/` dirs at runtime. No hardcoded list, no rebuild. | 025-026 |
 | RE output via `Output/re-curated` | Builder sets `outputDirectory` differently. OG and RE output never collide. | 025 |
@@ -339,6 +340,7 @@ The builder blueprint must set `outputDirectory` to `Output/re-curated` for RE j
 
 1. **Sort order differences:** `customer_contactability` and `card_expiration_watch` may have different row ordering. Formatting, not data.
 2. **Timestamp format difference:** `inter_account_transfers` writes different format in Python vs C#. Formatting, not data.
+3. **Queue status mismatch:** BD's blueprints insert into `control.task_queue` with `status = 'Queued'`, but the framework polls for `status = 'Pending'`. Contract mismatch — BD's blueprints need updating.
 
 ### Resolved Issues
 
@@ -347,6 +349,7 @@ The builder blueprint must set `outputDirectory` to `Output/re-curated` for RE j
 - Proofmark memory leak: **RESOLVED.** Validated at scale.
 - All sparse/missing output RCAs: **RESOLVED.** All explained by seed data.
 - All CSV formatting differences: **RESOLVED.** All categorised, zero data bugs.
+- Append-mode re-run bug: **RESOLVED.** `find_latest_partition()` grabbed future partitions on re-run (session 027). Fixed with `before` parameter.
 - RAM/OOM risk: **MITIGATED.** Swap 2GB→16GiB. RAM upgrade planned (16→24GB).
 - ETL_ROOT env var not persistent: **RESOLVED.** Updated in `.bashrc` (session 023).
 - Network isolation v1: **SUPERSEDED** by v2 (session 025). See section 4.
@@ -422,6 +425,7 @@ The builder blueprint must set `outputDirectory` to `Output/re-curated` for RE j
 | 024 | 2026-03-14 | Housekeeping. AtcStrategy synced. EtlReverseEngineering cloned. State-of-poc6 updated. |
 | 025 | 2026-03-14 | Network isolation v2. Path consolidation under ETL_ROOT. RE/ directory with symlinks. Dynamic external module loading (`importlib`). 10 blueprints updated. compose.yml: 3 mounts. 156 tests passing. |
 | 026 | 2026-03-15 | Replaced hardcoded OG import list in `external.py` with `_load_from_dir()` directory scan. Fixed crash from burned jobs still in import list. 156 tests passing. |
+| 027 | 2026-03-16 | Append-mode re-run bug fixed. `find_latest_partition()` now takes `before` param. Both CSV and Parquet writers pass effective date. Queue status mismatch diagnosed (`Queued` vs `Pending`). 158 tests passing. |
 | BD-1| 2026-03-10 | Agent taxonomy designed. Adversarial review. Architecture doc. |
 | BD-2 | 2026-03-10 | C# orchestrator, DB-backed queue, state machine, polyglot architecture. |
 | BD-3 | 2026-03-10 | GSD project. 27 requirements. 6-phase roadmap. Ready for Phase 1. |
