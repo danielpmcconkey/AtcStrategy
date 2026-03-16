@@ -1,6 +1,6 @@
 # State of POC6
 
-**Last updated:** 2026-03-14 (session 18)
+**Last updated:** 2026-03-15 (session 20)
 
 ## Milestones
 
@@ -22,32 +22,96 @@ Phases 4-7. 40 new tests (132 total), 16 requirements. Replaced synchronous engi
 - **Phase 6:** `WorkerPool` — N configurable threads (default 6, `RE_WORKER_COUNT` env var), claim-execute loop, pluggable `TaskHandler`
 - **Phase 7:** `StepHandler` — per-step SM logic through queue, Engine rewritten as manifest-ingest → pool wrapper, all engine tests rewritten for queue execution, `run_job()` deleted
 
-### v0.3 Agent Integration — FIRST RUN DONE, FIXING PATH ISSUES
+### v0.3 Agent Integration — 10/11 JOBS COMPLETE, 12 IN PROGRESS
 
-Replaced node stubs with Claude CLI agent invocations. First full pipeline run
-on job 373 (`dans_transaction_special`) got through all build + FBR gates but
-failed at the validate stage:
-- `ExecuteJobRuns` ran ETL framework locally instead of queuing to `control.task_queue`
-- `ExecuteProofmark` queued correctly but used wrong paths — all 62 tasks failed
-- Publisher overwrote OG job registration in `control.jobs` (fixed)
+First end-to-end pipeline runs with real Claude CLI agents replacing stubs.
 
-**Session 18 fixes:**
-- Hobson designed path architecture v2 — `RE/` directories, symlinked to host
-- All blueprints updated for `_re` naming, `{ETL_ROOT}` literal tokens, RE/ paths
-- DB cleaned, OG job registration restored, artifacts wiped for fresh run
-- Awaiting: container rebuild (re-curated mount), Hobson's symlinks, re-seed
+**Session 18:** First complete run — job 373 (`DansTransactionSpecial`), 62/62
+proofmark comparisons passed STRICT. Several bug fixes (signoff outcome type,
+proofmark-executor paths, no-delete evidence rule).
+
+**Session 19:** 10-job batch run. Results:
+- **Run 1 (all 10):** 4 completed, 6 failed at `ExecuteJobRuns`. Root cause:
+  `_load_all()` in `external.py` had hardcoded import list including a phantom
+  module (`repeat_overdraft_customer_processor`) from a job cut between POC5/POC6.
+  Also discovered agents were copy-pasting OG external module code with `_re`
+  suffix instead of actually remediating anti-patterns.
+- **Blueprint overhaul:** Rewrote 10 blueprints to enforce remediation-first
+  anti-pattern policy. Key change: externals are last resort, not default.
+  FSD writer now instructs agents to inline logic into standard framework
+  modules (DataSourcing, Transformation, CsvFileWriter).
+- **Hobson fix:** Replaced hardcoded `_load_all()` import list with directory
+  scan (`pkgutil.iter_modules`). 156 tests passing.
+- **Run 2 (6 failed jobs, fresh start):** 5 completed with genuine remediation.
+  Jobs 160 and 166 fully eliminated external modules. Jobs 161, 164, 165
+  reduced externals to thin I/O shims. All proofmark STRICT. Job 163
+  (TransactionAnomalyFlags) still running — got kicked back by FBR.
+- **Timeout fix:** `run_until_drained` timeout bumped from 1h to 4h.
+
+**Session 20:** Infrastructure + batch-12 launch.
+- **Job 163 dead-lettered** at FBR_ProofmarkCheck (5/5 retries exhausted).
+  Root cause: zombie job from missing FAIL transition + timeout cascade.
+  Rebuilt successfully on retry but couldn't survive FBR gauntlet.
+- **Bug fix: work-node FAIL transitions.** WORK nodes had no FAIL edge in
+  the transition table, causing zombie jobs (status=RUNNING, no queue entry).
+  Added self-retry FAIL edges for all 27 work nodes. Also added save-before-raise
+  safety net in step_handler.
+- **Per-node model mapping.** `MODEL_MAP` in `nodes.py` assigns models by node:
+  Opus for spec/design/adversarial review (16 nodes), Haiku for mechanical
+  execution (2 nodes), Sonnet for everything else (23 nodes via fallback).
+  ~35% fewer Opus calls vs uniform Opus.
+- **Blueprint cleanup.** Burned all C# references (OG is now Python). Killed
+  stale tokens (`{OG_CS_ROOT}`, `{FW_DOCS}`, `{ORCH_ROOT}`, `{JOB_DIR}`).
+  All paths hardcoded. `{ETL_ROOT}` remains as only token (literal for DB).
+  Updated external module interface docs (register/execute pattern).
+- **Timeout bumped** from 600s to 1800s (30 min) per step.
+- **Token-budget clutch** tested and working. `control.re_engine_config`
+  `clutch_engaged = true` parks all workers until disengaged.
+- **Batch-12 launched** (13 jobs: 12 new + job 163 resume). All 12 new jobs
+  progressed to Build/Validate stage before clutch engaged. Model mapping
+  confirmed working in logs (Sonnet for Plan/Build, Opus for Review/FBR).
+
+**Due diligence on completed jobs (session 19):**
+- No proofmark cheating (all compare curated vs re-curated)
+- Genuine code remediation (not copy-paste) confirmed for all 5
+- 31-date proofmark coverage confirmed for 4/5 (job 164 only 1 date had output — legit)
+- All deployments correct (RE/Jobs, RE/externals, Output/re-curated)
+
+**Completed jobs:** 159, 160, 161, 162, 164, 165, 166, 369, 371, 373 (10 total)
+**Dead-lettered:** 163 (TransactionAnomalyFlags — FBR_ProofmarkCheck, 5 retries)
+**In progress (clutch engaged):** 1-12 (batch-12, all in Build/Validate stage)
+
+## Batch Status at Clutch Engagement (session 20)
+
+| Job | Node | Retries |
+|-----|------|---------|
+| 1   | ReviewProofmarkConfig | 0 |
+| 2   | BuildProofmarkConfig | 0 |
+| 3   | ReviewFsd | 0 |
+| 4   | ReviewJobArtifacts | 0 |
+| 5   | ReviewJobArtifacts | 0 |
+| 6   | ExecuteUnitTests | 0 |
+| 7   | BuildJobArtifacts | 0 |
+| 8   | FBR_BddCheck | 0 |
+| 9   | ExecuteUnitTests | 0 |
+| 10  | BuildProofmarkConfig | 0 |
+| 11  | ReviewProofmarkConfig | 0 |
+| 12  | ReviewUnitTests | 0 |
 
 ## Path Architecture (v2)
 
 - **One literal token: `{ETL_ROOT}`** — never resolved by orchestrator, host
-  expands at runtime from its own env var
-- **RE artifacts** deploy to `{ETL_ROOT}/RE/Jobs/` and `{ETL_ROOT}/RE/externals/`
-  (symlinked from host codeprojects to container workspace)
+  expands at runtime from its own env var. Used ONLY in DB entries.
+- **All other paths hardcoded** to container mount points. No tokens.
+- **RE artifacts** deploy to `/workspace/MockEtlFrameworkPython/RE/Jobs/` and
+  `/workspace/MockEtlFrameworkPython/RE/externals/` (symlinked to host)
 - **`_re` suffix** on all RE identifiers: jobName, typeName, module filenames,
   control.jobs registration
-- **OG output** at `{ETL_ROOT}/Output/curated/` (ro mount)
-- **RE output** at `{ETL_ROOT}/Output/re-curated/` (ro mount, host writes here)
-- See: `AtcStrategy/POC6/HobsonsNotes/path-changes-for-bd-v2.md`
+- **OG output** at `/workspace/MockEtlFrameworkPython/Output/curated/` (ro mount)
+- **RE output** at `/workspace/MockEtlFrameworkPython/Output/re-curated/` (ro mount, host writes here)
+- **OG job confs** at `/workspace/MockEtlFrameworkPython/JobExecutor/Jobs/`
+- **OG externals** at `/workspace/MockEtlFrameworkPython/src/etl/modules/externals/`
+- **Framework docs** at `/workspace/MockEtlFrameworkPython/Documentation/`
 
 ## Architecture
 
@@ -57,6 +121,8 @@ failed at the validate stage:
 - Fresh Claude CLI context per invocation (no rot)
 - Postgres task queue with `SELECT ... FOR UPDATE SKIP LOCKED`
 - Per-agent blueprints as system prompts
+- Per-node model assignment via MODEL_MAP (Opus/Sonnet/Haiku)
+- Token-budget clutch in `control.re_engine_config` for pausing workers
 - 103 independent job pipelines (from manifest), zero cross-contamination
 - See: `poc6-architecture.md`
 
@@ -71,10 +137,10 @@ failed at the validate stage:
 | `src/workflow_engine/schema.sql` | DDL for re_task_queue, re_job_state |
 | `src/workflow_engine/engine.py` | Engine — manifest ingest + pool wrapper |
 | `src/workflow_engine/transitions.py` | Transition table, routing dicts, validation |
-| `src/workflow_engine/nodes.py` | Node ABC, stub implementations, agent registry |
+| `src/workflow_engine/nodes.py` | Node ABC, stub implementations, agent registry, MODEL_MAP |
 | `src/workflow_engine/agent_node.py` | AgentNode — Claude CLI invocation per blueprint |
 | `src/workflow_engine/models.py` | JobState, EngineConfig, Outcome, NodeType |
-| `blueprints/_conventions.md` | Agent conventions, path tokens, RE naming rules |
+| `blueprints/_conventions.md` | Agent conventions, paths, RE naming rules |
 
 ## Design Principles (standing)
 
@@ -85,6 +151,7 @@ failed at the validate stage:
 - Fresh context every agent invocation. No state carried between invocations.
 - Deterministic orchestrator. No LLM in the control loop.
 - No vestigial test harnesses — tests exercise the real execution path.
+- Model assignment by node complexity, not uniform across pipeline.
 
 ## Division of Labor
 
