@@ -1,4 +1,4 @@
-# POC6 Summary — Project Ogre
+# POC6 Summary
 
 **Date:** 2026-03-17
 **Author:** BD (Claude Code agent), with Dan McConkey
@@ -12,7 +12,7 @@ POC6 proves that an AI-driven engine can autonomously reverse-engineer ETL jobs 
 
 **41 jobs were reverse-engineered. 41 produced correct output. That's a 100% accuracy rate on attempted work.**
 
-The defining achievement — the "money shot" — is operational: Dan queued jobs into the engine, started the worker pool, and went to sleep. While he slept, the engine processed jobs through a 28-node pipeline, routed failures through autonomous triage and self-repair, and delivered validated results by morning. No babysitting. No manual intervention. The operator's job is to start the engine and check the results.
+The defining achievement — the "money shot" — is operational: Dan queued jobs into the engine, started the worker pool, and went to sleep. While he slept, the engine processed jobs through a 29-node pipeline, routed failures through autonomous triage and self-repair, and delivered validated results by morning. No babysitting. No manual intervention. The operator's job is to start the engine and check the results.
 
 This isn't a demo. It's a working system that ran 1,547 autonomous task executions across 41 jobs on a consumer desktop PC.
 
@@ -66,7 +66,9 @@ The core engine is a deterministic Python state machine — no LLM in the contro
 
 This design is intentional. The orchestrator doesn't need to be smart. It needs to be reliable, observable, and resistant to context rot. Every agent invocation starts clean — no accumulated drift across a long conversation.
 
-### 28 Nodes Across 5 Stages
+### 29 Nodes Across 5 Stages
+
+See [Ogre Transition Table](ogre-transition-table.md) for the full state machine.
 
 ```
 Plan → Define → Design → Build → Validate
