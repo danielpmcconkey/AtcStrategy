@@ -1,6 +1,6 @@
 # State of POC6
 
-**Last updated:** 2026-03-15 (session 20)
+**Last updated:** 2026-03-17 (session 26)
 
 ## Milestones
 
@@ -22,81 +22,81 @@ Phases 4-7. 40 new tests (132 total), 16 requirements. Replaced synchronous engi
 - **Phase 6:** `WorkerPool` — N configurable threads (default 6, `RE_WORKER_COUNT` env var), claim-execute loop, pluggable `TaskHandler`
 - **Phase 7:** `StepHandler` — per-step SM logic through queue, Engine rewritten as manifest-ingest → pool wrapper, all engine tests rewritten for queue execution, `run_job()` deleted
 
-### v0.3 Agent Integration — 10/11 JOBS COMPLETE, 12 IN PROGRESS
+### v0.3 Agent Integration — 37/102 JOBS COMPLETE, 3 IN PROGRESS
 
 First end-to-end pipeline runs with real Claude CLI agents replacing stubs.
 
-**Session 18:** First complete run — job 373 (`DansTransactionSpecial`), 62/62
-proofmark comparisons passed STRICT. Several bug fixes (signoff outcome type,
-proofmark-executor paths, no-delete evidence rule).
+**Sessions 18-20:** Initial agent integration. First complete job (373,
+DansTransactionSpecial). Blueprint overhauls for anti-pattern remediation.
+External module loading fixed (directory scan replacing hardcoded imports).
+Per-node model mapping (Opus/Sonnet/Haiku). Token-budget clutch. 10 jobs
+complete by end of session 20.
 
-**Session 19:** 10-job batch run. Results:
-- **Run 1 (all 10):** 4 completed, 6 failed at `ExecuteJobRuns`. Root cause:
-  `_load_all()` in `external.py` had hardcoded import list including a phantom
-  module (`repeat_overdraft_customer_processor`) from a job cut between POC5/POC6.
-  Also discovered agents were copy-pasting OG external module code with `_re`
-  suffix instead of actually remediating anti-patterns.
-- **Blueprint overhaul:** Rewrote 10 blueprints to enforce remediation-first
-  anti-pattern policy. Key change: externals are last resort, not default.
-  FSD writer now instructs agents to inline logic into standard framework
-  modules (DataSourcing, Transformation, CsvFileWriter).
-- **Hobson fix:** Replaced hardcoded `_load_all()` import list with directory
-  scan (`pkgutil.iter_modules`). 156 tests passing.
-- **Run 2 (6 failed jobs, fresh start):** 5 completed with genuine remediation.
-  Jobs 160 and 166 fully eliminated external modules. Jobs 161, 164, 165
-  reduced externals to thin I/O shims. All proofmark STRICT. Job 163
-  (TransactionAnomalyFlags) still running — got kicked back by FBR.
-- **Timeout fix:** `run_until_drained` timeout bumped from 1h to 4h.
+**Session 25:** Major engine changes (commit `770ee81`):
+- **FinalSignOff removed** — rubber-stamping, zero value. 21 nodes, was 22.
+- **Pat CONDITIONAL flow** — `FBR_EvidenceAudit` returns CONDITIONAL for
+  fixable doc/test drift → PatFix auto-resolves → COMPLETE. REJECTED →
+  DEAD_LETTER for real output problems.
+- **Triage-fix blueprint updated** — "update everything your changes
+  invalidate" constraint added.
+- **Graceful shutdown** — SIGINT/SIGTERM handler, non-daemon workers,
+  `start_new_session=True` for Claude subprocesses.
+- **Logging to stderr + engine.log** — structlog via stdlib, thread-safe
+  FileHandler. Diagnostic traceback blocks in step_handler for transition
+  failures.
+- 28 jobs complete by end of session. PatFix tested manually on job 15
+  (first CONDITIONAL→PatFix→COMPLETE, via manual task injection).
 
-**Session 20:** Infrastructure + batch-12 launch.
-- **Job 163 dead-lettered** at FBR_ProofmarkCheck (5/5 retries exhausted).
-  Root cause: zombie job from missing FAIL transition + timeout cascade.
-  Rebuilt successfully on retry but couldn't survive FBR gauntlet.
-- **Bug fix: work-node FAIL transitions.** WORK nodes had no FAIL edge in
-  the transition table, causing zombie jobs (status=RUNNING, no queue entry).
-  Added self-retry FAIL edges for all 27 work nodes. Also added save-before-raise
-  safety net in step_handler.
-- **Per-node model mapping.** `MODEL_MAP` in `nodes.py` assigns models by node:
-  Opus for spec/design/adversarial review (16 nodes), Haiku for mechanical
-  execution (2 nodes), Sonnet for everything else (23 nodes via fallback).
-  ~35% fewer Opus calls vs uniform Opus.
-- **Blueprint cleanup.** Burned all C# references (OG is now Python). Killed
-  stale tokens (`{OG_CS_ROOT}`, `{FW_DOCS}`, `{ORCH_ROOT}`, `{JOB_DIR}`).
-  All paths hardcoded. `{ETL_ROOT}` remains as only token (literal for DB).
-  Updated external module interface docs (register/execute pattern).
-- **Timeout bumped** from 600s to 1800s (30 min) per step.
-- **Token-budget clutch** tested and working. `control.re_engine_config`
-  `clutch_engaged = true` parks all workers until disengaged.
-- **Batch-12 launched** (13 jobs: 12 new + job 163 resume). All 12 new jobs
-  progressed to Build/Validate stage before clutch engaged. Model mapping
-  confirmed working in logs (Sonnet for Plan/Build, Opus for Review/FBR).
+**Session 26:** PatFix validated end-to-end. Proofmark blueprint fixed.
+- **PatFix fully automated** — jobs 20, 23, 19, 21, 16 all completed via
+  CONDITIONAL→PatFix→COMPLETE with zero manual intervention. PatFix handles
+  FSD updates, test rewrites, re-running jobs through framework, re-running
+  Proofmark, and fixing typeName mismatches. Pat's audit reviewed — all
+  CONDITIONALs are legitimate doc/test drift after triage pivots, not
+  papering over real problems.
+- **Proofmark executor blueprint fixed** (commit `20cd311`) — added parquet
+  path handling. Old blueprint hardcoded CSV paths; parquet jobs need
+  directory paths. Agent now reads jobconf for `jobDirName`,
+  `outputTableDirName`, `fileName` instead of guessing. Won't help jobs
+  already past this step, but prevents the recurring double-nested parquet
+  path error for new jobs.
+- **Job feeder automation** — bash script checks every 2 minutes, maintains
+  6 running jobs by hot-loading from eligible pool (checks
+  `control.job_dependencies`). Recipe for hot-loading:
+  ```sql
+  INSERT INTO control.re_job_state (job_id, current_node, status)
+  VALUES ('{job_id}', 'LocateOgSourceFiles', 'RUNNING');
+  INSERT INTO control.re_task_queue (job_id, node_name)
+  VALUES ('{job_id}', 'LocateOgSourceFiles');
+  ```
+  `job_id` = `control.jobs.job_id` (same number).
+- **37 jobs complete**, 1 dead-lettered (job 5, trailer comparison — accepted),
+  3 still running at session end.
 
-**Due diligence on completed jobs (session 19):**
-- No proofmark cheating (all compare curated vs re-curated)
-- Genuine code remediation (not copy-paste) confirmed for all 5
-- 31-date proofmark coverage confirmed for 4/5 (job 164 only 1 date had output — legit)
-- All deployments correct (RE/Jobs, RE/externals, Output/re-curated)
+## Current Job Status
 
-**Completed jobs:** 159, 160, 161, 162, 164, 165, 166, 369, 371, 373 (10 total)
-**Dead-lettered:** 163 (TransactionAnomalyFlags — FBR_ProofmarkCheck, 5 retries)
-**In progress (clutch engaged):** 1-12 (batch-12, all in Build/Validate stage)
+**37 COMPLETE, 1 DEAD_LETTER, 3 RUNNING** out of 102 OG jobs.
 
-## Batch Status at Clutch Engagement (session 20)
+### Running Jobs at Session End
 
-| Job | Node | Retries |
-|-----|------|---------|
-| 1   | ReviewProofmarkConfig | 0 |
-| 2   | BuildProofmarkConfig | 0 |
-| 3   | ReviewFsd | 0 |
-| 4   | ReviewJobArtifacts | 0 |
-| 5   | ReviewJobArtifacts | 0 |
-| 6   | ExecuteUnitTests | 0 |
-| 7   | BuildJobArtifacts | 0 |
-| 8   | FBR_BddCheck | 0 |
-| 9   | ExecuteUnitTests | 0 |
-| 10  | BuildProofmarkConfig | 0 |
-| 11  | ReviewProofmarkConfig | 0 |
-| 12  | ReviewUnitTests | 0 |
+| Job | Name | Current Node | Notes |
+|-----|------|-------------|-------|
+| 18 | CreditScoreAverage | ExecuteProofmark | Had typeName issue (triage fixed), now Proofmark data mismatches — heading to triage again |
+| 26 | TopBranches | Publish | Clean run |
+| 28 | CustomerTransactionActivity | ReviewFsd | Mid-pipeline |
+
+### Dead Letter
+| Job | Name | Node | Reason |
+|-----|------|------|--------|
+| 5 | DailyTransactionVolume | ExecuteProofmark | Trailer comparison — Proofmark feature killed. Output is correct. Job 6 can consume its output. |
+
+## Token Budget Observations (Session 26)
+
+- ~0.4-0.5%/min with 6 workers sustained
+- Session 25 averaged ~0.6%/min (higher due to BD context overhead)
+- Clutch at 90% leaves ~10% buffer for wind-down
+- 5-hour session refresh, ~160 min active budget per cycle
+- 13 concurrent agents is the RAM ceiling; tokens are the real constraint
 
 ## Path Architecture (v2)
 
@@ -123,7 +123,8 @@ proofmark-executor paths, no-delete evidence rule).
 - Per-agent blueprints as system prompts
 - Per-node model assignment via MODEL_MAP (Opus/Sonnet/Haiku)
 - Token-budget clutch in `control.re_engine_config` for pausing workers
-- 103 independent job pipelines (from manifest), zero cross-contamination
+- 102 independent job pipelines, zero cross-contamination
+- PatFix auto-remediation for documentation/test drift after triage
 - See: `poc6-architecture.md`
 
 ## Key Files (EtlReverseEngineering repo)
@@ -140,7 +141,10 @@ proofmark-executor paths, no-delete evidence rule).
 | `src/workflow_engine/nodes.py` | Node ABC, stub implementations, agent registry, MODEL_MAP |
 | `src/workflow_engine/agent_node.py` | AgentNode — Claude CLI invocation per blueprint |
 | `src/workflow_engine/models.py` | JobState, EngineConfig, Outcome, NodeType |
+| `src/workflow_engine/log_config.py` | structlog config — stderr + engine.log |
 | `blueprints/_conventions.md` | Agent conventions, paths, RE naming rules |
+| `blueprints/proofmark-executor.md` | Proofmark queue entry construction (CSV + Parquet) |
+| `blueprints/pat-fix.md` | PatFix auto-remediation blueprint |
 
 ## Design Principles (standing)
 
