@@ -60,7 +60,7 @@ It doesn't just write code — it documents what it understood, why it made the 
 
 ### The Orchestrator Is Deliberately Dumb
 
-Previous POCs taught us that trying to leave complex task orchestration to a long-lived LLM produced context rot and undesirable results. In our attempt at making our orchestrator dumber and dumber, we eventually landed on a purely deterministic state machine.
+Previous POCs taught us that trying to leave complex task orchestration to a long-lived LLM produced context rot and inefficient results. In our attempt at making our orchestrator dumber and dumber, we eventually landed on a purely deterministic state machine.
 
 The core engine is a deterministic Python state machine — no LLM in the control loop. It manages a Postgres-backed task queue and a configurable pool of concurrent Claude CLI workers (typically 6 - 12). Each worker claims a task, executes it via a fresh Claude agent invocation, and enqueues the next task based on the outcome.
 
@@ -87,9 +87,9 @@ When a job fails a review gate or produces incorrect output, the engine doesn't 
 
 2. **Triage** — An autonomous 3-phase sub-pipeline: Root Cause Analysis (Opus), Fix (Sonnet), Reset (Sonnet). 13 of 41 jobs went through triage. All 13 recovered.
 
-3. **PatFix** — Post-validation auto-remediation for documentation/test drift caused by triage fixes. Handles FSD updates, test rewrites, re-runs through the framework, re-runs Proofmark. 7 jobs completed through this path with zero manual intervention. -- Note Dan named the agent who was our final arbiter of success "Pat" after a prior colleague who is literally a human bullshit detector. The phase in our workflow is called PatFix, because it fixed any shenanigans Pat found.
+3. **PatFix** — Post-validation auto-remediation for documentation/test drift caused by triage fixes. Handles FSD updates, test rewrites, re-runs through the framework, re-runs Proofmark. 7 jobs completed through this path with zero manual intervention. -- Note Dan named the agent who was our final arbiter of success "Pat" after a prior colleague who is literally a human bullshit detector. The phase in our workflow is called PatFix, because it addressed any lingering clean-up that Pat required.
 
-4. **Final Build Review (FBR)** — An adversarial auditor as the final boss. This agent was instructed to assume that the RE team didn't do their job right. He inspected traceability between the original code, the BRD, BDD, FSD, process artifacts, Proofmark results, and unit test execution. He made sure that the agents didn't cheat at any step. If this agent flunked a job outright, it was all over for that job. If he gave conditional approval, his conditions had to all be met before final sign-off.
+4. **Final Build Review (FBR)** — An adversarial auditor as the final boss. This agent was instructed to assume that the RE team didn't do their job right. He inspected traceability between the original code, the BRD, BDD, FSD, process artifacts, Proofmark results, and unit test execution. He confirmed that all guardrails were enforced. If this agent flunked a job outright, it was all over for that job. If he gave conditional approval, his conditions had to all be met before final sign-off.
 
 5. **The exception that proves the rule** — We had one job that the automation marked as a dead-letter. The truth is that there are some ETL jobs that produce genuinely unique output patterns. In this case, job 5, the original ETL job writes a trailing record with non-deterministic values. The Proofmark application does not have the ability to certify that the output matches. The workflow correctly escalated to a human. This was the one time that Dan had to intervene. The output *did* match. It's just that the deterministic matching couldn't prove it.
 
