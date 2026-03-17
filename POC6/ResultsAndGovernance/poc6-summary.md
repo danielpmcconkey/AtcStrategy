@@ -87,11 +87,11 @@ When a job fails a review gate or produces incorrect output, the engine doesn't 
 
 2. **Triage** — An autonomous 3-phase sub-pipeline: Root Cause Analysis (Opus), Fix (Sonnet), Reset (Sonnet). 13 of 41 jobs went through triage. All 13 recovered.
 
-3. **PatFix** — Post-validation auto-remediation for documentation/test drift caused by triage fixes. Handles FSD updates, test rewrites, re-runs through the framework, re-runs Proofmark. 7 jobs completed through this path with zero manual intervention. -- Note Dan named the agent who was our final arbiter of success "Pat" after a prior colleague who is literally a human bullshit detector. The pase in our workflow is called Patfix, because it fixed any shenanigans Pat found.
+3. **PatFix** — Post-validation auto-remediation for documentation/test drift caused by triage fixes. Handles FSD updates, test rewrites, re-runs through the framework, re-runs Proofmark. 7 jobs completed through this path with zero manual intervention. -- Note Dan named the agent who was our final arbiter of success "Pat" after a prior colleague who is literally a human bullshit detector. The phase in our workflow is called PatFix, because it fixed any shenanigans Pat found.
 
-4. **Final Build Review (FBR)** — An adversarial auditor as the final boss. This agent was instructed to assume that the RE team didn't do their job right. He inspected traceability between the original code, the BRD, BDD, FSD, process artifacts, Proofmark results, and unit test execution. He made sure that the agents didn't cheat at any step. If this agent flunked a job outright, it was all over for that job. If he gave conditional approval, his conditions had to all be met before before final sign-off.
+4. **Final Build Review (FBR)** — An adversarial auditor as the final boss. This agent was instructed to assume that the RE team didn't do their job right. He inspected traceability between the original code, the BRD, BDD, FSD, process artifacts, Proofmark results, and unit test execution. He made sure that the agents didn't cheat at any step. If this agent flunked a job outright, it was all over for that job. If he gave conditional approval, his conditions had to all be met before final sign-off.
 
-5. **The exception that proves the rule** — We had one job that the automation marked as a dead-letter. The truth is that there are some ETL jobs that produce genuinely unique output patterns. In this case, job 5, the original ETL job writes a trailing record with non-deterministic values. The Proofmark application does not have the ablitiy to certify that the output matches. The workflow correctly escalated to a human. This was the one time that Dan had to intervene. The output *did* match. It's just that the determininstic matching couldn't prove it.
+5. **The exception that proves the rule** — We had one job that the automation marked as a dead-letter. The truth is that there are some ETL jobs that produce genuinely unique output patterns. In this case, job 5, the original ETL job writes a trailing record with non-deterministic values. The Proofmark application does not have the ability to certify that the output matches. The workflow correctly escalated to a human. This was the one time that Dan had to intervene. The output *did* match. It's just that the deterministic matching couldn't prove it.
 
 ### Token Budget Clutch
 
@@ -101,7 +101,7 @@ A database flag (`clutch_engaged`) lets the operator throttle the engine when ap
 
 ## Anti-Pattern Remediation
 
-This process doesn't just replicate legacy code — it improves it. The "orignal" ETL portfolio in this POC was intentionally written poorly, with anti-patterns we see in our daily lives on the production platform. The reverse engineering team was given a list of those anti-patterns, told to sniff them out, and eradicate them where the could. Every job's BRD includes an anti-pattern catalog, and the FSD includes a remediation plan.
+This process doesn't just replicate legacy code — it improves it. The "original" ETL portfolio in this POC was intentionally written poorly, with anti-patterns we see in our daily lives on the production platform. The reverse engineering team was given a list of those anti-patterns, told to sniff them out, and eradicate them where they could. Every job's BRD includes an anti-pattern catalog, and the FSD includes a remediation plan.
 
 **175 anti-patterns identified across 41 jobs:**
 
@@ -166,7 +166,7 @@ No cloud infrastructure. No GPU cluster. No fine-tuned models. Off-the-shelf Cla
 
 1. **Token cost model** — Anthropic's subscription plans obscure the actual token counts behind percentage-based meters and the RE process only closely approximates our production environment and complexity. We would need to port this process into our network before we could begin measuring per-job token consumption and build a reliable cost model.
 
-2. **Proofmark enhancement** — This comparison application was built to handle the POC's specific use cases. We would need to build out additional comparison modles such as data profiling, fixed-width, XML and JSON output types. As we move forward with our prototype inside the company network, more use cases will become apparent. The good news is that Claude built this entire application in an afternoon, most of which was Dan coming up with the right requirements.
+2. **Proofmark enhancement** — This comparison application was built to handle the POC's specific use cases. We would need to build out additional comparison modules such as data profiling, fixed-width, XML and JSON output types. As we move forward with our prototype inside the company network, more use cases will become apparent. The good news is that Claude built this entire application in an afternoon, most of which was Dan coming up with the right requirements.
 
 3. **Scaling strategy** — The engine is I/O bound on API calls, not compute. Horizontal scaling means more workers and a larger token budget, not more hardware.
 
